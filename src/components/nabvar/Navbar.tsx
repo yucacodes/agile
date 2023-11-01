@@ -1,14 +1,11 @@
-import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useComputed$ } from "@builder.io/qwik";
 import style from "./navbar.module.css";
 import { Link, useLocation } from "@builder.io/qwik-city";
 
-export const Navbar = component$(() => {
+const Navbar = component$(() => {
   const loc = useLocation();
-  const pathname = useSignal("");
-
-  useVisibleTask$(({ track }) => {
-    track(() => loc.url.pathname);
-    pathname.value = loc.url.pathname;
+  const pathname = useComputed$(() => {
+    return loc.url.pathname;
   });
 
   return (
@@ -39,3 +36,5 @@ export const Navbar = component$(() => {
     </nav>
   );
 });
+
+export { Navbar };
