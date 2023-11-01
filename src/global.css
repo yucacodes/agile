@@ -152,3 +152,7 @@ html {
 .principal-container {
   width: 100%;
 }
+
+.active {
+  text-decoration-line: underline !important;
+}
