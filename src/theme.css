@@ -1,0 +1,13 @@
+:root{
+    --primary-color: #0197fe;
+    --primary-color-rgb: 1, 151, 254;
+    --primary-color-contrast: #fff;
+
+    --secondary-color: #d84493;
+    --secondary-color-rgb: 216, 68, 147;
+    --secondary-color-contrast: #fff;
+
+    --accent-color: #ff6d00;
+    --accent-color-rgb: 255, 109, 0;
+    --accent-color-contrast: #fff;
+}

@@ -1,0 +1,11 @@
+.button {
+  background-color: rgba(var(--primary-color-rgb), 1);
+  color: var(--primary-color-contrast);
+  width: fit-content;
+  border: none;
+  padding: 14px 45px;
+  border-radius: 36px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}

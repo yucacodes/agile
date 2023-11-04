@@ -5,8 +5,8 @@ export const Background = component$(() => {
   return (
     <>
       <div class={style.leftBlur}></div>
-      <Slot />
       <div class={style.rightBlur}></div>
+      <Slot />
     </>
   );
 });

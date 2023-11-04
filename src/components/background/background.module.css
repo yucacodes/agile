@@ -14,7 +14,7 @@
   max-width: 20em;
   max-height: 20em;
   border-radius: 50% 50% 50% 0;
-  background: radial-gradient(circle at 50% 50%, #0197fe, rgba(76, 0, 255, 0));
+  background: radial-gradient(circle at 50% 50%, var(--primary-color, blue), #4c00ff00);
 }
 
 .rightBlur {
@@ -24,15 +24,15 @@
   max-width: 25em;
   border-radius: 50% 50% 0% 50%;
   transform: rotate(-35deg);
-  background: radial-gradient(circle at 50% 50%, #d84493, rgba(76, 0, 255, 0));
+  background: radial-gradient(circle at 50% 50%, var(--secondary-color), #4c00ff00);
 }
 
 @media screen and (min-width: 768px) {
   .leftBlur {
     bottom: -10%;
     left: -10%;
-    max-width: 25em;
-    max-height: 25em;
+    max-width: 40%;
+    max-height: 45%;
   }
 
   .rightBlur {
