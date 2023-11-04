@@ -1,11 +1,8 @@
+.container {
+ 
+}
 .nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 2rem;
-  background-color: #fff;
-
-  height: 4rem;
+  display: none;
 
   .listlink {
     display: flex;
@@ -29,4 +26,31 @@
   }
 }
 
+@media screen and (min-width: 768px) {
+  .container {
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+  }
 
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    height: 4rem;
+  }
+
+  .content {
+    margin: auto;
+    gap: 110px;
+  }
+
+  .textsContainer {
+    max-width: 428px;
+  }
+
+  .informativeText {
+    margin: 34px auto;
+  }
+}

@@ -1,6 +1,6 @@
 .button {
-  background-color: #005bc5;
-  color: white;
+  background-color: rgba(var(--primary-color-rgb), 1);
+  color: var(--primary-color-contrast);
   width: fit-content;
   border: none;
   padding: 14px 45px;

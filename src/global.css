@@ -121,7 +121,7 @@ blockquote:before,
 blockquote:after,
 q:before,
 q:after {
-  content: '';
+  content: "";
   content: none;
 }
 
@@ -151,9 +151,10 @@ html {
 }
 
 .principal-container {
-  width: 100%;
+  width: 100vw;
+  height: 100dvh;
+  height: 100vh;
 }
-
 .active {
   text-decoration-line: underline !important;
 }
