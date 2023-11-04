@@ -1,0 +1,11 @@
+.footer {
+  display: none;
+}
+
+@media screen and (min-width: 768px) {
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 26px;
+  }
+}
