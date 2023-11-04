@@ -3,7 +3,7 @@ import style from "./navbar.module.css";
 import { Link, useLocation } from "@builder.io/qwik-city";
 import { MenuBurger } from "../menu-burger/MenuBurger";
 
-const Navbar = component$(() => {
+export const Navbar = component$(() => {
   const loc = useLocation();
   const pathname = useComputed$(() => {
     return loc.url.pathname;
@@ -40,5 +40,3 @@ const Navbar = component$(() => {
     </div>
   );
 });
-
-export { Navbar };
