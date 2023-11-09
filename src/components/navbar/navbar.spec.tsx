@@ -17,3 +17,4 @@ test(`should render link planning ⭐`, async () => {
   const div =  screen.querySelector('[role="planning"]') as HTMLElement;
   expect(div.outerHTML).toContain("Planning");
 });
+
