@@ -1,5 +1,6 @@
 {
   "name": "my-qwik-empty-starter",
+  "type": "module",
   "description": "App with Routing built-in ready to create your app",
   "engines": {
     "node": "20.9.0"
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@builder.io/qwik": "^1.2.15",
     "@builder.io/qwik-city": "^1.2.15",
+    "@types/bcrypt": "^5.0.1",
     "@types/eslint": "^8.44.4",
     "@types/node": "^20.8.4",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
@@ -43,7 +45,11 @@
     "vitest": "^0.34.6"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "reflect-metadata": "^0.1.13",
     "sharp": "^0.32.6",
-    "socket.io": "^4.7.2"
+    "short-uuid": "^4.2.2",
+    "socket.io": "^4.7.2",
+    "tsyringe": "^4.8.0"
   }
 }

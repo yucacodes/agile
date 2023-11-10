@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowJs": true,
     "target": "ES2017",
     "module": "ES2022",
@@ -18,7 +20,11 @@
     "noEmit": true,
     "types": ["node", "vite/client"],
     "paths": {
-      "~/*": ["./src/*"]
+      "@domain": ["./src/backend/domain"],
+      "@application": ["./src/backend/application"],
+      "@presentation": ["./src/backend/presentation"],
+      "@infrastructure": ["./src/backend/infrastructure"],
+      "~/*": ["./src/*"],
     }
   },
   "files": ["./.eslintrc.cjs"],
