@@ -137,8 +137,9 @@ html {
   font-family: 'DM Sans', sans-serif;
 }
 
-.principal-container {
-  width: 100vw;
+.principal{
+  display: flex;
+  flex-direction: column;
   height: 100dvh;
   height: 100vh;
 }
