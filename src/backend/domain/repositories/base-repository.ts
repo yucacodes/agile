@@ -24,7 +24,7 @@ export abstract class BaseRepository<
       this.persistNewEntities(newEntities),
       this.persistEntitiesUpdates(updatedEntitities),
     ])
-    entities.forEach(x => x.setAsSaved())
+    entities.forEach((x) => x.setAsSaved())
   }
 
   protected abstract persistNewEntities(entities: E[]): Promise<void>

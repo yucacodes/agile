@@ -1,5 +1,5 @@
-import { Slot, component$ } from "@builder.io/qwik";
-import style from "./background.module.css";
+import { Slot, component$ } from '@builder.io/qwik'
+import style from './background.module.css'
 
 export const Background = component$(() => {
   return (
@@ -8,5 +8,5 @@ export const Background = component$(() => {
       <div class={style.rightBlur}></div>
       <Slot />
     </>
-  );
-});
+  )
+})

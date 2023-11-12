@@ -24,7 +24,7 @@
       "@application": ["./src/backend/application"],
       "@presentation": ["./src/backend/presentation"],
       "@infrastructure": ["./src/backend/infrastructure"],
-      "~/*": ["./src/*"],
+      "~/*": ["./src/*"]
     }
   },
   "files": ["./.eslintrc.cjs"],

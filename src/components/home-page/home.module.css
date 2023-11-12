@@ -6,7 +6,6 @@
   padding-inline: 6rem;
 }
 
-
 .content {
   flex: 1;
   display: flex;
@@ -18,8 +17,8 @@
 
 .textsContainer {
   text-align: center;
- display: grid;
- gap: 2rem;
+  display: grid;
+  gap: 2rem;
 }
 
 .informativeText {
@@ -27,6 +26,6 @@
   font-size: 16px;
 }
 
-.spacer{
+.spacer {
   flex: 1;
 }

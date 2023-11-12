@@ -46,11 +46,11 @@ export abstract class Entity<P extends EntityProps> {
   }
 
   createdAt(): Date {
-    return new Date(this.props.createdAt);
+    return new Date(this.props.createdAt)
   }
 
   updatedAt(): Date {
-    return new Date(this.props.updatedAt);
+    return new Date(this.props.updatedAt)
   }
 
   public setAsSaved() {

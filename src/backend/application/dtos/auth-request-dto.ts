@@ -1,3 +1,1 @@
-export interface AuthRequestDto {
-
-}
+export interface AuthRequestDto {}

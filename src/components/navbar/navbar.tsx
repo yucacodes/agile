@@ -1,13 +1,13 @@
-import { component$, useComputed$ } from "@builder.io/qwik";
-import style from "./navbar.module.css";
-import { Link, useLocation } from "@builder.io/qwik-city";
-import { MenuBurger } from "../menu-burger/MenuBurger";
+import { component$, useComputed$ } from '@builder.io/qwik'
+import style from './navbar.module.css'
+import { Link, useLocation } from '@builder.io/qwik-city'
+import { MenuBurger } from '../menu-burger/MenuBurger'
 
 export const Navbar = component$(() => {
-  const loc = useLocation();
+  const loc = useLocation()
   const pathname = useComputed$(() => {
-    return loc.url.pathname;
-  });
+    return loc.url.pathname
+  })
 
   return (
     <div class={style.container}>
@@ -18,7 +18,7 @@ export const Navbar = component$(() => {
             href="/"
             role="planning"
             class={{
-              active: pathname.value === "/",
+              active: pathname.value === '/',
             }}
           >
             Planning
@@ -27,7 +27,7 @@ export const Navbar = component$(() => {
             href="/about"
             role="meetTheTeam"
             class={{
-              active: pathname.value === "/about/",
+              active: pathname.value === '/about/',
             }}
           >
             Meet the team
@@ -38,5 +38,5 @@ export const Navbar = component$(() => {
         </section>
       </nav>
     </div>
-  );
-});
+  )
+})

@@ -9,12 +9,11 @@ export interface MeetingProps extends EntityProps {
 }
 
 export class Meeting extends Entity<MeetingProps> {
-
   private static SECRET_BYTES = 32
   private static SECRET_SALT_ROUNDS = 10
 
-  static factory(): { meeting: Meeting, secret: string } {
-    const secret = generateSecureRandomSecretString(this.SECRET_BYTES);
+  static factory(): { meeting: Meeting; secret: string } {
+    const secret = generateSecureRandomSecretString(this.SECRET_BYTES)
     const meeting = new Meeting({
       ...this.factoryBaseProps(),
       secretHash: hashSync(secret, this.SECRET_SALT_ROUNDS),
@@ -39,7 +38,7 @@ export class Meeting extends Entity<MeetingProps> {
   }
 
   participants(): Map<string, MeetingParticipant> {
-    return new Map(this.props.participants);
+    return new Map(this.props.participants)
   }
 
   // Private methods
@@ -51,4 +50,4 @@ export class Meeting extends Entity<MeetingProps> {
 
 // Errors
 
-export class PersonProvideInvalidSecretError extends Error { }
+export class PersonProvideInvalidSecretError extends Error {}

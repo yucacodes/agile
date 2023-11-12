@@ -1,5 +1,4 @@
 .container {
- 
 }
 .nav {
   display: none;
@@ -16,7 +15,6 @@
     font-size: 1rem;
     font-weight: 400;
   }
-
 
   .action button {
     background-color: #fff;

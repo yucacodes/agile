@@ -1,4 +1,4 @@
-import { type Meeting, type MeetingProps, MeetingsRepository} from '@domain'
+import { type Meeting, type MeetingProps, MeetingsRepository } from '@domain'
 import { DummyRepositoryHelper } from './dummy-repository-helper'
 import { singleton } from 'tsyringe'
 

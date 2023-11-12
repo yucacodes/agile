@@ -1,15 +1,12 @@
-import type { MeetingParticipant } from "@domain";
-import type { EntityDto, EntityDtoMapper } from "./entity-dto";
+import type { MeetingParticipant } from '@domain'
+import type { EntityDto, EntityDtoMapper } from './entity-dto'
 
 export interface MeetingParticipantDto extends EntityDto {
-  name: string;
+  name: string
 }
 
 export class MeetingParticipantDtoMapper {
-
-  constructor(
-    private entityDtoMapper: EntityDtoMapper,
-  ) { }
+  constructor(private entityDtoMapper: EntityDtoMapper) {}
 
   makeDto(obj: MeetingParticipant): MeetingParticipantDto {
     return {
@@ -18,9 +15,11 @@ export class MeetingParticipantDtoMapper {
     }
   }
 
-  makeMapDtos(map: Map<string, MeetingParticipant>): { [key: string]: MeetingParticipantDto } {
-    const result: { [key: string]: MeetingParticipantDto } = {};
+  makeMapDtos(map: Map<string, MeetingParticipant>): {
+    [key: string]: MeetingParticipantDto
+  } {
+    const result: { [key: string]: MeetingParticipantDto } = {}
     for (const [key, obj] of map.entries()) result[key] = this.makeDto(obj)
-    return result;
+    return result
   }
 }

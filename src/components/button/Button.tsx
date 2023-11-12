@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
-import style from "./button.module.css";
+import { component$ } from '@builder.io/qwik'
+import style from './button.module.css'
 
 export const Button = component$(({ text }: { text: string }) => {
-  return <button class={style.button}>{text}</button>;
-});
+  return <button class={style.button}>{text}</button>
+})

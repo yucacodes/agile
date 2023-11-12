@@ -1,13 +1,13 @@
-import type { DocumentHead } from "@builder.io/qwik-city";
+import type { DocumentHead } from '@builder.io/qwik-city'
 
-export { HomePage as default } from "~/components/home-page";
+export { HomePage as default } from '~/components/home-page'
 
 export const head: DocumentHead = {
-  title: "PokerSession",
+  title: 'PokerSession',
   meta: [
     {
-      name: "description",
-      content: "Qwik site description",
+      name: 'description',
+      content: 'Qwik site description',
     },
   ],
-};
+}

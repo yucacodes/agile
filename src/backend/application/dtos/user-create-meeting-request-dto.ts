@@ -1,4 +1,3 @@
-
 export interface UserCreateMeetingRequestDto {
-  name: string;
+  name: string
 }

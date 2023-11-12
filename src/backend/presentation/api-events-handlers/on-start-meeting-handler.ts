@@ -1,13 +1,12 @@
-import type { UserCreateMeetingRequestDto } from '@application';
-import { UserCreateMeeting } from '@application';
-import { container } from 'tsyringe';
-import type { OnStartMeetingCallback } from '../api-events';
-
+import type { UserCreateMeetingRequestDto } from '@application'
+import { UserCreateMeeting } from '@application'
+import { container } from 'tsyringe'
+import type { OnStartMeetingCallback } from '../api-events'
 
 export function onStartMeetingHandler(
   request: UserCreateMeetingRequestDto,
-  callback: OnStartMeetingCallback,
+  callback: OnStartMeetingCallback
 ) {
-  const service = container.resolve(UserCreateMeeting);
-  service.perform(request).then(callback);
+  const service = container.resolve(UserCreateMeeting)
+  service.perform(request).then(callback)
 }
