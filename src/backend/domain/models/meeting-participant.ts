@@ -1,4 +1,4 @@
-import { Entity, EntityProps } from './entity'
+import { Entity, type EntityProps } from './entity'
 
 export const MeetingParticipantRolesValues = ['Manager', 'Participant'] as const
 

@@ -1,10 +1,10 @@
 await import("reflect-metadata");
-const { onStartMeetingHandler } = await import('./presentation/api-events-handlers');
+const { onStartMeetingHandler } = await import('@presentation');
 
 
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { ApiEmmitedEventsMap, ApiListenEventsMap, ApiServerEventsMap } from './presentation/api-events';
+import type { ApiEmmitedEventsMap, ApiListenEventsMap, ApiServerEventsMap } from '@presentation';
 
 const httpServer = createServer()
 

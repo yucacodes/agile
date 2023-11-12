@@ -1,6 +1,6 @@
 import { generateSecureRandomSecretString } from '@domain'
-import { Entity, EntityProps } from './entity'
-import { MeetingParticipant } from './meeting-participant'
+import { Entity, type EntityProps } from './entity'
+import type { MeetingParticipant } from './meeting-participant'
 import { compareSync, hashSync } from 'bcrypt'
 
 export interface MeetingProps extends EntityProps {

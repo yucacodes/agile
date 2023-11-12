@@ -1,7 +1,7 @@
 
 import { Meeting, MeetingParticipant, MeetingsRepository } from "@domain";
 import { singleton } from "tsyringe";
-import { MeetingDtoMapper, MeetingWithAuthInformationDto, UserCreateMeetingRequestDto } from "../dtos";
+import { MeetingDtoMapper, type MeetingWithAuthInformationDto, type UserCreateMeetingRequestDto } from "../dtos";
 import { GenerateMeetingAuthInformation } from "../helpers";
 
 @singleton()

@@ -1,5 +1,5 @@
-import { MeetingAuthInformationDto } from "./meeting-auth-information-dto";
-import { MeetingDto } from "./meeting-dto";
+import type { MeetingAuthInformationDto } from "./meeting-auth-information-dto";
+import type { MeetingDto } from "./meeting-dto";
 
 export interface MeetingWithAuthInformationDto {
   meeting: MeetingDto

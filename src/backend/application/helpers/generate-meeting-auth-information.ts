@@ -1,5 +1,5 @@
-import { Meeting, MeetingParticipant } from "@domain";
-import { MeetingAuthInformationDto } from "../dtos";
+import type { Meeting, MeetingParticipant } from "@domain";
+import type { MeetingAuthInformationDto } from "../dtos";
 import { singleton } from "tsyringe";
 
 @singleton()

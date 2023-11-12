@@ -1,6 +1,6 @@
-import { Meeting } from "@domain";
-import { EntityDtoMapper, EntityDto } from "./entity-dto";
-import { MeetingParticipantDto, MeetingParticipantDtoMapper } from "./meeting-participant-dto";
+import type { Meeting } from "@domain";
+import type { EntityDtoMapper, EntityDto } from "./entity-dto";
+import type { MeetingParticipantDto, MeetingParticipantDtoMapper } from "./meeting-participant-dto";
 
 export interface MeetingDto extends EntityDto {
   participants: { [key: string]: MeetingParticipantDto },

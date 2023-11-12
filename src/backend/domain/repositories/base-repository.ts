@@ -1,4 +1,4 @@
-import { EntityProps, Entity } from '../models'
+import type { EntityProps, Entity } from '../models'
 
 export abstract class BaseRepository<
   P extends EntityProps,

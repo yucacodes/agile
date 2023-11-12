@@ -1,4 +1,4 @@
-import { Meeting, MeetingProps } from '../models'
+import type { Meeting, MeetingProps } from '../models'
 import { BaseRepository } from './base-repository'
 
 

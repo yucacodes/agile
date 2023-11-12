@@ -9,7 +9,7 @@ import { useSocket } from "~/hooks/useSocket";
 
 export const HomePage = component$(() => {
   const { events } = useSocket("private-message");
-  //console.log("events", events);
+  console.log("events", events);
 
   return (
     <>

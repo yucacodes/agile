@@ -1,4 +1,4 @@
-import { MeetingParticipantRole } from "@domain";
+import type { MeetingParticipantRole } from "@domain";
 
 export interface MeetingAuthInformationDto {
   meetingId: string;

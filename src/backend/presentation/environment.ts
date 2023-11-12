@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { singleton } from "tsyringe";
 
 
@@ -6,6 +7,7 @@ export class Environment {
   getEnvironmentVariable(name: string, defaultValue?: string): string {
     throw new Error('Not implemented');
   }
+
 
   getEnvironmentVariableAsNumber(name: string, defaultValue?: string): number {
     throw new Error('Not implemented');

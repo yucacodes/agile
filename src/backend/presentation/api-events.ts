@@ -1,4 +1,4 @@
-import { MeetingWithAuthInformationDto, UserCreateMeetingRequestDto } from "@application";
+import type { MeetingWithAuthInformationDto, UserCreateMeetingRequestDto } from "@application";
 
 export type OnStartMeetingCallback = (data: MeetingWithAuthInformationDto) => void;
 
