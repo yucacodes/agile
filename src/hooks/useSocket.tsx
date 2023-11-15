@@ -1,30 +1,45 @@
-import { useComputed$, useSignal } from '@builder.io/qwik'
-import { io } from 'socket.io-client'
+import {
+  type NoSerialize,
+  noSerialize,
+  useSignal,
+  useTask$,
+  useVisibleTask$,
+} from '@builder.io/qwik'
+import { type Socket, io } from 'socket.io-client'
 
-const socket = io('http://localhost:3000', { transports: ['websocket'] })
+const useSocket = (serverPath: string) => {
+  const socket = useSignal<NoSerialize<Socket>>(undefined)
 
-const useSocket = (nameEvent: string) => {
-  const isConnect = useSignal<boolean>(false)
-  const events = useSignal<Record<string, any>[]>([])
+  // this need to be initialized on the client only
+  useVisibleTask$(({ cleanup }) => {
+    const wsClient = io(serverPath)
+    socket.value = noSerialize(wsClient)
 
-  useComputed$(() => {
-    socket.on('connect', () => {
-      isConnect.value = true
-      console.log('connect')
-    })
-
-    socket.on('disconnect', () => {
-      isConnect.value = false
-      console.log('disconnect')
-    })
-
-    socket.on(nameEvent, (data) => {
-      console.log('data', data)
-      events.value = [...events.value, data]
+    cleanup(() => {
+      wsClient.close()
     })
   })
 
-  return { events, isConnect }
+  const isOnline = useSignal<boolean | undefined>(false)
+
+  useTask$(({ track }) => {
+    track(() => socket.value)
+    socket.value?.on('connect', () => {
+      isOnline.value = socket.value?.connected
+    })
+  })
+
+  useTask$(({ track }) => {
+    track(() => socket.value)
+    socket.value?.on('disconnect', () => {
+      isOnline.value = socket.value?.connected
+    })
+  })
+
+  return {
+    socket,
+    isOnline,
+  }
 }
 
 export { useSocket }
