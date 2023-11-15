@@ -3,6 +3,7 @@ import type { RequestHandler } from '@builder.io/qwik-city'
 
 import { Background } from '~/components/background/Background'
 import { Navbar } from '~/components/navbar'
+import { Provider } from '~/context/ProviderContext'
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   // Control caching for this request for best performance and to reduce hosting costs:
@@ -17,11 +18,13 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 
 export default component$(() => {
   return (
-    <main class="principal">
-      <Background>
-        <Navbar />
-        <Slot />
-      </Background>
-    </main>
+    <Provider>
+      <main class="principal">
+        <Background>
+          <Navbar />
+          <Slot />
+        </Background>
+      </main>
+    </Provider>
   )
 })

@@ -29,5 +29,3 @@ export const Provider = component$(() => {
 
   return <Slot />
 })
-
-export const SocketContext = createContextId<State>('socket.context')

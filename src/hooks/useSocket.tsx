@@ -9,18 +9,20 @@ import { type Socket, io } from 'socket.io-client'
 
 const useSocket = (serverPath: string) => {
   const socket = useSignal<NoSerialize<Socket>>(undefined)
+  const isOnline = useSignal<boolean | undefined>(false)
 
   // this need to be initialized on the client only
   useVisibleTask$(({ cleanup }) => {
-    const wsClient = io(serverPath)
+    const wsClient = io(serverPath, {
+      transports: ['websocket'],
+      protocols: ['websocket'],
+    })
     socket.value = noSerialize(wsClient)
 
     cleanup(() => {
       wsClient.close()
     })
   })
-
-  const isOnline = useSignal<boolean | undefined>(false)
 
   useTask$(({ track }) => {
     track(() => socket.value)
