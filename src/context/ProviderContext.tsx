@@ -1,28 +1,33 @@
 import {
   component$,
-  useStore,
   useContextProvider,
   createContextId,
   Slot,
+  useStore,
+  type NoSerialize,
+  type Signal,
 } from '@builder.io/qwik'
+import type { Socket } from 'socket.io-client'
 import { useSocket } from '~/hooks/useSocket'
 export interface State {
   user: any
-  events: Record<string, any>[]
-  isConnect: boolean
+  socket: Signal<NoSerialize<Socket>>
+  isOnline: Signal<boolean | undefined>
 }
 
 export const StateProvider = createContextId<State>('StateProvider')
 
 export const Provider = component$(() => {
-  const { events, isConnect } = useSocket('events')
+  const { isOnline, socket } = useSocket('http://localhost:3000')
   const state = useStore<State>({
     user: null,
-    events: events.value,
-    isConnect: isConnect.value,
+    socket,
+    isOnline,
   })
 
   useContextProvider(StateProvider, state)
 
   return <Slot />
 })
+
+export const SocketContext = createContextId<State>('socket.context')
