@@ -1,0 +1,19 @@
+.pointsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.4rem;
+  row-gap: 0.6rem;
+}
+
+.points {
+  background-color: #40ffd12b;
+  border-radius: 2.25rem;
+  font-size: 0.7rem;
+  border: none;
+  min-width: 5rem;
+  height: 2.7rem;
+  cursor: pointer;
+}
+
+@media screen and (min-width: 768px) {
+}
