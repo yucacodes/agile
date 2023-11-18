@@ -1,14 +1,16 @@
 import type { Meeting } from '@domain'
-import type { EntityDtoMapper, EntityDto } from './entity-dto'
-import type {
-  MeetingParticipantDto,
+import { singleton } from 'tsyringe'
+import { EntityDtoMapper, type EntityDto } from './entity-dto'
+import {
   MeetingParticipantDtoMapper,
+  type MeetingParticipantDto,
 } from './meeting-participant-dto'
 
 export interface MeetingDto extends EntityDto {
   participants: { [key: string]: MeetingParticipantDto }
 }
 
+@singleton()
 export class MeetingDtoMapper {
   constructor(
     private entityDtoMapper: EntityDtoMapper,

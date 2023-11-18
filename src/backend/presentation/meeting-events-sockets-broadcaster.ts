@@ -1,14 +1,16 @@
-import type {
-  MeetingAuthInformationDto,
+import {
   MeetingParticipantJoinedEventDtoMapper,
+  type MeetingAuthInformationDto,
 } from '@application'
 import {
   MeetingEventsBus,
   MeetingParticipantJoinedEvent,
   type MeetingEvent,
 } from '@domain'
+import { singleton } from 'tsyringe'
 import type { ApiSocket } from './api-events'
 
+@singleton()
 export class MeetingEventsSocketsBroadcaster extends MeetingEventsBus {
   private sockets: ApiSocket[] = []
 
@@ -27,8 +29,8 @@ export class MeetingEventsSocketsBroadcaster extends MeetingEventsBus {
     )
 
     if (event instanceof MeetingParticipantJoinedEvent) {
-      for (const listener of meetingSockets)
-        listener.emit(
+      for (const socket of meetingSockets)
+        socket.emit(
           'ParticipantJoined',
           this.meetingParticipantJoinedEventDtoMapper.makeDto(event)
         )

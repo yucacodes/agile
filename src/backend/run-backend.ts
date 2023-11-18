@@ -1,5 +1,5 @@
-await import('./inject-dependencies')
-const { onStartMeetingHandler } = await import('@presentation')
+const { container } = await import('./inject-dependencies')
+const { MeetingSocketsHandler } = await import('@presentation')
 
 import {
   type ApiEmmitedEventsMap,
@@ -17,10 +17,12 @@ const io = new Server<
   ApiEmmitedEventsMap,
   ApiServerEventsMap,
   ApiSocketData
->(httpServer)
+>(httpServer as any)
 
-io.on('connection', (socket) => {
-  socket.on('StartMeeting', onStartMeetingHandler)
-})
+const meetingSocketsHandler = container.resolve(MeetingSocketsHandler)
+
+io.on('connection', (socket) =>
+  meetingSocketsHandler.handleSocketConnection(socket)
+)
 
 httpServer.listen(3000)

@@ -51,6 +51,6 @@ export class MeetingParticipant extends Entity<MeetingParticipantProps> {
   }
 
   validate(): void {
-    throw new Error('Method not implemented.')
+    // TODO: implement
   }
 }

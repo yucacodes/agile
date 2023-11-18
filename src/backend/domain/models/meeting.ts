@@ -1,7 +1,10 @@
-import { generateSecureRandomSecretString } from '@domain'
+import {
+  generatePasswordHash,
+  generateSecureRandomSecretString,
+  verifyPasswordHash,
+} from '../helpers'
 import { Entity, type EntityProps } from './entity'
 import type { MeetingParticipant } from './meeting-participant'
-import { compareSync, hashSync } from 'bcrypt'
 
 export interface MeetingProps extends EntityProps {
   secretHash: string
@@ -16,14 +19,14 @@ export class Meeting extends Entity<MeetingProps> {
     const secret = generateSecureRandomSecretString(this.SECRET_BYTES)
     const meeting = new Meeting({
       ...this.factoryBaseProps(),
-      secretHash: hashSync(secret, this.SECRET_SALT_ROUNDS),
+      secretHash: generatePasswordHash(secret, this.SECRET_SALT_ROUNDS),
       participants: new Map(),
     })
     return { meeting, secret }
   }
 
   validate(): void {
-    throw new Error('Method not implemented.')
+    // TODO: implement
   }
 
   addParticipant(participant: MeetingParticipant, providedSecret: string) {
@@ -47,7 +50,7 @@ export class Meeting extends Entity<MeetingProps> {
   // Private methods
 
   private isValidSecret(secret: string): boolean {
-    return compareSync(secret, this.props.secretHash)
+    return verifyPasswordHash(secret, this.props.secretHash)
   }
 }
 
