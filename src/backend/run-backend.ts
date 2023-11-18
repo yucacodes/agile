@@ -1,20 +1,22 @@
-await import('reflect-metadata')
+await import('./inject-dependencies')
 const { onStartMeetingHandler } = await import('@presentation')
 
+import {
+  type ApiEmmitedEventsMap,
+  type ApiListenEventsMap,
+  type ApiServerEventsMap,
+  type ApiSocketData,
+} from '@presentation'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import type {
-  ApiEmmitedEventsMap,
-  ApiListenEventsMap,
-  ApiServerEventsMap,
-} from '@presentation'
 
 const httpServer = createServer()
 
 const io = new Server<
   ApiListenEventsMap,
   ApiEmmitedEventsMap,
-  ApiServerEventsMap
+  ApiServerEventsMap,
+  ApiSocketData
 >(httpServer)
 
 io.on('connection', (socket) => {

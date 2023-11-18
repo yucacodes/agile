@@ -27,8 +27,11 @@ export class Meeting extends Entity<MeetingProps> {
   }
 
   addParticipant(participant: MeetingParticipant, providedSecret: string) {
+    if (participant.meetingId() !== this.id()) {
+      throw new ParticipantMeetingIdNotMatch()
+    }
     if (!this.isValidSecret(providedSecret)) {
-      throw new PersonProvideInvalidSecretError()
+      throw new ParticipantProvideInvalidSecretError()
     }
     this.props.participants.set(participant.id(), participant)
   }
@@ -50,4 +53,5 @@ export class Meeting extends Entity<MeetingProps> {
 
 // Errors
 
-export class PersonProvideInvalidSecretError extends Error {}
+export class ParticipantMeetingIdNotMatch extends Error {}
+export class ParticipantProvideInvalidSecretError extends Error {}

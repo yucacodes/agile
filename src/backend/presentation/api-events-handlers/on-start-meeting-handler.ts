@@ -8,5 +8,6 @@ export function onStartMeetingHandler(
   callback: OnStartMeetingCallback
 ) {
   const service = container.resolve(UserCreateMeeting)
+  // TODO: register socket in brodcaster
   service.perform(request).then(callback)
 }

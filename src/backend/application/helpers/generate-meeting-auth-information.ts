@@ -10,8 +10,8 @@ export class GenerateMeetingAuthInformation {
   ): MeetingAuthInformationDto {
     return {
       meetingId: meeting.id(),
-      participantId: participant.id(),
-      participantName: participant.name(),
+      meetingParticipantId: participant.id(),
+      meetingParticipantName: participant.name(),
       roles: participant.roles(),
     }
   }

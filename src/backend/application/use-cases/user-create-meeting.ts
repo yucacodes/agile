@@ -1,4 +1,10 @@
-import { Meeting, MeetingParticipant, MeetingsRepository } from '@domain'
+import {
+  Meeting,
+  MeetingEventsBus,
+  MeetingParticipant,
+  MeetingParticipantJoinedEvent,
+  MeetingsRepository,
+} from '@domain'
 import { singleton } from 'tsyringe'
 import {
   MeetingDtoMapper,
@@ -12,7 +18,8 @@ export class UserCreateMeeting {
   constructor(
     private meetingsRepository: MeetingsRepository,
     private generateMeetingAuthInformation: GenerateMeetingAuthInformation,
-    private meetingDtoMapper: MeetingDtoMapper
+    private meetingDtoMapper: MeetingDtoMapper,
+    private meetingEventsBus: MeetingEventsBus
   ) {}
 
   async perform(
@@ -21,6 +28,7 @@ export class UserCreateMeeting {
     const { meeting: newMeeting, secret: meetingSecret } = Meeting.factory()
 
     const firstParticipant = MeetingParticipant.factory({
+      meeting: newMeeting,
       name: request.name,
       roles: ['Manager', 'Participant'],
     })
@@ -28,6 +36,11 @@ export class UserCreateMeeting {
     newMeeting.addParticipant(firstParticipant, meetingSecret)
 
     await this.meetingsRepository.save(newMeeting)
+    this.meetingEventsBus.notify(
+      MeetingParticipantJoinedEvent.factory({
+        meetingParticipant: firstParticipant,
+      })
+    )
 
     return {
       meeting: this.meetingDtoMapper.makeDto(newMeeting),
