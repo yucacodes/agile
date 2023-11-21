@@ -6,14 +6,19 @@ import type {
 } from '@application'
 import type { Socket } from 'socket.io'
 
-export type OnStartMeetingCallback = (
-  data: MeetingWithAuthInformationDto
-) => void
+export type MeetingUseCaseError = { success: false; errorCode?: string }
+export type MeetingUseCaseSuccess<R> = { success: true; result: R }
+
+export type MeetingUseCaseResult<R> =
+  | MeetingUseCaseSuccess<R>
+  | MeetingUseCaseError
+
+export type MeetingUseCaseCallback<R> = (data: MeetingUseCaseResult<R>) => void
 
 export type ApiListenEventsMap = {
   StartMeeting: (
     request: UserCreateMeetingRequestDto,
-    callback: OnStartMeetingCallback
+    callback: MeetingUseCaseCallback<MeetingWithAuthInformationDto>
   ) => void
 }
 
