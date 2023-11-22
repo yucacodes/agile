@@ -1,0 +1,11 @@
+.button {
+  color: #012677;
+
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-decoration-line: underline;
+  background-color: transparent;
+  border: none;
+}

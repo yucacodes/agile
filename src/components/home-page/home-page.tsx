@@ -1,4 +1,4 @@
-import { component$, useContext, useTask$ } from '@builder.io/qwik'
+import { $, component$, useContext, useTask$ } from '@builder.io/qwik'
 import { Subtitle } from '~/components/subtitle/Subtitle'
 import { Title } from '~/components/title/Title'
 
@@ -6,8 +6,10 @@ import { Footer } from '~/components/footer/Footer'
 import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
 import style from './home.module.css'
 import { StateProvider } from '~/context/ProviderContext'
+import { useNavigate } from '@builder.io/qwik-city'
 
 export const HomePage = component$(() => {
+  const nav = useNavigate()
   const { socket } = useContext(StateProvider)
 
   useTask$(({ track }) => {
@@ -16,7 +18,7 @@ export const HomePage = component$(() => {
       console.log('events', events)
     })
   })
-
+  const action = $(() => nav('/create-session'))
   return (
     <>
       <main class={style.container}>
@@ -31,7 +33,7 @@ export const HomePage = component$(() => {
               communicate point stories from agile teams
             </p>
           </div>
-          <PrimaryButton text="START A SESSION" />
+          <PrimaryButton action={action} text="START A SESSION" />
         </div>
         <Footer />
       </main>
