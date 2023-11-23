@@ -6,6 +6,7 @@
   .footer {
     display: flex;
     justify-content: flex-end;
+    margin-bottom: 2rem;
     gap: 26px;
   }
 }
