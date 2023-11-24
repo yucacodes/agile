@@ -1,6 +1,7 @@
 .table {
   display: flex;
   flex-direction: column;
+  margin: 0 4rem;
   gap: 2.5rem;
 }
 
@@ -19,8 +20,25 @@
 th,
 td {
   flex-basis: 50%;
-  text-align: center;
+}
+
+.playerColumn {
+  text-align: left;
+  position: relative;
+}
+
+.pointsColumn {
+  text-align: right;
+}
+
+.check {
+  color: #0b7e01;
+  position: absolute;
+  left: -2rem;
 }
 
 @media screen and (min-width: 768px) {
+  .table {
+    margin: 0 8rem;
+  }
 }
