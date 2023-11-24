@@ -9,9 +9,13 @@ import {
 } from '@builder.io/qwik'
 import type { Socket } from 'socket.io-client'
 import { useSocket } from '~/hooks/useSocket'
+import type { ApiEmmitedEventsMap, ApiListenEventsMap } from '@presentation'
+import type { MeetingAuthInformationDto } from '@application'
+
+export type ClientSocket = Socket<ApiEmmitedEventsMap, ApiListenEventsMap>
 export interface State {
-  user: any
-  socket: Signal<NoSerialize<Socket>>
+  user: MeetingAuthInformationDto
+  socket: Signal<NoSerialize<ClientSocket>>
   isOnline: Signal<boolean | undefined>
 }
 
@@ -20,7 +24,7 @@ export const StateProvider = createContextId<State>('StateProvider')
 export const Provider = component$(() => {
   const { isOnline, socket } = useSocket('http://localhost:3000')
   const state = useStore<State>({
-    user: null,
+    user: {} as MeetingAuthInformationDto,
     socket,
     isOnline,
   })

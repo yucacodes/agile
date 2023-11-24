@@ -1,18 +1,44 @@
-import { $, component$ } from '@builder.io/qwik'
+import { $, component$, useContext, useSignal } from '@builder.io/qwik'
 import style from './create-session-page.module.css'
 import { useNavigate } from '@builder.io/qwik-city'
 import { Title } from '../title/Title'
 import { LinkButton } from '../link-button/LinkButton'
+import { StateProvider } from '~/context/ProviderContext'
 
 export const CreateSessionPage = component$(() => {
+  const { socket } = useContext(StateProvider)
+  const name = useSignal('')
+
   const nav = useNavigate()
-  const action = $(() => nav('/play-session'))
+  const action = $(() => {
+    socket.value?.emit(
+      'StartMeeting',
+      {
+        name: name.value,
+      },
+      ({ success, ...data }) => {
+        console.log('data', data)
+
+        if (!success) {
+          return
+        }
+        nav('/play-session')
+      }
+    )
+  })
   return (
     <>
       <div class={style.content}>
         <Title text="Create Session" />
         <section class={style.form}>
-          <input type="text" class={style.input} placeholder="Session name" />
+          <input
+            onChange$={(event) => {
+              name.value = event.target.value
+            }}
+            type="text"
+            class={style.input}
+            placeholder="Session name"
+          />
           <LinkButton action={action} text="Create a sessión" />
         </section>
       </div>
