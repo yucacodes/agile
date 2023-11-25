@@ -1,11 +1,15 @@
-import { component$ } from '@builder.io/qwik'
+import { $, component$, useContext } from '@builder.io/qwik'
 import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
 import { SecondaryButton } from '../secondary-button/SecondaryButton'
 import { PlayersTable } from '../players-table/PlayersTable'
 import { Points } from '../points/Points'
 import style from './play-session-page.module.css'
+import { StateProvider } from '~/context/ProviderContext'
 
 export const PlaySessionPage = component$(() => {
+  const { socket, user } = useContext(StateProvider)
+
+  const action = $(() => {})
   return (
     <main class={style.container}>
       <p class={style.sessionId}>
@@ -16,7 +20,7 @@ export const PlaySessionPage = component$(() => {
           <section class={style.header}>
             <p class={style.timeText}>Time</p>
             <p class={style.time}>00:10:00</p>
-            <p class={style.userName}>Ricardo Bermudez</p>
+            <p class={style.userName}>{user.value.meetingParticipantName}</p>
           </section>
 
           <input
@@ -37,8 +41,8 @@ export const PlaySessionPage = component$(() => {
       </div>
 
       <section class={style.buttonsContainer}>
-        <PrimaryButton text="CLEAR VOTES" />
-        <PrimaryButton text="SHOW VOTES" />
+        <PrimaryButton action={action} text="CLEAR VOTES" />
+        <PrimaryButton action={action} text="SHOW VOTES" />
         <SecondaryButton text="SHARED SESSION" />
       </section>
     </main>

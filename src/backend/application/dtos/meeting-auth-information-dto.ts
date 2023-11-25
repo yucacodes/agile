@@ -4,5 +4,6 @@ export interface MeetingAuthInformationDto {
   meetingId: string
   meetingParticipantId: string
   meetingParticipantName: string
+  secret: string
   roles: readonly MeetingParticipantRole[]
 }

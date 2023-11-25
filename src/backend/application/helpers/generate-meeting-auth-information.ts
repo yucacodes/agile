@@ -6,12 +6,14 @@ import { singleton } from 'tsyringe'
 export class GenerateMeetingAuthInformation {
   perform(
     meeting: Meeting,
-    participant: MeetingParticipant
+    participant: MeetingParticipant,
+    secret: string
   ): MeetingAuthInformationDto {
     return {
       meetingId: meeting.id(),
       meetingParticipantId: participant.id(),
       meetingParticipantName: participant.name(),
+      secret,
       roles: participant.roles(),
     }
   }
