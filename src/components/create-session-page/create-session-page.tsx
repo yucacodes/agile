@@ -14,12 +14,12 @@ export const CreateSessionPage = component$(() => {
     socket.value?.emit(
       'StartMeeting',
       {
-        name: name.value,
+        name: '',
       },
-      ({ success, ...data }) => {
-        console.log('data', data)
+      (response) => {
+        console.log('result', response)
 
-        if (!success) {
+        if (!response.success) {
           return
         }
         nav('/play-session')

@@ -24,7 +24,13 @@ export const StateProvider = createContextId<State>('StateProvider')
 export const Provider = component$(() => {
   const { isOnline, socket } = useSocket('http://localhost:3000')
   const state = useStore<State>({
-    user: {} as MeetingAuthInformationDto,
+    user: {
+      meetingId: '',
+      meetingParticipantId: '',
+      meetingParticipantName: '',
+      roles: [],
+      secret: '',
+    },
     socket,
     isOnline,
   })
