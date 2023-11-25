@@ -17,12 +17,10 @@ export const CreateSessionPage = component$(() => {
         name: name.value,
       },
       (response) => {
-        console.log('result', response)
-
         if (!response.success) {
           return
         }
-        user = response.result.authInfo
+        user.value = response.result.authInfo
         nav('/play-session')
       }
     )
