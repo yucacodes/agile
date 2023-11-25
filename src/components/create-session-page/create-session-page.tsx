@@ -38,7 +38,7 @@ export const CreateSessionPage = component$(() => {
             class={style.input}
             placeholder="Session name"
           />
-          <LinkButton action={action} text="Create a sessión" />
+          <LinkButton action={action} text="Create a session" />
         </section>
       </div>
     </>

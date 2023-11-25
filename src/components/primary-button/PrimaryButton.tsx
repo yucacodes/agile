@@ -10,6 +10,7 @@ export const PrimaryButton = component$<TypePrimaryButton>(
   ({ text, action }) => {
     return (
       <button
+        role="button-primary"
         onClick$={() => {
           action()
         }}
