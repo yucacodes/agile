@@ -6,7 +6,7 @@ import { LinkButton } from '../link-button/LinkButton'
 import { StateProvider } from '~/context/ProviderContext'
 
 export const CreateSessionPage = component$(() => {
-  const { socket } = useContext(StateProvider)
+  const { socket, user } = useContext(StateProvider)
   const name = useSignal('')
 
   const nav = useNavigate()
@@ -14,7 +14,7 @@ export const CreateSessionPage = component$(() => {
     socket.value?.emit(
       'StartMeeting',
       {
-        name: '',
+        name: name.value,
       },
       (response) => {
         console.log('result', response)
@@ -22,6 +22,7 @@ export const CreateSessionPage = component$(() => {
         if (!response.success) {
           return
         }
+        user = response.result.authInfo
         nav('/play-session')
       }
     )
