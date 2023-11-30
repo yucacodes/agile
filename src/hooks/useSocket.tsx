@@ -1,22 +1,25 @@
 import {
-  type NoSerialize,
   noSerialize,
   useSignal,
   useTask$,
   useVisibleTask$,
+  type NoSerialize,
 } from '@builder.io/qwik'
-import { type Socket, io } from 'socket.io-client'
+
+import { io } from 'socket.io-client'
+import type { ClientSocket } from '~/context/ProviderContext'
 
 const useSocket = (serverPath: string) => {
-  const socket = useSignal<NoSerialize<Socket>>(undefined)
+  const socket = useSignal<NoSerialize<ClientSocket>>(undefined)
   const isOnline = useSignal<boolean | undefined>(false)
 
   // this need to be initialized on the client only
   useVisibleTask$(({ cleanup }) => {
-    const wsClient = io(serverPath, {
+    const wsClient: ClientSocket = io(serverPath, {
       transports: ['websocket'],
       protocols: ['websocket'],
     })
+
     socket.value = noSerialize(wsClient)
 
     cleanup(() => {

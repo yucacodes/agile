@@ -14,7 +14,7 @@ test(`should render link planning ⭐`, async () => {
     </QwikCityMockProvider>
     
   );
-  const div =  screen.querySelector('[role="planning"]') as HTMLElement;
+  const div =  screen.querySelector('[role="planning"]');
   expect(div.outerHTML).toContain("Planning");
 });
 
