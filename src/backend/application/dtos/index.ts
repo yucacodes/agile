@@ -1,4 +1,3 @@
-export * from './auth-request-dto'
 export * from './entity-dto'
 export * from './auth-information-dto'
 export * from './meeting-dto'
