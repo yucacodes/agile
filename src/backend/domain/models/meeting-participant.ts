@@ -14,6 +14,7 @@ export interface MeetingParticipantFactoryProps {
   user: User
   meeting: Meeting
   name: string
+  isManager?: boolean
 }
 
 export class MeetingParticipant extends Entity<MeetingParticipantProps> {
@@ -23,7 +24,7 @@ export class MeetingParticipant extends Entity<MeetingParticipantProps> {
       userId: props.user.id(),
       meetingId: props.meeting.id(),
       name: props.name,
-      isManager: props.user.isMeetingManager(),
+      isManager: props.isManager ?? false,
       isConnected: true,
     })
   }

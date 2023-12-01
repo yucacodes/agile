@@ -4,7 +4,7 @@ import type {
   MeetingWithAuthInformationDto,
   UserCreateMeetingRequestDto,
 } from '@application'
-import type { Socket } from 'socket.io'
+import type { Server, Socket } from 'socket.io'
 import { type SocketEmit, type SocketListener } from '../sockets/sockets-types'
 
 export type MeetingListenEventsMap = {
@@ -29,6 +29,13 @@ export type MeetingSocketData = {
 }
 
 export type MeetingSocket = Socket<
+  MeetingListenEventsMap,
+  MeetingEmmitedEventsMap,
+  MeetingServerEventsMap,
+  MeetingSocketData
+>
+
+export type MeetingSocketsServer = Server<
   MeetingListenEventsMap,
   MeetingEmmitedEventsMap,
   MeetingServerEventsMap,

@@ -20,11 +20,11 @@ export class User extends Entity<UserProps> {
     })
   }
 
-  public validate(): void {
-    // TODO: implement
+  public roles(): readonly UserRole[] {
+    return [...this.props.roles]
   }
 
-  isMeetingManager() {
-    return this.props.roles.includes('MeetingManager')
+  public validate(): void {
+    // TODO: implement
   }
 }

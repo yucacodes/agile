@@ -1,16 +1,8 @@
 import { type AuthInformationDto } from '../dtos'
 
-export interface UseCaseWithAuth<Request, Result> {
-  perform(
+export abstract class UseCase<Request, Result> {
+  abstract perform(
     request: Request,
-    authInformation: AuthInformationDto
+    authInformation?: AuthInformationDto
   ): Promise<Result>
 }
-
-export interface UseCaseWithoutAuth<Request, Result> {
-  perform(request: Request): Promise<Result>
-}
-
-export type UseCase<Request, Result> =
-  | UseCaseWithAuth<Request, Result>
-  | UseCaseWithoutAuth<Request, Result>
