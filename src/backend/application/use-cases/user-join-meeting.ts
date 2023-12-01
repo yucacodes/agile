@@ -21,7 +21,7 @@ export class UserJoinMeeting {
     private meetingEventsBus: MeetingEventsBus
   ) {}
 
-  async perform(
+  async execute(
     request: UserJoinMeetingRequestDto
   ): Promise<MeetingWithAuthInformationDto | null> {
     const existingMeeting = await this.meetingsRepository.findById(
