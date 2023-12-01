@@ -1,6 +1,6 @@
 import {
-  MeetingParticipantJoinedEventDtoMapper,
-  type MeetingAuthInformationDto,
+  type MeetingParticipantJoinedEventDtoMapper,
+  type MeetingWithAuthInformationDto,
 } from '@application'
 import {
   MeetingEventsBus,
@@ -8,11 +8,11 @@ import {
   type MeetingEvent,
 } from '@domain'
 import { singleton } from 'tsyringe'
-import type { ApiSocket } from './api-events'
+import type { MeetingSocket } from './meeting-sockets-types'
 
 @singleton()
 export class MeetingEventsSocketsBroadcaster extends MeetingEventsBus {
-  private sockets: ApiSocket[] = []
+  private sockets: MeetingSocket[] = []
 
   constructor(
     private meetingParticipantJoinedEventDtoMapper: MeetingParticipantJoinedEventDtoMapper
@@ -23,9 +23,8 @@ export class MeetingEventsSocketsBroadcaster extends MeetingEventsBus {
   notify(event: MeetingEvent): void {
     const meetingSockets = this.sockets.filter(
       (x) =>
-        x.data.auth?.meetingId === event.meetingId() &&
-        x.data.auth.meetingParticipantId !==
-          event.originatingMeetingParticipantId()
+        x.data.meetingId === event.meetingId() &&
+        x.data.auth?.userId !== event.originatingMeetingParticipantId()
     )
 
     if (event instanceof MeetingParticipantJoinedEvent) {
@@ -41,8 +40,11 @@ export class MeetingEventsSocketsBroadcaster extends MeetingEventsBus {
     }
   }
 
-  registerSocket(socket: ApiSocket, authInfo: MeetingAuthInformationDto): void {
-    socket.data.auth = authInfo
+  registerSocket(
+    socket: MeetingSocket,
+    data: MeetingWithAuthInformationDto
+  ): void {
+    socket.data = { auth: data.authInfo, meetingId: data.meeting.id }
     this.sockets.push(socket)
   }
 }

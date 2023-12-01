@@ -2,10 +2,10 @@ const { container } = await import('./inject-dependencies')
 const { MeetingSocketsHandler } = await import('@presentation')
 
 import {
-  type ApiEmmitedEventsMap,
-  type ApiListenEventsMap,
-  type ApiServerEventsMap,
-  type ApiSocketData,
+  type MeetingEmmitedEventsMap,
+  type MeetingListenEventsMap,
+  type MeetingServerEventsMap,
+  type MeetingSocketData,
 } from '@presentation'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
@@ -13,10 +13,10 @@ import { Server } from 'socket.io'
 const httpServer = createServer()
 
 const io = new Server<
-  ApiListenEventsMap,
-  ApiEmmitedEventsMap,
-  ApiServerEventsMap,
-  ApiSocketData
+  MeetingListenEventsMap,
+  MeetingEmmitedEventsMap,
+  MeetingServerEventsMap,
+  MeetingSocketData
 >(httpServer as any)
 
 const meetingSocketsHandler = container.resolve(MeetingSocketsHandler)
