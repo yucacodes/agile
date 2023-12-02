@@ -1,10 +1,4 @@
-import {
-  Meeting,
-  MeetingEventsBus,
-  MeetingParticipant,
-  MeetingParticipantJoinedEvent,
-  MeetingsRepository,
-} from '@domain'
+import { Meeting, MeetingParticipant, MeetingsRepository, User } from '@domain'
 import { singleton } from 'tsyringe'
 import {
   MeetingDtoMapper,
@@ -12,43 +6,43 @@ import {
   type UserCreateMeetingRequestDto,
 } from '../dtos'
 import { GenerateMeetingAuthInformation } from '../helpers'
+import { UseCase } from './use-case'
 
 @singleton()
-export class UserCreateMeeting {
+export class UserCreateMeeting extends UseCase<
+  UserCreateMeetingRequestDto,
+  MeetingWithAuthInformationDto
+> {
   constructor(
     private meetingsRepository: MeetingsRepository,
     private generateMeetingAuthInformation: GenerateMeetingAuthInformation,
-    private meetingDtoMapper: MeetingDtoMapper,
-    private meetingEventsBus: MeetingEventsBus
-  ) {}
+    private meetingDtoMapper: MeetingDtoMapper
+  ) {
+    super()
+  }
 
   async perform(
     request: UserCreateMeetingRequestDto
   ): Promise<MeetingWithAuthInformationDto> {
     const { meeting: newMeeting, secret: meetingSecret } = Meeting.factory()
 
+    const user = User.factory({ roles: ['MeetingParticipant'] })
+
     const firstParticipant = MeetingParticipant.factory({
       meeting: newMeeting,
       name: request.name,
-      roles: ['Manager', 'Participant'],
+      isManager: true,
+      user,
     })
 
     newMeeting.addParticipant(firstParticipant, meetingSecret)
 
     await this.meetingsRepository.save(newMeeting)
-    this.meetingEventsBus.notify(
-      MeetingParticipantJoinedEvent.factory({
-        meetingParticipant: firstParticipant,
-      })
-    )
 
     return {
+      secret: meetingSecret,
       meeting: this.meetingDtoMapper.makeDto(newMeeting),
-      authInfo: this.generateMeetingAuthInformation.perform(
-        newMeeting,
-        firstParticipant,
-        meetingSecret
-      ),
+      authInfo: this.generateMeetingAuthInformation.perform(user),
     }
   }
 }

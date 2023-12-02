@@ -1,31 +1,30 @@
 import { Entity, type EntityProps } from './entity'
 import { type Meeting } from './meeting'
-
-export const MeetingParticipantRolesValues = ['Manager', 'Participant'] as const
-
-export type MeetingParticipantRole =
-  (typeof MeetingParticipantRolesValues)[number]
+import type { User } from './user'
 
 export interface MeetingParticipantProps extends EntityProps {
+  userId: string
   meetingId: string
   name: string
-  roles: MeetingParticipantRole[]
+  isManager: boolean
   isConnected: boolean
 }
 
 export interface MeetingParticipantFactoryProps {
+  user: User
   meeting: Meeting
   name: string
-  roles: MeetingParticipantRole[]
+  isManager?: boolean
 }
 
 export class MeetingParticipant extends Entity<MeetingParticipantProps> {
   static factory(props: MeetingParticipantFactoryProps): MeetingParticipant {
     return new MeetingParticipant({
       ...this.factoryBaseProps(),
+      userId: props.user.id(),
       meetingId: props.meeting.id(),
       name: props.name,
-      roles: props.roles,
+      isManager: props.isManager ?? false,
       isConnected: true,
     })
   }
@@ -36,10 +35,6 @@ export class MeetingParticipant extends Entity<MeetingParticipantProps> {
 
   name(): string {
     return this.props.name
-  }
-
-  roles(): readonly MeetingParticipantRole[] {
-    return [...this.props.roles]
   }
 
   setAsDisconnected() {

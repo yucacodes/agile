@@ -1,1 +1,1 @@
-export * from './generate-meeting-auth-information'
+export * from './generate-auth-information'

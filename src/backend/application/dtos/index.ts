@@ -1,6 +1,5 @@
-export * from './auth-request-dto'
 export * from './entity-dto'
-export * from './meeting-auth-information-dto'
+export * from './auth-information-dto'
 export * from './meeting-dto'
 export * from './meeting-participant-dto'
 export * from './meeting-participant-joined-event-dto'
