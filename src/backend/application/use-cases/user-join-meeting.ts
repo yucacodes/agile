@@ -21,10 +21,10 @@ export class UserJoinMeeting {
     private meetingEventsBus: MeetingEventsBus
   ) {}
 
-  async execute(
+  async perform(
     request: UserJoinMeetingRequestDto
-  ): Promise<MeetingWithAuthInformationDto | null> {
-    const existingMeeting = await this.meetingsRepository.findById(
+  ): Promise<MeetingWithAuthInformationDto> {
+    const existingMeeting = await this.meetingsRepository.fetchById(
       request.meetingId
     )
 

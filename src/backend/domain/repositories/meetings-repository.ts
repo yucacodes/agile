@@ -4,6 +4,4 @@ import { BaseRepository } from './base-repository'
 export abstract class MeetingsRepository extends BaseRepository<
   MeetingProps,
   Meeting
-> {
-  abstract findById(id: string): Promise<Meeting | null>
-}
+> {}
