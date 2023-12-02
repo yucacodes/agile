@@ -1,4 +1,5 @@
 import type { MeetingParticipantJoinedEvent } from '@domain'
+import { singleton } from 'tsyringe'
 
 export interface MeetingParticipantJoinedEventDto {
   meetingParticipantId: string
@@ -6,6 +7,7 @@ export interface MeetingParticipantJoinedEventDto {
   time: string
 }
 
+@singleton()
 export class MeetingParticipantJoinedEventDtoMapper {
   makeDto(
     obj: MeetingParticipantJoinedEvent

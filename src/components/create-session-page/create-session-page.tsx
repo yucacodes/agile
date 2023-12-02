@@ -20,7 +20,7 @@ export const CreateSessionPage = component$(() => {
         if (!response.success) {
           return
         }
-        user.value = response.result.authInfo
+        user.value = response.data.authInfo
         nav('/play-session')
       }
     )

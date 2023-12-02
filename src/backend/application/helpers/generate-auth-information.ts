@@ -3,7 +3,7 @@ import { singleton } from 'tsyringe'
 import type { AuthInformationDto } from '../dtos'
 
 @singleton()
-export class GenerateMeetingAuthInformation {
+export class GenerateAuthInformation {
   perform(user: User): AuthInformationDto {
     return {
       userId: user.id(),

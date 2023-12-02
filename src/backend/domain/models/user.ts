@@ -1,6 +1,6 @@
 import { Entity, type EntityProps } from './entity'
 
-export const userRolesValues = ['MeetingManager', 'MeetingParticipant'] as const
+export const userRolesValues = ['MeetingParticipant'] as const
 
 export type UserRole = (typeof userRolesValues)[number]
 

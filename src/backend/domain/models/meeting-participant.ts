@@ -1,8 +1,7 @@
-import { Entity, type EntityProps } from './entity'
 import { type Meeting } from './meeting'
 import type { User } from './user'
 
-export interface MeetingParticipantProps extends EntityProps {
+export interface MeetingParticipantProps {
   userId: string
   meetingId: string
   name: string
@@ -17,10 +16,9 @@ export interface MeetingParticipantFactoryProps {
   isManager?: boolean
 }
 
-export class MeetingParticipant extends Entity<MeetingParticipantProps> {
+export class MeetingParticipant {
   static factory(props: MeetingParticipantFactoryProps): MeetingParticipant {
     return new MeetingParticipant({
-      ...this.factoryBaseProps(),
       userId: props.user.id(),
       meetingId: props.meeting.id(),
       name: props.name,
@@ -28,6 +26,8 @@ export class MeetingParticipant extends Entity<MeetingParticipantProps> {
       isConnected: true,
     })
   }
+
+  constructor(private props: MeetingParticipantProps) {}
 
   meetingId(): string {
     return this.props.meetingId

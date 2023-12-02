@@ -17,7 +17,7 @@ export class StartMeetingEventHandler extends SocketEventHandler<
     super(UserCreateMeetingRequestDtoValidator, userCreateMeeting)
   }
 
-  onSuccess(socket: GenericSocket, result: MeetingWithAuthInformationDto) {
+  override onSuccess(socket: GenericSocket, result: MeetingWithAuthInformationDto) {
     registerSocketToRoom(socket, result)
   }
 }

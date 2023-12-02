@@ -1,4 +1,4 @@
-import { type MeetingParticipantJoinedEventDtoMapper } from '@application'
+import { MeetingParticipantJoinedEventDtoMapper } from '@application'
 import {
   MeetingEventsBus,
   MeetingParticipantJoinedEvent,

@@ -38,5 +38,6 @@ export abstract class SocketEventHandler<Request, Result> {
     }
   }
 
-  abstract onSuccess(socket: GenericSocket, result: Result): void
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onSuccess(socket: GenericSocket, result: Result): void {}
 }

@@ -5,7 +5,7 @@ import {
   type MeetingWithAuthInformationDto,
   type UserCreateMeetingRequestDto,
 } from '../dtos'
-import { GenerateMeetingAuthInformation } from '../helpers'
+import { GenerateAuthInformation } from '../helpers'
 import { UseCase } from './use-case'
 
 @singleton()
@@ -15,7 +15,7 @@ export class UserCreateMeeting extends UseCase<
 > {
   constructor(
     private meetingsRepository: MeetingsRepository,
-    private generateMeetingAuthInformation: GenerateMeetingAuthInformation,
+    private generateMeetingAuthInformation: GenerateAuthInformation,
     private meetingDtoMapper: MeetingDtoMapper
   ) {
     super()
