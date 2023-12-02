@@ -2,8 +2,8 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 
 import { type UseCase } from '@application'
-import { type MeetingSocket } from '../meeting-sockets/meeting-sockets-types'
-import { type SocketCallback } from './sockets-types'
+
+import { type GenericSocket, type SocketCallback } from './sockets-types'
 
 interface RequestValidator<Request> {
   new (): Request & object
@@ -14,20 +14,14 @@ export interface SocketEventHandlerFactoryProps<Request, Result> {
   useCase: UseCase<Request, Result>
 }
 
-export class SocketEventHandler<Request, Result> {
-  static factory<Request, Result>(
-    props: SocketEventHandlerFactoryProps<Request, Result>
-  ): SocketEventHandler<Request, Result> {
-    return new SocketEventHandler(props.requestValidator, props.useCase)
-  }
-
+export abstract class SocketEventHandler<Request, Result> {
   constructor(
     private requestValidator: RequestValidator<Request>,
     private useCase: UseCase<Request, Result>
   ) {}
 
-  async handle(
-    socket: MeetingSocket,
+  public async handle(
+    socket: GenericSocket,
     request: Request,
     callback: SocketCallback<Result>
   ) {
@@ -37,9 +31,12 @@ export class SocketEventHandler<Request, Result> {
     if (requestErrors.length > 0) return callback({ success: false })
     try {
       const data = await this.useCase.perform(request, socket.data.auth)
+      this.onSuccess(socket, data)
       return callback({ success: true, data })
-    } catch {
+    } catch (error) {
       return callback({ success: false })
     }
   }
+
+  abstract onSuccess(socket: GenericSocket, result: Result): void
 }
