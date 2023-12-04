@@ -16,6 +16,8 @@ export interface State {
   user: Signal<AuthInformationDto>
   socket: Signal<NoSerialize<MeetingClientSocket>>
   isOnline: Signal<boolean | undefined>
+  secret: Signal<string | undefined>
+  idMeeting: Signal<string | undefined>
 }
 
 export const StateProvider = createContextId<State>('StateProvider')
@@ -27,6 +29,8 @@ export const Provider = component$(() => {
     user,
     socket,
     isOnline,
+    secret: useSignal<string | undefined>(undefined),
+    idMeeting: useSignal<string | undefined>(undefined),
   })
 
   useContextProvider(StateProvider, state)
