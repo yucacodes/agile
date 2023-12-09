@@ -1,15 +1,20 @@
+
 await import('reflect-metadata')
 const { container: c } = await import('tsyringe')
-const { MeetingsRepository, MeetingEventsBus } = await import('@domain')
+const { MeetingsRepository, MeetingEventsBus, TimeManager } = await import('@domain')
 const {
   MeetingsDummyRepository,
   MeetingSocketsEventsBus,
+  ServerTimeManager,
   httpServer,
   meetingSocketsServer,
 } = await import('@infrastructure')
 
 const { default: pino } = await import('pino')
 const logger = pino()
+
+// TimeManager
+c.registerType(TimeManager as any, ServerTimeManager)
 
 // Repositories
 c.registerType(MeetingsRepository as any, MeetingsDummyRepository)
