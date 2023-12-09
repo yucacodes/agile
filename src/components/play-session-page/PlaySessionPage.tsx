@@ -7,20 +7,27 @@ import style from './play-session-page.module.css'
 import { StateProvider } from '~/context/ProviderContext'
 
 export const PlaySessionPage = component$(() => {
-  const { socket, user } = useContext(StateProvider)
+  const { socket, user, idMeeting, secret } = useContext(StateProvider)
 
   const action = $(() => {})
+
+  const shareLink = $(() => {
+    navigator.clipboard.writeText(
+      `http://localhost:5173/create-session?secret=${secret.value}&id=${idMeeting.value}`
+    )
+  })
+
   return (
     <main class={style.container}>
       <p class={style.sessionId}>
-        Sesion Id: <span class={style.span}>453d-fdre-ferfs-sdfrg</span>
+        Sesion Id: <span class={style.span}> {idMeeting.value} </span>
       </p>
       <div class={style.desktopView}>
         <section class={style.content}>
           <section class={style.header}>
             <p class={style.timeText}>Time</p>
             <p class={style.time}>00:10:00</p>
-            <p class={style.userName}>{user.value.meetingParticipantName}</p>
+            <p class={style.userName}>{user.value.name}</p>
           </section>
 
           <input
@@ -43,7 +50,7 @@ export const PlaySessionPage = component$(() => {
       <section class={style.buttonsContainer}>
         <PrimaryButton action={action} text="CLEAR VOTES" />
         <PrimaryButton action={action} text="SHOW VOTES" />
-        <SecondaryButton text="SHARED SESSION" />
+        <SecondaryButton action={shareLink} text="SHARED SESSION" />
       </section>
     </main>
   )

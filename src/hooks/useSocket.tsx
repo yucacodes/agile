@@ -5,17 +5,16 @@ import {
   useVisibleTask$,
   type NoSerialize,
 } from '@builder.io/qwik'
+import type { MeetingClientSocket } from '@presentation'
 
 import { io } from 'socket.io-client'
-import type { ClientSocket } from '~/context/ProviderContext'
-
 const useSocket = (serverPath: string) => {
-  const socket = useSignal<NoSerialize<ClientSocket>>(undefined)
+  const socket = useSignal<NoSerialize<MeetingClientSocket>>(undefined)
   const isOnline = useSignal<boolean | undefined>(false)
 
   // this need to be initialized on the client only
   useVisibleTask$(({ cleanup }) => {
-    const wsClient: ClientSocket = io(serverPath, {
+    const wsClient: MeetingClientSocket = io(serverPath, {
       transports: ['websocket'],
       protocols: ['websocket'],
     })

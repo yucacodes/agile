@@ -37,12 +37,13 @@ export default component$(() => {
           meetingId: QueryParams.value.id,
         },
         (response) => {
+          console.log('🚀 ~ file: index.tsx:40 ~ action ~ response:', response)
           if (!response.success) {
             return
           }
-
-          console.log('response', response)
-
+          secret.value = response.data.secret
+          idMeeting.value = response.data.meeting.id
+          user.value = { ...response.data.authInfo, name: name.value }
           nav('/play-session')
         }
       )
@@ -56,13 +57,14 @@ export default component$(() => {
         name: name.value,
       },
       (response) => {
+        console.log('🚀 ~ file: index.tsx:60 ~ action ~ response:', response)
         if (!response.success) {
           return
         }
 
         secret.value = response.data.secret
         idMeeting.value = response.data.meeting.id
-        user.value = response.data.authInfo
+        user.value = { ...response.data.authInfo, name: name.value }
         nav('/play-session')
       }
     )
