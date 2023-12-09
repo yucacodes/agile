@@ -14,7 +14,7 @@ export class MeetingParticipantJoinedEventDtoMapper {
   ): MeetingParticipantJoinedEventDto {
     const meetingParticipant = obj.meetingParticipant()
     return {
-      meetingParticipantId: meetingParticipant.id(),
+      meetingParticipantId: meetingParticipant.meetingId(),
       meetingParticipantName: meetingParticipant.name(),
       time: obj.time().toISOString(),
     }

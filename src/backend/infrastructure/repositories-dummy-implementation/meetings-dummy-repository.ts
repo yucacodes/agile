@@ -2,11 +2,13 @@ import { type Meeting, type MeetingProps, MeetingsRepository } from '@domain'
 import { DummyRepositoryHelper } from './dummy-repository-helper'
 import { singleton } from 'tsyringe'
 
+
+const items: Map<string, Meeting> = new Map()
+
 @singleton()
 export class MeetingsDummyRepository extends MeetingsRepository {
-  private items: Map<string, Meeting> = new Map()
   private helper: DummyRepositoryHelper<MeetingProps, Meeting> =
-    new DummyRepositoryHelper(this.items)
+    new DummyRepositoryHelper(items)
 
   async fetchById(id: string): Promise<Meeting | null> {
     return this.helper.fetchById(id)

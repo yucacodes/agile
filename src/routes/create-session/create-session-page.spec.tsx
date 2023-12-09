@@ -3,7 +3,7 @@ import { createDOM } from '@builder.io/qwik/testing';
 import { test, expect, vi, beforeAll, it } from "vitest";
 
 import { QwikCityMockProvider } from '@builder.io/qwik-city';
-import { CreateSessionPage } from './create-session-page';
+import { CreateSessionPage } from '.';
 
 
 
