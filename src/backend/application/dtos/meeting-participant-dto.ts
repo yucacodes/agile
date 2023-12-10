@@ -1,19 +1,21 @@
 import type { MeetingParticipant } from '@domain'
-import { type EntityDto, EntityDtoMapper } from './entity-dto'
 import { singleton } from 'tsyringe'
 
-export interface MeetingParticipantDto extends EntityDto {
+export interface MeetingParticipantDto {
+  userId: string
   name: string
+  isManager: boolean
+  isConnected: boolean
 }
 
 @singleton()
 export class MeetingParticipantDtoMapper {
-  constructor(private entityDtoMapper: EntityDtoMapper) {}
-
   makeDto(obj: MeetingParticipant): MeetingParticipantDto {
     return {
-      ...this.entityDtoMapper.makeDto(obj),
+      userId: obj.userId(),
       name: obj.name(),
+      isManager: obj.isManager(),
+      isConnected: obj.isConnected(),
     }
   }
 

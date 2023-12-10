@@ -29,6 +29,18 @@ export class MeetingParticipant {
 
   constructor(private props: MeetingParticipantProps) {}
 
+  userId(): string {
+    return this.props.userId
+  }
+
+  isManager(): boolean {
+    return this.props.isManager
+  }
+
+  isConnected(): boolean {
+    return this.props.isConnected
+  }
+
   meetingId(): string {
     return this.props.meetingId
   }

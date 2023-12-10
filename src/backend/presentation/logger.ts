@@ -1,9 +1,11 @@
+import { ValidationError } from 'class-validator'
 import pino, { Logger as PinoLogger } from 'pino'
 
 export class Logger {
   private logger: PinoLogger
 
-  constructor(baseName: string) {
+  constructor(baseName: string | Function) {
+    baseName = typeof baseName === 'string' ? baseName : baseName.name
     this.logger = pino({
       formatters: {
         bindings: (x) => ({ ...x, pid: baseName }),
@@ -27,7 +29,7 @@ export class Logger {
     this.logger.warn(message)
   }
 
-  error(message: string, error?: Error): void {
+  error(message: string, error?: Error | ValidationError[]): void {
     this.logger.error(error, message)
   }
 }

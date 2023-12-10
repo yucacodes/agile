@@ -11,12 +11,7 @@ export class MeetingSocketsHandler {
   ) {}
 
   handleSocketConnection(socket: MeetingSocket) {
-    socket.on('StartMeeting', (...args) =>
-      this.startMeetingEventHandler.handle(socket, ...args)
-    )
-
-    socket.on('JoinMeeting', (...args) =>
-      this.joinMeetingEventHandler.handle(socket, ...args)
-    )
+    socket.on('StartMeeting', this.startMeetingEventHandler.for(socket))
+    socket.on('JoinMeeting', this.joinMeetingEventHandler.for(socket))
   }
 }

@@ -28,10 +28,6 @@ export class MeetingParticipantJoinedEvent extends MeetingEvent {
     return this.props.meetingParticipant.meetingId()
   }
 
-  originatingMeetingParticipantId(): string {
-    return this.props.meetingParticipant.id()
-  }
-
   meetingParticipant(): MeetingParticipant {
     return this.props.meetingParticipant
   }
