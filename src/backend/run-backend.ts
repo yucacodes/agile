@@ -1,13 +1,15 @@
 const { container } = await import('./inject-dependencies')
-const { MeetingSocketsHandler, Environment } = await import('@presentation')
+const { MeetingSocketsHandler, Environment, Logger } = await import(
+  '@presentation'
+)
 
 import { type MeetingSocketsServer } from '@presentation'
 import { type Server as HttpServer } from 'http'
-import { type Logger } from 'pino'
 
 const environment = container.resolve(Environment)
 const httpServer = container.resolve<HttpServer>('HttpServer')
-const logger = container.resolve<Logger>('Logger')
+const logger = new Logger('Server')
+
 const meetingSocketsServer = container.resolve<MeetingSocketsServer>(
   'MeetingSocketsServer'
 )
@@ -30,5 +32,5 @@ meetingSocketsServer.on('connection', (socket) => {
 // Run Server
 const port = environment.getEnvironmentVariableAsNumber('PORT', 3000)
 httpServer.listen(port, () => {
-  logger.info(`Server running on port: ${port}`)
+  logger.info(`Running on port ${port}`)
 })
