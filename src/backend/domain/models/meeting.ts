@@ -36,7 +36,7 @@ export class Meeting extends Entity<MeetingProps> {
     if (!this.isValidSecret(providedSecret)) {
       throw new ParticipantProvideInvalidSecretError()
     }
-    // this.props.participants.set(participant.id(), participant)
+    this.props.participants.set(participant.userId(), participant)
   }
 
   participantById(id: string): MeetingParticipant | undefined {
