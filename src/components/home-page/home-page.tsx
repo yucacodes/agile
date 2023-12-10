@@ -10,7 +10,7 @@ import style from './home.module.css'
 export const HomePage = component$(() => {
   const nav = useNavigate()
 
-  const action = $(() => nav('/create-session'))
+  const action = $(() => nav('/join-session'))
   return (
     <>
       <main class={style.container}>

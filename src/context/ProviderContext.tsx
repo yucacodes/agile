@@ -15,6 +15,7 @@ import { useSocket } from '~/hooks/useSocket'
 
 interface AuthInformation extends AuthInformationDto {
   name: string
+  isManager: boolean
 }
 
 export interface State {
