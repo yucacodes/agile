@@ -1,10 +1,8 @@
 import { $, component$, useContext } from '@builder.io/qwik'
 import {
+  type RequestHandler,
   useLocation,
   type DocumentHead,
-  useNavigate,
-  routeLoader$,
-  RequestHandler,
 } from '@builder.io/qwik-city'
 import { HasPermission } from '~/components/hasPermission/hasPermission'
 import { PlayersTable } from '~/components/players-table/PlayersTable'
@@ -20,9 +18,9 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 
   if (secret && id) {
     await next()
+  } else {
+    redirect(302, '/')
   }
-
-  redirect(302, '/')
 }
 
 export default component$(() => {
