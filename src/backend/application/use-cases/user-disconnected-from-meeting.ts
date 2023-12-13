@@ -27,7 +27,9 @@ export class UserDisconnectedFromMeeting extends UseCase<
     if (!participant) {
       throw new Error('Invalid participant')
     }
+  
+      meeting.notifyParticipantDisconnected(authInformation!.userId)
 
-    meeting.notifyParticipantDisconnected(authInformation!.userId)
+      meeting.setAsSaved()
   }
 }
