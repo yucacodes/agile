@@ -26,6 +26,7 @@ export class UserDisconnectedFromMeeting extends UseCase<
 
     meeting.notifyParticipantDisconnected(authInformation.userId)
 
-    meeting.setAsSaved()
+    await this.meetingsRepository.save(meeting)
+
   }
 }
