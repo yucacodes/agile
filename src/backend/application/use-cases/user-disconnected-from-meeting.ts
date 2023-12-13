@@ -16,15 +16,16 @@ export class UserDisconnectedFromMeeting extends UseCase<
     request: UserDisconnectedFromMeetingDto,
     authInformation?: AuthInformationDto | undefined
   ): Promise<void> {
+    if (!authInformation) throw new Error('Invalid auth information')
+
     const meeting = await this.meetingsRepository.fetchById(request.meetingId)
 
     if (!meeting) {
       throw new Error('Invalid meeting')
     }
 
-    meeting.notifyParticipantDisconnected(authInformation!.userId)
+    meeting.notifyParticipantDisconnected(authInformation.userId)
 
     meeting.setAsSaved()
   }
 }
-
