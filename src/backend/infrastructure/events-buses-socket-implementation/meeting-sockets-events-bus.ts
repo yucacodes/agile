@@ -6,6 +6,7 @@ import {
 } from '@domain'
 import { meetingRoomId, type MeetingSocketsServer } from '@presentation'
 import { inject, singleton } from 'tsyringe'
+import { UserDisconnectedFromMeetingEvent } from '~/backend/domain/events/user-disconnected-from-meeting-event'
 
 @singleton()
 export class MeetingSocketsEventsBus extends MeetingEventsBus {
@@ -29,6 +30,11 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
         'ParticipantJoined',
         this.meetingParticipantJoinedEventDtoMapper.makeDto(event)
       )
+    } else if (event instanceof UserDisconnectedFromMeetingEvent) {
+      room.emit('ParticipantDisconnected', {
+        meetingId: event.meetingId(),
+        participantId: event.participantId(),
+      })
     } else {
       throw new Error(
         `${event.constructor.name} is not supported by ${MeetingSocketsEventsBus.name}`

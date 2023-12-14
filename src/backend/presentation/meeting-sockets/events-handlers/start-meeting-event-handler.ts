@@ -5,7 +5,7 @@ import {
   type UserCreateMeetingRequestDto,
 } from '@application'
 import {
-  SocketCallback,
+  type SocketCallback,
   SocketEventHandler,
   type GenericSocket,
 } from '../../sockets'

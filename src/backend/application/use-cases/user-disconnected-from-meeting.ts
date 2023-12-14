@@ -2,14 +2,18 @@ import { singleton } from 'tsyringe'
 import { UseCase } from './use-case'
 import type { UserDisconnectedFromMeetingDto } from '../dtos/user-disconnected-from-meeting-dto'
 import type { AuthInformationDto } from '../dtos'
-import { MeetingsRepository } from '@domain'
+import { MeetingEventsBus, MeetingsRepository } from '@domain'
+import { UserDisconnectedFromMeetingEvent } from '~/backend/domain/events/user-disconnected-from-meeting-event'
 
 @singleton()
 export class UserDisconnectedFromMeeting extends UseCase<
   UserDisconnectedFromMeetingDto,
   void
 > {
-  constructor(private meetingsRepository: MeetingsRepository) {
+  constructor(
+    private meetingsRepository: MeetingsRepository,
+    private meetingEventsBus: MeetingEventsBus
+  ) {
     super()
   }
   async perform(
@@ -28,5 +32,10 @@ export class UserDisconnectedFromMeeting extends UseCase<
 
     await this.meetingsRepository.save(meeting)
 
+    this.meetingEventsBus.notify(
+      UserDisconnectedFromMeetingEvent.factory({
+        meetingParticipant: meeting.participantById(authInformation.userId)!,
+      })
+    )
   }
 }
