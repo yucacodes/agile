@@ -1,16 +1,26 @@
 import { IsNotEmpty, IsString } from 'class-validator'
 
 export interface UserVotingDto {
-  userId: string
-  selectedOptionId: string
+  meetingId: string
+  votingId: string
+  point: number
+  participantId: string
 }
 
 export class UserVotingDtoValidator implements UserVotingDto {
   @IsString()
   @IsNotEmpty()
-  userId: string = ''
+  meetingId: string = ''
 
   @IsString()
   @IsNotEmpty()
-  selectedOptionId: string = ''
+  votingId: string = ''
+
+  @IsString()
+  @IsNotEmpty()
+  point: number = 0
+
+  @IsString()
+  @IsNotEmpty()
+  participantId: string = ''
 }

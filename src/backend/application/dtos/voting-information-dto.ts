@@ -1,4 +1,4 @@
 export interface VotingInformationDto {
-  userId: string
-  selectedOptionId: string
+  participant: string
+  point: Number
 }

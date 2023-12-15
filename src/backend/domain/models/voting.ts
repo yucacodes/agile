@@ -1,28 +1,39 @@
-import { generateRandomVotingIdString } from '../helpers'
-import type { User } from './user'
+import {
+  Entity,
+  type TimeManager,
+  type EntityProps,
+  generateRandomVotingIdString,
+} from '@framework/domain'
+import type { MeetingParticipant } from './meeting-participant'
 
-export interface VotingProps {
+export interface VotingProps extends EntityProps {
   votingId: string
   timeLimit: Date
-  status: 'open' | 'closed'
-  votes: Map<string, string>
+  isOpen: boolean
+  votes: Map<string, number>
+  manualClosed: boolean
 }
 
 export interface VotingFactoryProps {
   timeLimit: Date
 }
 
-export class Voting {
+export class Voting extends Entity<VotingProps> {
   static factory(props: VotingFactoryProps): Voting {
     return new Voting({
+      ...this.factoryBaseProps(),
       votingId: generateRandomVotingIdString(),
       timeLimit: props.timeLimit,
-      status: 'open',
+      isOpen: false,
       votes: new Map(),
+      manualClosed: false,
     })
   }
 
-  constructor(private props: VotingProps) {}
+  validate(): void {
+    // TODO: implement
+    throw new MethodNotImplemented()
+  }
 
   votingId(): string {
     return this.props.votingId
@@ -32,23 +43,53 @@ export class Voting {
     return this.props.timeLimit
   }
 
-  status(): 'open' | 'closed' {
-    return this.props.status
+  isOpen(): boolean {
+    return this.props.isOpen
   }
 
-  votes(): Map<string, string> {
+  votes(): Map<string, number> {
     return this.props.votes
   }
 
-  closeVoting(): void {
-    this.props.status = 'closed'
+  manualCloseVoting(): void {
+    this.props.manualClosed = true
   }
 
-  vote(user: User, selectedOptionId: string): void {
-    if (this.props.status === 'open') {
-      this.props.votes.set(user.id(), selectedOptionId)
+  startVoting(): void {
+    if (!this.props.isOpen) {
+      this.props.isOpen = true
+    }
+  }
+
+  closeVoting(
+    participants: MeetingParticipant[],
+    timeManager: TimeManager
+  ): void {
+    const allVoted = participants.every((participant) => {
+      return this.props.votes.has(participant.userId())
+    })
+
+    const currentTime = timeManager.now()
+    const dynamicTimeLimit = this.props.timeLimit
+
+    const timeRemaining = dynamicTimeLimit.getTime() - currentTime.getTime()
+    const isTimeExpired = timeRemaining <= 0
+
+    if (allVoted || isTimeExpired || this.props.manualClosed) {
+      this.props.isOpen = false
+    }
+  }
+
+  setVoteByParticipant(participant: MeetingParticipant, points: number): void {
+    if (this.props.isOpen) {
+      this.props.votes.set(participant.userId(), points)
     } else {
-      throw new Error('Voting is closed.')
+      throw new VotingIsClosed()
     }
   }
 }
+
+// Errors
+
+export class VotingIsClosed extends Error {}
+export class MethodNotImplemented extends Error {}
