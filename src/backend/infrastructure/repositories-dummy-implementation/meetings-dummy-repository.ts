@@ -1,6 +1,6 @@
 import { type Meeting, type MeetingProps, MeetingsRepository } from '@domain'
-import { DummyRepositoryHelper } from './dummy-repository-helper'
-import { singleton } from '@injection'
+import { DummyRepositoryHelper } from '@framework/infrastructure'
+import { singleton } from '@framework/injection'
 
 
 const items: Map<string, Meeting> = new Map()

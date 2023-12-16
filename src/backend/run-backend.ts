@@ -1,6 +1,6 @@
 import { MeetingSocketsEventsListener } from '@infrastructure'
-import { container } from '@injection'
-import { Environment, Logger } from '@presentation'
+import { container } from '@framework/injection'
+import { Environment, Logger } from '@framework/presentation'
 import { type Server as HttpServer } from 'http'
 import { type Server as SocketIoServer } from 'socket.io'
 import './inject-implementations'

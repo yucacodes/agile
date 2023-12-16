@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { singleton } from '@injection'
+import { singleton } from '@framework/injection'
 
 @singleton()
 export class Environment {

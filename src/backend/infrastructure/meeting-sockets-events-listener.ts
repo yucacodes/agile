@@ -1,11 +1,10 @@
-import { singleton } from '@injection'
+import { singleton } from '@framework/injection'
+import { Logger, type SocketEventController } from '@framework/presentation'
 import {
   JoinMeetingEventController,
-  Logger,
   StartMeetingEventController,
   UserDisconnectedFromMeetingEventController,
   type MeetingSocket,
-  type SocketEventController,
 } from '@presentation'
 
 @singleton()

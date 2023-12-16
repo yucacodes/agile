@@ -1,10 +1,11 @@
-import { MeetingEventsBus, MeetingsRepository, TimeManager } from '@domain'
+import { MeetingEventsBus, MeetingsRepository } from '@domain'
+import { TimeManager } from '@framework/domain'
+import { ServerTimeManager } from '@framework/infrastructure'
+import { container } from '@framework/injection'
 import {
   MeetingSocketsEventsBus,
   MeetingsDummyRepository,
-  ServerTimeManager,
 } from '@infrastructure'
-import { container } from '@injection'
 import { createServer } from 'http'
 import { Server as SocketIoServer } from 'socket.io'
 

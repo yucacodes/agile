@@ -4,10 +4,13 @@ import {
   type MeetingWithAuthInformationDto,
   type UserJoinMeetingRequestDto,
 } from '@application'
-import { singleton } from '@injection'
+import { singleton } from '@framework/injection'
+import {
+  SocketEventController,
+  socketEventController,
+} from '@framework/presentation'
 import { type MeetingSocket } from '../meeting-sockets'
 import { registerSocketToRoom } from '../meeting-sockets/meeting-rooms'
-import { SocketEventController, socketEventController } from '../sockets'
 
 @singleton()
 @socketEventController({

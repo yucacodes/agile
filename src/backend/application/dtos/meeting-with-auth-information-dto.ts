@@ -1,4 +1,4 @@
-import type { AuthInformationDto } from './auth-information-dto'
+import type { AuthInformationDto } from '@framework/application'
 import type { MeetingDto } from './meeting-dto'
 
 export interface MeetingWithAuthInformationDto {

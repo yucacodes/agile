@@ -1,5 +1,5 @@
 import type { MeetingParticipantJoinedEvent } from '@domain'
-import { singleton } from '@injection'
+import { singleton } from '@framework/injection'
 
 export interface MeetingParticipantJoinedEventDto {
   meetingParticipantId: string

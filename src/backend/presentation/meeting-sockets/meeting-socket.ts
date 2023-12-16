@@ -1,7 +1,7 @@
-import { type AuthInformationDto } from '@application'
+import { type AuthInformationDto } from '@framework/application'
 import { type Socket } from 'socket.io'
-import { type MeetingListenEventsMap } from './meeting-listen-events'
 import { type MeetingEmmitedEventsMap } from './meeting-emmited-events'
+import { type MeetingListenEventsMap } from './meeting-listen-events'
 import { type MeetingServerEventsMap } from './meeting-server-events'
 
 export type MeetingSocketData = {

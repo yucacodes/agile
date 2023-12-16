@@ -1,5 +1,5 @@
 import { type MeetingParticipantJoinedEventDto } from '@application'
-import { type SocketEmit } from '../sockets'
+import { type SocketEmit } from '@framework/presentation'
 
 // ----- Events that server emit, and client listen -----
 export type MeetingEmmitedEventsMap = {

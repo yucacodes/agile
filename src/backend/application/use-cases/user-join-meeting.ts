@@ -3,16 +3,15 @@ import {
   MeetingParticipant,
   MeetingParticipantJoinedEvent,
   MeetingsRepository,
-  User,
 } from '@domain'
-import { singleton } from '@injection'
+import { GenerateAuthInformation, UseCase } from '@framework/application'
+import { User } from '@framework/domain'
+import { singleton } from '@framework/injection'
 import {
   MeetingDtoMapper,
   type MeetingWithAuthInformationDto,
   type UserJoinMeetingRequestDto,
 } from '../dtos'
-import { GenerateAuthInformation } from '../helpers'
-import { UseCase } from './use-case'
 
 @singleton()
 export class UserJoinMeeting extends UseCase<

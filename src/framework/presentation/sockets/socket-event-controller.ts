@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 
-import { type AuthInformationDto } from '@application'
+import { type AuthInformationDto } from '@framework/application'
 import { Logger } from '../logger'
 import { type GenericSocket, type SocketCallback } from './sockets-types'
 

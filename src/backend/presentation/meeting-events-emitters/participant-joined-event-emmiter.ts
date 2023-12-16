@@ -3,13 +3,13 @@ import {
   type MeetingParticipantJoinedEventDto,
 } from '@application'
 import { MeetingParticipantJoinedEvent } from '@domain'
-import { singleton } from '@injection'
-import { meetingRoomId } from '../meeting-sockets'
+import { singleton } from '@framework/injection'
 import {
   SocketEventEmitter,
   socketEventEmitter,
   type EmittedResult,
-} from '../sockets'
+} from '@framework/presentation'
+import { meetingRoomId } from '../meeting-sockets'
 
 @singleton()
 @socketEventEmitter({

@@ -1,5 +1,5 @@
-import { ValidationError } from 'class-validator'
-import pino, { Logger as PinoLogger } from 'pino'
+import { type ValidationError } from 'class-validator'
+import pino, { type Logger as PinoLogger } from 'pino'
 
 export class Logger {
   private logger: PinoLogger

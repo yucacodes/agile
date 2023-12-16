@@ -3,7 +3,7 @@ import {
   type UserCreateMeetingRequestDto,
   type UserJoinMeetingRequestDto,
 } from '@application'
-import { type SocketListener } from '../sockets'
+import { type SocketListener } from '@framework/presentation'
 
 // ------ Events that client emit and server listen -----
 

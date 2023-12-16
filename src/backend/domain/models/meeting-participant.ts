@@ -1,5 +1,5 @@
 import { type Meeting } from './meeting'
-import type { User } from './user'
+import type { User } from '@framework/domain'
 
 export interface MeetingParticipantProps {
   userId: string

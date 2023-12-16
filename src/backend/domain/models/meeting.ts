@@ -1,9 +1,10 @@
 import {
+  Entity,
   generatePasswordHash,
   generateSecureRandomSecretString,
   verifyPasswordHash,
-} from '../helpers'
-import { Entity, type EntityProps } from './entity'
+  type EntityProps,
+} from '@framework/domain'
 import type { MeetingParticipant } from './meeting-participant'
 
 export interface MeetingProps extends EntityProps {

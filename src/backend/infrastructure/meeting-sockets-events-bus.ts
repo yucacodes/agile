@@ -1,6 +1,7 @@
 import { MeetingEventsBus, type MeetingEvent } from '@domain'
-import { inject, singleton } from '@injection'
-import { Logger, ParticipantJoinedEventEmitter } from '@presentation'
+import { inject, singleton } from '@framework/injection'
+import { Logger } from '@framework/presentation'
+import { ParticipantJoinedEventEmitter } from '@presentation'
 import { Server as SocketIoServer } from 'socket.io'
 
 @singleton()

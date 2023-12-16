@@ -1,4 +1,4 @@
-import type { Entity, EntityProps } from '@domain'
+import type { Entity, EntityProps } from '@framework/domain'
 
 export interface EntityDto {
   id: string

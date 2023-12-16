@@ -4,13 +4,13 @@ import {
   type MeetingWithAuthInformationDto,
   type UserCreateMeetingRequestDto,
 } from '@application'
-import { singleton } from '@injection'
-import { registerSocketToRoom } from '../meeting-sockets'
+import { singleton } from '@framework/injection'
 import {
   SocketEventController,
   socketEventController,
   type GenericSocket,
-} from '../sockets'
+} from '@framework/presentation'
+import { registerSocketToRoom } from '../meeting-sockets'
 
 @singleton()
 @socketEventController({

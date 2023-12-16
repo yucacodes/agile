@@ -3,12 +3,12 @@ import {
   UserDisconnectedFromMeetingDtoValidator,
   type UserDisconnectedFromMeetingDto,
 } from '@application'
-import { singleton } from '@injection'
+import { singleton } from '@framework/injection'
 import {
   SocketEventController,
   socketEventController,
   type GenericSocket,
-} from '../sockets'
+} from '@framework/presentation'
 
 @singleton()
 @socketEventController({

@@ -3,12 +3,9 @@ import {
   MeetingsRepository,
   UserDisconnectedFromMeetingEvent,
 } from '@domain'
-import { singleton } from '@injection'
-import {
-  type AuthInformationDto,
-  type UserDisconnectedFromMeetingDto,
-} from '../dtos'
-import { UseCase } from './use-case'
+import { UseCase, type AuthInformationDto } from '@framework/application'
+import { singleton } from '@framework/injection'
+import { type UserDisconnectedFromMeetingDto } from '../dtos'
 
 @singleton()
 export class UserDisconnectedFromMeeting extends UseCase<

@@ -20,7 +20,7 @@
     "noEmit": true,
     "types": ["node", "vite/client", "bun-types"],
     "paths": {
-      "@injection": ["./src/backend/injection"],
+      "@framework/*": ["./src/framework/*"],
       "@domain": ["./src/backend/domain"],
       "@application": ["./src/backend/application"],
       "@presentation": ["./src/backend/presentation"],
