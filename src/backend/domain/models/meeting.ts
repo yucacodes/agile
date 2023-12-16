@@ -39,6 +39,14 @@ export class Meeting extends Entity<MeetingProps> {
     this.props.participants.set(participant.userId(), participant)
   }
 
+  notifyParticipantDisconnected(userId: string) {
+    const participant = this.props.participants.get(userId)
+
+    if (participant) {
+      participant.setAsDisconnected()
+    }
+  }
+
   participantById(id: string): MeetingParticipant | undefined {
     return this.props.participants.get(id)
   }
