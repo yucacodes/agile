@@ -1,9 +1,14 @@
-import { singleton } from 'tsyringe'
+import {
+  MeetingEventsBus,
+  MeetingsRepository,
+  UserDisconnectedFromMeetingEvent,
+} from '@domain'
+import { singleton } from '@injection'
+import {
+  type AuthInformationDto,
+  type UserDisconnectedFromMeetingDto,
+} from '../dtos'
 import { UseCase } from './use-case'
-import type { UserDisconnectedFromMeetingDto } from '../dtos/user-disconnected-from-meeting-dto'
-import type { AuthInformationDto } from '../dtos'
-import { MeetingEventsBus, MeetingsRepository } from '@domain'
-import { UserDisconnectedFromMeetingEvent } from '~/backend/domain/events/user-disconnected-from-meeting-event'
 
 @singleton()
 export class UserDisconnectedFromMeeting extends UseCase<

@@ -3,6 +3,7 @@ import {
   JoinMeetingEventController,
   Logger,
   StartMeetingEventController,
+  UserDisconnectedFromMeetingEventController,
   type MeetingSocket,
   type SocketEventController,
 } from '@presentation'
@@ -13,7 +14,8 @@ export class MeetingSocketsEventsListener {
 
   constructor(
     private startMeetingEventController: StartMeetingEventController,
-    private joinMeetingEventController: JoinMeetingEventController
+    private joinMeetingEventController: JoinMeetingEventController,
+    private userDisconnectedFromMeetingEventController: UserDisconnectedFromMeetingEventController
   ) {
     this.controllers().forEach((x) =>
       this.logger.info(`Controller Registered for ${x.socketEvent()} Event`)
@@ -23,7 +25,11 @@ export class MeetingSocketsEventsListener {
   // -------- Make Sure To Add all events controllers -------------
 
   controllers(): SocketEventController<any, any>[] {
-    return [this.startMeetingEventController, this.joinMeetingEventController]
+    return [
+      this.startMeetingEventController,
+      this.joinMeetingEventController,
+      this.userDisconnectedFromMeetingEventController,
+    ]
   }
 
   addToSocket(socket: MeetingSocket) {
