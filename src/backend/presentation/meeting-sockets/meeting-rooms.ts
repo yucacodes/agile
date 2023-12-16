@@ -1,5 +1,5 @@
 import { type MeetingWithAuthInformationDto } from '@application'
-import { type MeetingSocket } from './meeting-sockets-types'
+import { type MeetingSocket } from './meeting-socket'
 
 export function meetingRoomId(props: { meetingId: string }): string {
   return `meeting:${props.meetingId}`

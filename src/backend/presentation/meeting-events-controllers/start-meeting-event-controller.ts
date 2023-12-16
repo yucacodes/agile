@@ -5,21 +5,21 @@ import {
   type UserCreateMeetingRequestDto,
 } from '@application'
 import {
-  SocketCallback,
-  SocketEventHandler,
+  type SocketCallback,
+  SocketEventController,
   type GenericSocket,
-} from '../../sockets'
-import { registerSocketToRoom } from '../meeting-rooms'
-import { singleton } from 'tsyringe'
-import { Logger } from '../../logger'
+} from '../sockets'
+import { registerSocketToRoom } from '../meeting-sockets'
+import { singleton } from '@injection'
 
 @singleton()
-export class StartMeetingEventHandler extends SocketEventHandler<
+export class StartMeetingEventController extends SocketEventController<
+  'StartMeeting',
   UserCreateMeetingRequestDto,
   MeetingWithAuthInformationDto
 > {
   constructor(private userCreateMeeting: UserCreateMeeting) {
-    super(new Logger(StartMeetingEventHandler))
+    super('StartMeeting')
   }
 
   protected handle(

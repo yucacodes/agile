@@ -1,5 +1,5 @@
 import type { User } from '@domain'
-import { singleton } from 'tsyringe'
+import { singleton } from '@injection'
 import type { AuthInformationDto } from '../dtos'
 
 @singleton()

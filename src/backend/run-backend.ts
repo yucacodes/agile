@@ -1,21 +1,18 @@
-const { container } = await import('./inject-dependencies')
-const { MeetingSocketsHandler, Environment, Logger } = await import(
-  '@presentation'
-)
+import { container } from '@injection'
+import { Environment, Logger } from '@presentation'
+import { createServer } from 'http'
+import { Server as SocketIoServer } from 'socket.io'
+import { MeetingSocketsEventsListener } from './infrastructure/meeting-sockets-events-listener'
+import './inject-implementations'
 
-import { type MeetingSocketsServer } from '@presentation'
-import { type Server as HttpServer } from 'http'
-
+const httpServer = createServer()
+const socketIoServer = new SocketIoServer(httpServer as any)
 const environment = container.resolve(Environment)
-const httpServer = container.resolve<HttpServer>('HttpServer')
+const meetingSocketsListener = container.resolve(MeetingSocketsEventsListener)
 const logger = new Logger('Server')
 
-const meetingSocketsServer = container.resolve<MeetingSocketsServer>(
-  'MeetingSocketsServer'
-)
-
 // Implement logging
-meetingSocketsServer.use((socket, next) => {
+socketIoServer.use((socket, next) => {
   logger.info(`Socket connection: ${socket.conn.remoteAddress}`)
   socket.onAny((event) => {
     logger.info(`Socket ${socket.conn.remoteAddress}: ${event}`)
@@ -24,9 +21,8 @@ meetingSocketsServer.use((socket, next) => {
 })
 
 // Handle connections
-const meetingSocketsHandler = container.resolve(MeetingSocketsHandler)
-meetingSocketsServer.on('connection', (socket) => {
-  meetingSocketsHandler.handleSocketConnection(socket)
+socketIoServer.on('connection', (socket) => {
+  meetingSocketsListener.addToSocket(socket)
 })
 
 // Run Server
