@@ -1,9 +1,9 @@
+import { singleton } from '@injection'
 import {
   JoinMeetingEventController,
   StartMeetingEventController,
   type MeetingSocket,
 } from '@presentation'
-import { singleton } from '@injection'
 
 @singleton()
 export class MeetingSocketsEventsListener {

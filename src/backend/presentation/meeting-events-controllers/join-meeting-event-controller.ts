@@ -1,40 +1,31 @@
 import {
+  UserJoinMeeting,
   UserJoinMeetingRequestDtoValidator,
   type MeetingWithAuthInformationDto,
-  UserJoinMeeting,
   type UserJoinMeetingRequestDto,
 } from '@application'
-import {
-  type GenericSocket,
-  type SocketCallback,
-  SocketEventController,
-} from '../sockets'
-import { registerSocketToRoom } from '../meeting-sockets/meeting-rooms'
 import { type MeetingSocket } from '../meeting-sockets'
+import { registerSocketToRoom } from '../meeting-sockets/meeting-rooms'
+import { SocketEventController, socketEventController } from '../sockets'
 import { singleton } from '@injection'
 
 @singleton()
+@socketEventController({
+  socketEvent: 'JoinMeeting',
+  requestValidator: UserJoinMeetingRequestDtoValidator,
+})
 export class JoinMeetingEventController extends SocketEventController<
-  'JoinMeeting',
   UserJoinMeetingRequestDto,
   MeetingWithAuthInformationDto
 > {
   constructor(private userJoinMeeting: UserJoinMeeting) {
-    super('JoinMeeting')
+    super()
   }
 
   protected handle(
-    socket: GenericSocket,
-    request: UserJoinMeetingRequestDto,
-    callback: SocketCallback<MeetingWithAuthInformationDto>
-  ): Promise<void> {
-    return this.handleWithUseCase({
-      socket,
-      request,
-      callback,
-      requestValidator: UserJoinMeetingRequestDtoValidator,
-      useCase: this.userJoinMeeting,
-    })
+    request: UserJoinMeetingRequestDto
+  ): Promise<MeetingWithAuthInformationDto> {
+    return this.userJoinMeeting.perform(request)
   }
 
   override onSuccess(

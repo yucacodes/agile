@@ -1,12 +1,12 @@
+import { MeetingSocketsEventsListener } from '@infrastructure'
 import { container } from '@injection'
 import { Environment, Logger } from '@presentation'
-import { createServer } from 'http'
-import { Server as SocketIoServer } from 'socket.io'
-import { MeetingSocketsEventsListener } from './infrastructure/meeting-sockets-events-listener'
+import { type Server as HttpServer } from 'http'
+import { type Server as SocketIoServer } from 'socket.io'
 import './inject-implementations'
 
-const httpServer = createServer()
-const socketIoServer = new SocketIoServer(httpServer as any)
+const httpServer = container.resolve<HttpServer>('HttpServer')
+const socketIoServer = container.resolve<SocketIoServer>('SocketIoServer')
 const environment = container.resolve(Environment)
 const meetingSocketsListener = container.resolve(MeetingSocketsEventsListener)
 const logger = new Logger('Server')

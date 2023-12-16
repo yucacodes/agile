@@ -23,7 +23,7 @@ export type SocketEventEmitterClass = {
 export abstract class SocketEventEmitter<DomainEvent, Output> {
   private config(): SocketEventEmmiterConfig {
     throw new Error(
-      'Should configure emmiter, using @socketEventEmitter(config) decorator'
+      'Should configure emmiter using @socketEventEmitter(config) decorator'
     )
   }
 
@@ -55,8 +55,8 @@ export interface socketEventEmitterProps<DomainEvent> {
   domainEvent: DomainEventClass<DomainEvent>
 }
 
-export function socketEventEmitter<DomainEvemt>(
-  props: socketEventEmitterProps<DomainEvemt>
+export function socketEventEmitter<DomainEvent>(
+  props: socketEventEmitterProps<DomainEvent>
 ) {
   return (constructor: SocketEventEmitterClass) => {
     const _config: SocketEventEmmiterConfig = {
@@ -67,5 +67,6 @@ export function socketEventEmitter<DomainEvemt>(
     constructor.prototype.config = function config() {
       return _config
     }
+    return constructor
   }
 }

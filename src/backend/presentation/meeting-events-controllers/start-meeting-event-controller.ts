@@ -1,39 +1,34 @@
 import {
+  UserCreateMeeting,
   UserCreateMeetingRequestDtoValidator,
   type MeetingWithAuthInformationDto,
-  UserCreateMeeting,
   type UserCreateMeetingRequestDto,
 } from '@application'
+import { singleton } from 'tsyringe'
+import { registerSocketToRoom } from '../meeting-sockets'
 import {
-  type SocketCallback,
   SocketEventController,
+  socketEventController,
   type GenericSocket,
 } from '../sockets'
-import { registerSocketToRoom } from '../meeting-sockets'
-import { singleton } from '@injection'
 
 @singleton()
+@socketEventController({
+  socketEvent: 'StartMeeting',
+  requestValidator: UserCreateMeetingRequestDtoValidator,
+})
 export class StartMeetingEventController extends SocketEventController<
-  'StartMeeting',
   UserCreateMeetingRequestDto,
   MeetingWithAuthInformationDto
 > {
   constructor(private userCreateMeeting: UserCreateMeeting) {
-    super('StartMeeting')
+    super()
   }
 
   protected handle(
-    socket: GenericSocket,
-    request: UserCreateMeetingRequestDto,
-    callback: SocketCallback<MeetingWithAuthInformationDto>
-  ): Promise<void> {
-    return this.handleWithUseCase({
-      socket,
-      request,
-      callback,
-      requestValidator: UserCreateMeetingRequestDtoValidator,
-      useCase: this.userCreateMeeting,
-    })
+    request: UserCreateMeetingRequestDto
+  ): Promise<MeetingWithAuthInformationDto> {
+    return this.userCreateMeeting.perform(request)
   }
 
   override onSuccess(
