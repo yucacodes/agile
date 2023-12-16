@@ -1,6 +1,6 @@
 import {
   type MeetingParticipantJoinedEventDto,
-  type MeetingParticipantJoinedEventDtoMapper,
+  MeetingParticipantJoinedEventDtoMapper,
 } from '@application'
 import { MeetingParticipantJoinedEvent } from '@domain'
 import { meetingRoomId } from '../meeting-sockets'
@@ -26,7 +26,7 @@ export class ParticipantJoinedEventEmitter extends SocketEventEmitter<
     super()
   }
 
-  emit(
+  protected emit(
     domainEvent: MeetingParticipantJoinedEvent
   ): EmittedResult<MeetingParticipantJoinedEventDto> {
     return {

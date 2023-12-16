@@ -4,7 +4,7 @@ import {
   type MeetingWithAuthInformationDto,
   type UserCreateMeetingRequestDto,
 } from '@application'
-import { singleton } from 'tsyringe'
+import { singleton } from '@injection'
 import { registerSocketToRoom } from '../meeting-sockets'
 import {
   SocketEventController,

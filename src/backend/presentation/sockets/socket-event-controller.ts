@@ -22,8 +22,13 @@ export type SocketEventControllerClass = {
 export abstract class SocketEventController<Request, Result> {
   private config(): SocketEventControllerConfig {
     throw new Error(
-      'Should configure controller using @socketEventController(config) decorator'
+      `Should configure ${this.constructor.name} using @socketEventController(config) decorator`
     )
+  }
+
+  socketEvent() {
+    const { socketEvent } = this.config()
+    return socketEvent
   }
 
   public listenFor(socket: GenericSocket) {
