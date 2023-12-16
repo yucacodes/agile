@@ -1,6 +1,7 @@
 # PokerSession
 
-Este proyecto OpenSource quiere mejorar la experiencia de los desarrolladores en el puntaje de las historias de usuario, utilizando tecnologias web.
+Este proyecto de código abierto tiene como objetivo mejorar significativamente la experiencia de los desarrolladores en la evaluación y puntuación de historias de usuario. Emplea tecnologías web de vanguardia para lograr este propósito. Al centrarse en la experiencia del usuario, busca simplificar y optimizar el proceso de manejo de historias de usuario, ofreciendo herramientas y funcionalidades intuitivas. Al hacerlo, pretende hacer más eficiente y agradable la colaboración entre los miembros del equipo de desarrollo, proporcionando una plataforma donde la evaluación de historias de usuario se integre de manera fluida en el trabajo general.
+Con un enfoque en la usabilidad y la implementación de tecnologías web modernas, este proyecto aspira a ser una contribución valiosa para la comunidad de desarrollo de software, mejorando la productividad y la satisfacción en el manejo de historias de usuario en entornos ágiles.
 
 
 ## Modo Desarrollo
