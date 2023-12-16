@@ -4,7 +4,11 @@ import {
   type UserDisconnectedFromMeetingDto,
 } from '@application'
 import { singleton } from '@injection'
-import { SocketEventController, socketEventController } from '../sockets'
+import {
+  SocketEventController,
+  socketEventController,
+  type GenericSocket,
+} from '../sockets'
 
 @singleton()
 @socketEventController({
@@ -19,6 +23,14 @@ export class UserDisconnectedFromMeetingEventController extends SocketEventContr
     private userDisconnectedFromMeeting: UserDisconnectedFromMeeting
   ) {
     super()
+  }
+
+  protected override request(
+    socket: GenericSocket
+  ): UserDisconnectedFromMeetingDto {
+    return {
+      meetingId: (socket.data as any).meetingId,
+    }
   }
 
   protected async handle(

@@ -31,22 +31,34 @@ export abstract class SocketEventController<Request, Result> {
     return socketEvent
   }
 
+  protected request(socket: GenericSocket, input: any): Request {
+    return input
+  }
+
+  protected authData(
+    socket: GenericSocket,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    input: any
+  ): AuthInformationDto | undefined {
+    return socket.data.auth
+  }
+
   public listenFor(socket: GenericSocket) {
     const { socketEvent, requestValidator, logger } = this.config()
-    const listener = async (
-      request: Request,
-      callback: SocketCallback<Result>
-    ) => {
-      const requestErrors = await validate(
-        plainToInstance(requestValidator, request)
-      )
-      if (requestErrors.length > 0) {
-        logger.error('Bad Request', requestErrors)
-        return callback({ success: false })
-      }
-
+    const listener = async (input: any, callback: SocketCallback<Result>) => {
       try {
-        const data = await this.handle(request, socket.data.auth)
+        const request = this.request(socket, input)
+        const auth = this.authData(socket, input)
+
+        const requestErrors = await validate(
+          plainToInstance(requestValidator, request)
+        )
+        if (requestErrors.length > 0) {
+          logger.error('Bad Request', requestErrors)
+          return callback({ success: false })
+        }
+
+        const data = await this.handle(request, auth)
         logger.info('Success request')
         this.onSuccess(socket, data)
         return callback({ success: true, data })
