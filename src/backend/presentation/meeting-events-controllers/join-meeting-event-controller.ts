@@ -5,22 +5,22 @@ import {
   type UserJoinMeetingRequestDto,
 } from '@application'
 import {
-  GenericSocket,
-  SocketCallback,
-  SocketEventHandler,
-} from '../../sockets'
-import { registerSocketToRoom } from '../meeting-rooms'
-import { type MeetingSocket } from '../meeting-sockets-types'
-import { singleton } from 'tsyringe'
-import { Logger } from '../../logger'
+  type GenericSocket,
+  type SocketCallback,
+  SocketEventController,
+} from '../sockets'
+import { registerSocketToRoom } from '../meeting-sockets/meeting-rooms'
+import { type MeetingSocket } from '../meeting-sockets'
+import { singleton } from '@injection'
 
 @singleton()
-export class JoinMeetingEventHandler extends SocketEventHandler<
+export class JoinMeetingEventController extends SocketEventController<
+  'JoinMeeting',
   UserJoinMeetingRequestDto,
   MeetingWithAuthInformationDto
 > {
   constructor(private userJoinMeeting: UserJoinMeeting) {
-    super(new Logger(JoinMeetingEventHandler))
+    super('JoinMeeting')
   }
 
   protected handle(

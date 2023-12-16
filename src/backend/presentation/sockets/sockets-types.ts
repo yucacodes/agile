@@ -1,6 +1,6 @@
 import { type AuthInformationDto } from '@application'
-import { Socket } from 'socket.io'
-import { EventsMap } from 'socket.io/dist/typed-events'
+import type { Socket } from 'socket.io'
+import type { EventsMap } from 'socket.io/dist/typed-events'
 
 export type SocketErrorResult = { success: false; errorCode?: string }
 

@@ -5,7 +5,7 @@ import {
   MeetingsRepository,
   User,
 } from '@domain'
-import { singleton } from 'tsyringe'
+import { singleton } from '@injection'
 import {
   MeetingDtoMapper,
   type MeetingWithAuthInformationDto,

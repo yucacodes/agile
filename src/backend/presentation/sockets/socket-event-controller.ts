@@ -3,16 +3,11 @@ import { validate } from 'class-validator'
 
 import { type UseCase } from '@application'
 
-import { type GenericSocket, type SocketCallback } from './sockets-types'
 import { Logger } from '../logger'
+import { type GenericSocket, type SocketCallback } from './sockets-types'
 
 interface RequestValidator<Request> {
   new (): Request & object
-}
-
-export interface SocketEventHandlerFactoryProps<Request, Result> {
-  requestValidator: RequestValidator<Request>
-  useCase: UseCase<Request, Result>
 }
 
 export interface HandleWithUseCaseArgs<Request, Result> {
@@ -23,16 +18,25 @@ export interface HandleWithUseCaseArgs<Request, Result> {
   requestValidator: RequestValidator<Request>
 }
 
-export abstract class SocketEventHandler<Request, Result> {
-  constructor(private logger: Logger) {}
+export abstract class SocketEventController<
+  Event extends string,
+  Request,
+  Result,
+> {
+  private logger: Logger
 
-  public for(socket: GenericSocket) {
-    return (request: Request, callback: SocketCallback<Result>) => {
+  constructor(private event: Event) {
+    this.logger = new Logger(`${event}EventController`)
+  }
+
+  public listenFor(socket: GenericSocket) {
+    const listener = (request: Request, callback: SocketCallback<Result>) => {
       this.handle(socket, request, (result) => {
         if (result.success) this.onSuccess(socket, result.data)
         callback(result)
       })
     }
+    return [this.event, listener] as const
   }
 
   protected abstract handle(

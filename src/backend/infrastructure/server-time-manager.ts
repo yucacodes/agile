@@ -1,5 +1,5 @@
 import { TimeManager } from '@domain'
-import { singleton } from 'tsyringe'
+import { singleton } from '@injection'
 
 @singleton()
 export class ServerTimeManager extends TimeManager {

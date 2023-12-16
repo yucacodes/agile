@@ -1,5 +1,5 @@
 import type { MeetingParticipant } from '@domain'
-import { singleton } from 'tsyringe'
+import { singleton } from '@injection'
 
 export interface MeetingParticipantDto {
   userId: string

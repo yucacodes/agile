@@ -1,5 +1,5 @@
 import type { Meeting } from '@domain'
-import { singleton } from 'tsyringe'
+import { singleton } from '@injection'
 import { EntityDtoMapper, type EntityDto } from './entity-dto'
 import {
   MeetingParticipantDtoMapper,

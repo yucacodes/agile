@@ -1,5 +1,4 @@
-export * from './events-buses-socket-implementation'
 export * from './repositories-dummy-implementation'
-export * from './http-server'
-export * from './meeting-sockets-server'
+export * from './meeting-sockets-events-bus'
+export * from './meeting-sockets-events-listener'
 export * from './server-time-manager'
