@@ -1,4 +1,10 @@
-import { $, component$, useContext } from '@builder.io/qwik'
+import {
+  $,
+  component$,
+  useContext,
+  useTask$,
+  useVisibleTask$,
+} from '@builder.io/qwik'
 import {
   type RequestHandler,
   useLocation,
@@ -11,6 +17,7 @@ import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
 import { SecondaryButton } from '~/components/secondary-button/SecondaryButton'
 import { StateProvider } from '~/context/ProviderContext'
 import style from './play-session-page.module.css'
+import { useToast } from '~/hooks/useToast'
 
 export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
   const secret = url.searchParams.get('secret')
@@ -25,7 +32,24 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 
 export default component$(() => {
   const location = useLocation()
+  const { addNotification } = useToast()
   const { socket, user, idMeeting, secret } = useContext(StateProvider)
+
+  useTask$(({ track, cleanup }) => {
+    track(() => socket.value)
+    socket.value?.once('ParticipantJoined', (payload) => {
+      if (payload.meetingParticipantId) {
+        addNotification({
+          message: `Se has unido a la sesión ${payload.meetingParticipantName}`,
+          status: 'success',
+        })
+      }
+    })
+
+    cleanup(() => {
+      socket.value?.off('ParticipantJoined')
+    })
+  })
 
   const action = $(() => {})
 
