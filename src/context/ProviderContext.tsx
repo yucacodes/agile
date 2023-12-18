@@ -1,4 +1,4 @@
-import { type AuthInformationDto } from '@application'
+import type { UserCreateMeetingRequestDto } from '@application'
 import {
   Slot,
   component$,
@@ -12,8 +12,7 @@ import {
 import type { MeetingClientSocket } from '@presentation'
 import { useSocket } from '~/hooks/useSocket'
 
-
-interface AuthInformation extends AuthInformationDto {
+interface AuthInformation extends UserCreateMeetingRequestDto {
   name: string
   isManager: boolean
 }

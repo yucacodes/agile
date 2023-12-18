@@ -9,6 +9,7 @@ import {
 import { StateProvider } from '~/context/ProviderContext'
 import { Title } from '~/components/title/Title'
 import { LinkButton } from '~/components/link-button/LinkButton'
+import { useToast } from '~/hooks/useToast'
 
 export const useJoinPokerSession = routeLoader$(async ({ url }) => {
   const secret = url.searchParams.get('secret')
@@ -20,6 +21,7 @@ export const useJoinPokerSession = routeLoader$(async ({ url }) => {
 })
 
 export default component$(() => {
+  const { addNotification } = useToast()
   const { socket, user, idMeeting, secret } = useContext(StateProvider)
 
   const QueryParams = useJoinPokerSession()
@@ -52,6 +54,12 @@ export default component$(() => {
             name: name.value,
             isManager,
           }
+
+          addNotification({
+            message: 'Te has unido a la sesión',
+            status: 'success',
+          })
+
           nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
         }
       )
@@ -76,6 +84,11 @@ export default component$(() => {
             .isManager
 
         user.value = { ...response.data.authInfo, name: name.value, isManager }
+        addNotification({
+          message: 'Has creado una sesión exitosamente',
+          status: 'success',
+        })
+
         nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
       }
     )

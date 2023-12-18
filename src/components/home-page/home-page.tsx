@@ -5,12 +5,15 @@ import { Title } from '~/components/title/Title'
 import { useNavigate } from '@builder.io/qwik-city'
 import { Footer } from '~/components/footer/Footer'
 import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
+
 import style from './home.module.css'
 
 export const HomePage = component$(() => {
   const nav = useNavigate()
 
-  const action = $(() => nav('/join-session'))
+  const action = $(() => {
+    nav('/join-session')
+  })
   return (
     <>
       <main class={style.container}>
