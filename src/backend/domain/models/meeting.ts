@@ -3,7 +3,6 @@ import {
   generatePasswordHash,
   generateSecureRandomSecretString,
   verifyPasswordHash,
-  type TimeManager,
   type EntityProps,
 } from '@framework/domain'
 import { Voting, type VotingProps } from './voting'
@@ -69,12 +68,13 @@ export class Meeting extends Entity<MeetingProps> {
     return this.props.votings
   }
 
-  closeAllVotings(
-    participants: MeetingParticipant[],
-    timeManager: TimeManager
-  ): void {
+  votingById(votingId: string): Voting | undefined {
+    return this.props.votings.find((voting) => voting.id() === votingId)
+  }
+
+  closeAllVotings(): void {
     for (const voting of this.props.votings) {
-      voting.closeVoting(participants, timeManager)
+      voting.closeVoting()
     }
   }
 

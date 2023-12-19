@@ -1,16 +1,28 @@
 import { MeetingsRepository } from '@domain'
 import { singleton } from 'tsyringe'
-import { UseCase } from './use-case'
-import type { VotingInformationDto, UserVotingDto } from '../dtos'
+import { UseCase, type AuthInformationDto } from '@framework/application'
+import type { VotingInformationDto, UserVotingRequestDto } from '../dtos'
+import { TimeManager } from '@framework/domain'
 
 @singleton()
-export class UserVoting extends UseCase<UserVotingDto, VotingInformationDto> {
-  constructor(private meetingsRepository: MeetingsRepository) {
+export class UserVoting extends UseCase<
+  UserVotingRequestDto,
+  VotingInformationDto
+> {
+  constructor(
+    private meetingsRepository: MeetingsRepository,
+    private timeManager: TimeManager
+  ) {
     super()
   }
 
-  async perform(request: UserVotingDto): Promise<VotingInformationDto> {
-    const { meetingId, votingId, point, participantId } = request
+  async perform(
+    request: UserVotingRequestDto,
+    authInformation?: AuthInformationDto | undefined
+  ): Promise<VotingInformationDto> {
+    if (!authInformation) throw new Error('Invalid auth information')
+
+    const { meetingId, votingId, point } = request
 
     const meeting = await this.meetingsRepository.fetchById(meetingId)
 
@@ -18,31 +30,30 @@ export class UserVoting extends UseCase<UserVotingDto, VotingInformationDto> {
       throw new Error('Meeting not found.')
     }
 
-    const voting = meeting.getVotings().find((v) => v.votingId() === votingId)
+    const voting = meeting.votingById(votingId)
 
     if (!voting) {
       throw new Error('Voting not found.')
     }
 
-    if (voting.isOpen()) {
-      const participant = meeting.participantById(participantId)
+    const isVotingOpen = voting.isOpen(this.timeManager)
 
-      if (!participant) {
-        throw new Error('Participant not found.')
-      }
-
-      voting.setVoteByParticipant(participant, point)
+    if (!isVotingOpen) {
+      throw new Error('Voting is closed.')
     }
 
-    const participant = meeting.participantById(participantId)
+    const participant = meeting.participantById(authInformation.userId)
 
     if (!participant) {
       throw new Error('Participant not found.')
     }
 
+    voting.setVoteByParticipant(participant, point)
+
     return {
-      participant: participant.name(),
-      point: point,
+      userId: participant.userId(),
+      point,
+      votingId: voting.id(),
     }
   }
 }
