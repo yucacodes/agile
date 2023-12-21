@@ -1,4 +1,4 @@
-import { type AuthInformationDto } from '@application'
+import { type AuthInformationDto } from '@framework/application'
 import type { Socket } from 'socket.io'
 import type { EventsMap } from 'socket.io/dist/typed-events'
 

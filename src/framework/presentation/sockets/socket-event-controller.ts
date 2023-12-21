@@ -45,26 +45,33 @@ export abstract class SocketEventController<Request, Result> {
 
   public listenFor(socket: GenericSocket) {
     const { socketEvent, requestValidator, logger } = this.config()
-    const listener = async (input: any, callback: SocketCallback<Result>) => {
+    const listener = async (
+      input: any,
+      callback: SocketCallback<Result> | undefined
+    ) => {
       try {
         const request = this.request(socket, input)
+        logger.info(JSON.stringify(request))
         const auth = this.authData(socket, input)
 
-        const requestErrors = await validate(
-          plainToInstance(requestValidator, request)
-        )
+        const validableRequest = plainToInstance(requestValidator, request)
+
+        logger.error('validableRequest', validableRequest)
+        const requestErrors = await validate(validableRequest)
+
         if (requestErrors.length > 0) {
           logger.error('Bad Request', requestErrors)
-          return callback({ success: false })
+
+          return callback && callback({ success: false })
         }
 
         const data = await this.handle(request, auth)
         logger.info('Success request')
         this.onSuccess(socket, data)
-        return callback({ success: true, data })
+        return callback && callback({ success: true, data })
       } catch (error) {
         logger.error('Request Error', error as Error)
-        return callback({ success: false })
+        return callback && callback({ success: false })
       }
     }
     return [socketEvent as any, listener] as const
