@@ -20,7 +20,7 @@ export class UserDisconnectedFromMeeting extends UseCase<
   }
   async perform(
     request: UserDisconnectedFromMeetingDto,
-    authInformation?: AuthInformationDto | undefined
+    authInformation: AuthInformationDto | null,
   ): Promise<void> {
     if (!authInformation) throw new Error('Invalid auth information')
 

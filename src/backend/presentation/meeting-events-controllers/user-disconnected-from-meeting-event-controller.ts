@@ -3,6 +3,7 @@ import {
   UserDisconnectedFromMeetingDtoValidator,
   type UserDisconnectedFromMeetingDto,
 } from '@application'
+import { type AuthInformationDto } from '@framework/application'
 import { singleton } from '@framework/injection'
 import {
   SocketEventController,
@@ -34,8 +35,9 @@ export class UserDisconnectedFromMeetingEventController extends SocketEventContr
   }
 
   protected async handle(
-    request: UserDisconnectedFromMeetingDto
+    request: UserDisconnectedFromMeetingDto,
+    authData: AuthInformationDto | null,
   ): Promise<void> {
-    await this.userDisconnectedFromMeeting.perform(request)
+    await this.userDisconnectedFromMeeting.perform(request, authData)
   }
 }

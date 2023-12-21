@@ -54,7 +54,7 @@ export default component$(() => {
   const action = $(() => {})
 
   const shareLink = $(() => {
-    navigator.clipboard.writeText(
+    (navigator as any).clipboard.writeText(
       `${
         location.url.protocol + '//' + location.url.host
       }/join-session?secret=${secret.value}&id=${idMeeting.value}`
