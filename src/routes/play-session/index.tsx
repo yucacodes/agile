@@ -46,6 +46,16 @@ export default component$(() => {
       }
     })
 
+
+    socket.value?.on('ParticipantDisconnected', (payload) => {
+      if (payload.meetingParticipant) {
+        addNotification({
+          message: `${payload.meetingParticipant.name} ha dejado la sesión`,
+          status: 'error',
+        })
+      }
+    })
+
     cleanup(() => {
       socket.value?.off('ParticipantJoined')
     })
