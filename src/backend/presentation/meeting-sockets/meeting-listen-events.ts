@@ -1,7 +1,9 @@
 import {
+  type UserVotingRequestDto,
   type MeetingWithAuthInformationDto,
   type UserCreateMeetingRequestDto,
   type UserJoinMeetingRequestDto,
+  type VotingInformationDto,
 } from '@application'
 import { type SocketListener } from '@framework/presentation'
 
@@ -16,4 +18,5 @@ export type MeetingListenEventsMap = {
     UserJoinMeetingRequestDto,
     MeetingWithAuthInformationDto
   >
+  UserVoting: SocketListener<UserVotingRequestDto, VotingInformationDto>
 }

@@ -6,7 +6,7 @@ export interface UserVotingRequestDto {
   point: number
 }
 
-export class UserVotingDtoValidator implements UserVotingRequestDto {
+export class UserVotingRequestDtoValidator implements UserVotingRequestDto {
   @IsString()
   @IsNotEmpty()
   meetingId: string = ''
