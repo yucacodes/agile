@@ -6,14 +6,16 @@ import {
   type NoSerialize,
 } from '@builder.io/qwik'
 import type { MeetingClientSocket } from '@presentation'
-
 import { io } from 'socket.io-client'
-const useSocket = (serverPath: string) => {
+
+export const useSocket = (serverPath: string) => {
   const socket = useSignal<NoSerialize<MeetingClientSocket>>(undefined)
   const isOnline = useSignal<boolean | undefined>(false)
 
   // this need to be initialized on the client only
   useVisibleTask$(({ cleanup }) => {
+    // eslint-disable-next-line no-debugger
+    debugger
     const wsClient: MeetingClientSocket = io(serverPath, {
       transports: ['websocket'],
       protocols: ['websocket'],
@@ -45,5 +47,3 @@ const useSocket = (serverPath: string) => {
     isOnline,
   }
 }
-
-export { useSocket }

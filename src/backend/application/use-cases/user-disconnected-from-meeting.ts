@@ -1,15 +1,15 @@
 import {
   MeetingEventsBus,
   MeetingsRepository,
-  UserDisconnectedFromMeetingEvent,
+  MeetingParticipantDisconnectedEvent,
 } from '@domain'
 import { UseCase, type AuthInformationDto } from '@framework/application'
 import { singleton } from '@framework/injection'
-import { type UserDisconnectedFromMeetingDto } from '../dtos'
+import { type MeetingParticipantDisconnectedRequestDto } from '../dtos'
 
 @singleton()
 export class UserDisconnectedFromMeeting extends UseCase<
-  UserDisconnectedFromMeetingDto,
+  MeetingParticipantDisconnectedRequestDto,
   void
 > {
   constructor(
@@ -19,7 +19,7 @@ export class UserDisconnectedFromMeeting extends UseCase<
     super()
   }
   async perform(
-    request: UserDisconnectedFromMeetingDto,
+    request: MeetingParticipantDisconnectedRequestDto,
     authInformation: AuthInformationDto | null,
   ): Promise<void> {
     if (!authInformation) throw new Error('Invalid auth information')
@@ -35,7 +35,7 @@ export class UserDisconnectedFromMeeting extends UseCase<
     await this.meetingsRepository.save(meeting)
 
     this.meetingEventsBus.notify(
-      UserDisconnectedFromMeetingEvent.factory({
+      MeetingParticipantDisconnectedEvent.factory({
         meetingParticipant: meeting.participantById(authInformation.userId)!,
       })
     )

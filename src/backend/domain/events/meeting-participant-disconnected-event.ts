@@ -1,26 +1,26 @@
 import type { MeetingParticipant } from '../models'
 import { MeetingEvent } from './meeting-event'
 
-export type UserDisconnectedFromMeetingEventFactoryProps = {
+export type MeetingParticipantDisconnectedEventFactoryProps = {
   meetingParticipant: MeetingParticipant
 }
 
-export interface UserDisconnectedFromMeetingEventProps {
+export interface MeetingParticipantDisconnectedEventProps {
   meetingParticipant: MeetingParticipant
   time: Date
 }
 
-export class UserDisconnectedFromMeetingEvent extends MeetingEvent {
+export class MeetingParticipantDisconnectedEvent extends MeetingEvent {
   static factory(
-    props: UserDisconnectedFromMeetingEventFactoryProps
-  ): UserDisconnectedFromMeetingEvent {
-    return new UserDisconnectedFromMeetingEvent({
+    props: MeetingParticipantDisconnectedEventFactoryProps
+  ): MeetingParticipantDisconnectedEvent {
+    return new MeetingParticipantDisconnectedEvent({
       meetingParticipant: props.meetingParticipant,
       time: new Date(),
     })
   }
 
-  constructor(private props: UserDisconnectedFromMeetingEventProps) {
+  constructor(private props: MeetingParticipantDisconnectedEventProps) {
     super()
   }
 

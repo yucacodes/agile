@@ -19,7 +19,7 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 
 export default component$(() => {
   return (
-    <Provider>
+
       <ToastProvider>
         <main class="principal">
           <Background>
@@ -28,6 +28,6 @@ export default component$(() => {
           </Background>
         </main>
       </ToastProvider>
-    </Provider>
+    
   )
 })

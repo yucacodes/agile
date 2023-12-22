@@ -37,7 +37,7 @@ export default component$(() => {
 
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
-    socket.value?.once('ParticipantJoined', (payload) => {
+    socket.value?.on('ParticipantJoined', (payload) => {
       if (payload.meetingParticipantId) {
         addNotification({
           message: `Se has unido a la sesión ${payload.meetingParticipantName}`,
