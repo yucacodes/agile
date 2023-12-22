@@ -9,7 +9,6 @@ import {
   SocketEventController,
   socketEventController,
 } from '@framework/presentation'
-import { type MeetingSocket } from '../meeting-sockets'
 
 @singleton()
 @socketEventController({
@@ -28,9 +27,5 @@ export class UserVotingEventController extends SocketEventController<
     request: UserVotingRequestDto
   ): Promise<VotingInformationDto> {
     return this.userVoting.perform(request)
-  }
-
-  override onSuccess(socket: MeetingSocket, result: VotingInformationDto): any {
-    return { socket, result }
   }
 }
