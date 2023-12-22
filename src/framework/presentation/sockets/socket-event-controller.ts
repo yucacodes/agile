@@ -20,6 +20,8 @@ export type SocketEventControllerClass = {
 }
 
 export abstract class SocketEventController<Request, Result> {
+  eventsCount = 0
+
   private config(): SocketEventControllerConfig {
     throw new Error(
       `Should configure ${this.constructor.name} using @socketEventController(config) decorator`
@@ -45,26 +47,31 @@ export abstract class SocketEventController<Request, Result> {
 
   public listenFor(socket: GenericSocket) {
     const { socketEvent, requestValidator, logger } = this.config()
-    const listener = async (input: any, callback: SocketCallback<Result>) => {
+    const listener = async (
+      input: any,
+      callback: SocketCallback<Result> | undefined
+    ) => {
+      this.eventsCount++
+      const eventId = this.eventsCount
       try {
+        logger.info(`(${eventId}) Start event`)
         const request = this.request(socket, input)
         const auth = this.authData(socket, input)
+        const validableRequest = plainToInstance(requestValidator, request)
+        const requestErrors = await validate(validableRequest)
 
-        const requestErrors = await validate(
-          plainToInstance(requestValidator, request)
-        )
         if (requestErrors.length > 0) {
-          logger.error('Bad Request', requestErrors)
-          return callback({ success: false })
+          logger.error(`(${eventId}) Bad Request`, requestErrors)
+          return callback && callback({ success: false })
         }
 
-        const data = await this.handle(request, auth)
-        logger.info('Success request')
+        const data = await this.handle(request, auth ?? null)
+        logger.info(`(${eventId}) Success request`)
         this.onSuccess(socket, data)
-        return callback({ success: true, data })
+        return callback && callback({ success: true, data })
       } catch (error) {
-        logger.error('Request Error', error as Error)
-        return callback({ success: false })
+        logger.error(`(${eventId}) Request Error`, error as Error)
+        return callback && callback({ success: false })
       }
     }
     return [socketEvent as any, listener] as const
@@ -72,7 +79,7 @@ export abstract class SocketEventController<Request, Result> {
 
   protected abstract handle(
     request: Request,
-    authData?: AuthInformationDto
+    authData: AuthInformationDto | null
   ): Promise<Result>
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,8 +1,9 @@
 import {
   UserDisconnectedFromMeeting,
-  UserDisconnectedFromMeetingDtoValidator,
-  type UserDisconnectedFromMeetingDto,
+  MeetingParticipantDisconnectedRequestDtoValidator,
+  type MeetingParticipantDisconnectedRequestDto,
 } from '@application'
+import { type AuthInformationDto } from '@framework/application'
 import { singleton } from '@framework/injection'
 import {
   SocketEventController,
@@ -13,10 +14,10 @@ import {
 @singleton()
 @socketEventController({
   socketEvent: 'disconnect',
-  requestValidator: UserDisconnectedFromMeetingDtoValidator,
+  requestValidator: MeetingParticipantDisconnectedRequestDtoValidator,
 })
 export class UserDisconnectedFromMeetingEventController extends SocketEventController<
-  UserDisconnectedFromMeetingDto,
+  MeetingParticipantDisconnectedRequestDto,
   void
 > {
   constructor(
@@ -27,15 +28,16 @@ export class UserDisconnectedFromMeetingEventController extends SocketEventContr
 
   protected override request(
     socket: GenericSocket
-  ): UserDisconnectedFromMeetingDto {
+  ): MeetingParticipantDisconnectedRequestDto {
     return {
       meetingId: (socket.data as any).meetingId,
     }
   }
 
   protected async handle(
-    request: UserDisconnectedFromMeetingDto
+    request: MeetingParticipantDisconnectedRequestDto,
+    authData: AuthInformationDto | null,
   ): Promise<void> {
-    await this.userDisconnectedFromMeeting.perform(request)
+    await this.userDisconnectedFromMeeting.perform(request, authData)
   }
 }

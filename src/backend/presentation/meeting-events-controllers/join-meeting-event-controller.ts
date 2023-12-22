@@ -26,7 +26,7 @@ export class JoinMeetingEventController extends SocketEventController<
   }
 
   protected handle(
-    request: UserJoinMeetingRequestDto
+    request: UserJoinMeetingRequestDto,
   ): Promise<MeetingWithAuthInformationDto> {
     return this.userJoinMeeting.perform(request)
   }

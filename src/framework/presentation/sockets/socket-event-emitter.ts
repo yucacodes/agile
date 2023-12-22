@@ -40,13 +40,8 @@ export abstract class SocketEventEmitter<DomainEvent, Output> {
     } = this.config()
     if (!(domainEvent instanceof domainEventClass)) return
     const { roomId, data } = this.emit(domainEvent)
-    socketIoServer.to(roomId).emit(socketEvent, data, (err: any) => {
-      if (err) {
-        logger.error('Emission error', err)
-      } else {
-        logger.info('Success emission')
-      }
-    })
+    socketIoServer.to(roomId).emit(socketEvent, data)
+    logger.info('Success emission')
   }
 
   protected abstract emit(domainEvent: DomainEvent): EmittedResult<Output>

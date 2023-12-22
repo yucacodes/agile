@@ -37,11 +37,21 @@ export default component$(() => {
 
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
-    socket.value?.once('ParticipantJoined', (payload) => {
+    socket.value?.on('ParticipantJoined', (payload) => {
       if (payload.meetingParticipantId) {
         addNotification({
           message: `Se has unido a la sesión ${payload.meetingParticipantName}`,
           status: 'success',
+        })
+      }
+    })
+
+
+    socket.value?.on('ParticipantDisconnected', (payload) => {
+      if (payload.meetingParticipant) {
+        addNotification({
+          message: `${payload.meetingParticipant.name} ha dejado la sesión`,
+          status: 'error',
         })
       }
     })
@@ -54,7 +64,7 @@ export default component$(() => {
   const action = $(() => {})
 
   const shareLink = $(() => {
-    navigator.clipboard.writeText(
+    (navigator as any).clipboard.writeText(
       `${
         location.url.protocol + '//' + location.url.host
       }/join-session?secret=${secret.value}&id=${idMeeting.value}`

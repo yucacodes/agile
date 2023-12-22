@@ -1,7 +1,10 @@
 import { MeetingEventsBus, type MeetingEvent } from '@domain'
 import { inject, singleton } from '@framework/injection'
 import { Logger } from '@framework/presentation'
-import { ParticipantJoinedEventEmitter } from '@presentation'
+import {
+  ParticipantDisconnectedEventEmitter,
+  ParticipantJoinedEventEmitter,
+} from '@presentation'
 import { Server as SocketIoServer } from 'socket.io'
 
 @singleton()
@@ -11,7 +14,8 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
   constructor(
     @inject('SocketIoServer')
     private socketIoServer: SocketIoServer,
-    private participantJoinedEventEmitter: ParticipantJoinedEventEmitter
+    private participantJoinedEventEmitter: ParticipantJoinedEventEmitter,
+    private participantDisconnectedEventEmitter: ParticipantDisconnectedEventEmitter
   ) {
     super()
     this.emitters().forEach((x) =>
@@ -22,7 +26,10 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
   // ------------- Make Sure To Add all events emitters  ------------------
 
   private emitters() {
-    return [this.participantJoinedEventEmitter]
+    return [
+      this.participantJoinedEventEmitter,
+      this.participantDisconnectedEventEmitter,
+    ]
   }
 
   notify(event: MeetingEvent) {
