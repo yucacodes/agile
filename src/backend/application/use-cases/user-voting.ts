@@ -18,7 +18,7 @@ export class UserVoting extends UseCase<
 
   async perform(
     request: UserVotingRequestDto,
-    authInformation?: AuthInformationDto | undefined
+    authInformation?: AuthInformationDto | null
   ): Promise<VotingInformationDto> {
     if (!authInformation) throw new Error('Invalid auth information')
 
