@@ -1,4 +1,4 @@
-import { $, component$ } from '@builder.io/qwik'
+import { $, component$, useContext } from '@builder.io/qwik'
 import { Subtitle } from '~/components/subtitle/Subtitle'
 import { Title } from '~/components/title/Title'
 
@@ -7,11 +7,14 @@ import { Footer } from '~/components/footer/Footer'
 import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
 
 import style from './home.module.css'
+import { StateProvider } from '~/context/ProviderContext'
 
 export const HomePage = component$(() => {
+  const { createSocket } = useContext(StateProvider)
   const nav = useNavigate()
 
   const action = $(() => {
+    createSocket();
     nav('/join-session')
   })
   return (

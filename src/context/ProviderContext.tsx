@@ -8,6 +8,7 @@ import {
   useStore,
   type NoSerialize,
   type Signal,
+  type QRL,
 } from '@builder.io/qwik'
 import type { MeetingClientSocket } from '@presentation'
 import { useSocket } from '~/hooks/useSocket'
@@ -23,12 +24,13 @@ export interface State {
   isOnline: Signal<boolean | undefined>
   secret: Signal<string | undefined>
   idMeeting: Signal<string | undefined>
+  createSocket:  QRL<() => void>
 }
 
 export const StateProvider = createContextId<State>('StateProvider')
 
 export const Provider = component$(() => {
-  const { isOnline, socket } = useSocket('http://localhost:3000')
+  const { isOnline, socket, createSocket } = useSocket('http://localhost:3000')
   const user = useSignal<AuthInformation>({} as AuthInformation)
   const state = useStore<State>({
     user,
@@ -36,6 +38,7 @@ export const Provider = component$(() => {
     isOnline,
     secret: useSignal<string | undefined>(undefined),
     idMeeting: useSignal<string | undefined>(undefined),
+    createSocket,
   })
 
   useContextProvider(StateProvider, state)

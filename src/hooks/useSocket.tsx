@@ -1,9 +1,9 @@
 import {
+  $,
   noSerialize,
   useSignal,
   useTask$,
-  useVisibleTask$,
-  type NoSerialize,
+  type NoSerialize
 } from '@builder.io/qwik'
 import type { MeetingClientSocket } from '@presentation'
 import { io } from 'socket.io-client'
@@ -12,10 +12,13 @@ export const useSocket = (serverPath: string) => {
   const socket = useSignal<NoSerialize<MeetingClientSocket>>(undefined)
   const isOnline = useSignal<boolean | undefined>(false)
 
-  // this need to be initialized on the client only
-  useVisibleTask$(({ cleanup }) => {
-    // eslint-disable-next-line no-debugger
-    debugger
+
+  /**
+   * Creates a socket connection.
+   *
+   * @return {void} No return value.
+   */
+  const createSocket = $(() => {
     const wsClient: MeetingClientSocket = io(serverPath, {
       transports: ['websocket'],
       protocols: ['websocket'],
@@ -23,10 +26,8 @@ export const useSocket = (serverPath: string) => {
 
     socket.value = noSerialize(wsClient)
 
-    cleanup(() => {
-      wsClient.close()
-    })
   })
+
 
   useTask$(({ track }) => {
     track(() => socket.value)
@@ -35,15 +36,20 @@ export const useSocket = (serverPath: string) => {
     })
   })
 
-  useTask$(({ track }) => {
+  useTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('disconnect', () => {
-      isOnline.value = socket.value?.connected
+      isOnline.value = socket.value?.disconnected
+    })
+
+    cleanup(() => {
+      socket.value?.close()
     })
   })
 
   return {
     socket,
     isOnline,
+    createSocket
   }
 }
