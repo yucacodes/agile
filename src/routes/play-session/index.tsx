@@ -39,6 +39,7 @@ export default component$(() => {
     track(() => socket.value)
     socket.value?.on('ParticipantJoined', (payload) => {
       if (payload.meetingParticipantId) {
+
         addNotification({
           message: `Se has unido a la sesión ${payload.meetingParticipantName}`,
           status: 'success',
@@ -91,7 +92,7 @@ export default component$(() => {
           />
 
           <section class={style.tableInMobile}>
-            <PlayersTable />
+            <PlayersTable  />
           </section>
 
           <Points />

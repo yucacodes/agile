@@ -1,4 +1,10 @@
-import { $, component$, useContext, useSignal } from '@builder.io/qwik'
+import {
+  $,
+  component$,
+  useContext,
+  useSignal,
+  useVisibleTask$,
+} from '@builder.io/qwik'
 import style from './join-session-page.module.css'
 import {
   type DocumentHead,
@@ -22,7 +28,8 @@ export const useJoinPokerSession = routeLoader$(async ({ url }) => {
 
 export default component$(() => {
   const { addNotification } = useToast()
-  const { socket, user, idMeeting, secret } = useContext(StateProvider)
+  const { socket, user, idMeeting, secret, participants, createSocket } =
+    useContext(StateProvider)
 
   const QueryParams = useJoinPokerSession()
 
@@ -30,8 +37,13 @@ export default component$(() => {
 
   const nav = useNavigate()
 
-  const action = $(() => {
+
+  const action = $(async () => {
     if (QueryParams.value.id && QueryParams.value.secret) {
+      createSocket();
+
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
       socket.value?.emit(
         'JoinMeeting',
         {
@@ -40,9 +52,13 @@ export default component$(() => {
           meetingId: QueryParams.value.id,
         },
         (response) => {
+        
           if (!response.success) {
             return
           }
+
+          participants.value = Object.values(response.data.meeting.participants)
+
           secret.value = response.data.secret
           idMeeting.value = response.data.meeting.id
           const isManager =
@@ -76,7 +92,7 @@ export default component$(() => {
         if (!response.success) {
           return
         }
-
+        participants.value = Object.values(response.data.meeting.participants)
         secret.value = response.data.secret
         idMeeting.value = response.data.meeting.id
         const isManager =
