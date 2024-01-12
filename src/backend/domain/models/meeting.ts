@@ -64,8 +64,8 @@ export class Meeting extends Entity<MeetingProps> {
     this.props.votings.push(voting)
   }
 
-  getVotings(): Voting[] {
-    return this.props.votings
+  getVotings(): readonly Voting[] {
+    return [...this.props.votings]
   }
 
   votingById(votingId: string): Voting | undefined {
@@ -74,7 +74,7 @@ export class Meeting extends Entity<MeetingProps> {
 
   closeAllVotings(): void {
     for (const voting of this.props.votings) {
-      voting.closeVoting()
+      voting.manualCloseVoting()
     }
   }
 

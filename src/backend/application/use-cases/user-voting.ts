@@ -48,7 +48,7 @@ export class UserVoting extends UseCase<
       throw new Error('Participant not found.')
     }
 
-    voting.setVoteByParticipant(participant, point)
+    voting.setParticipantVote(participant, point)
 
     return {
       userId: participant.userId(),

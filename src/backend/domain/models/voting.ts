@@ -4,8 +4,8 @@ import type { MeetingParticipant } from './meeting-participant'
 export interface VotingProps extends EntityProps {
   timeLimit: Date
   isOpen: boolean
-  votes: Map<string, number>
-  manualClosed: boolean
+  userVotes: Map<string, number>
+  participants: MeetingParticipant[]
 }
 
 export interface VotingFactoryProps {
@@ -18,8 +18,8 @@ export class Voting extends Entity<VotingProps> {
       ...this.factoryBaseProps(),
       timeLimit: props.timeLimit,
       isOpen: false,
-      votes: new Map(),
-      manualClosed: false,
+      userVotes: new Map(),
+      participants: [],
     })
   }
 
@@ -32,51 +32,41 @@ export class Voting extends Entity<VotingProps> {
   }
 
   isOpen(timeManager: TimeManager): boolean {
-    const isTimeExpired =
-      this.props.timeLimit.getTime() - timeManager.now().getTime()
-
-    if (isTimeExpired || this.props.manualClosed) {
-      this.props.isOpen = false
-    }
-
-    return this.props.isOpen
+    if (!this.props.isOpen) return false
+    return this.props.timeLimit.getTime() > timeManager.now().getTime()
   }
 
   votes(): Map<string, number> {
-    return this.props.votes
+    return this.props.userVotes
   }
 
   manualCloseVoting(): void {
-    this.props.manualClosed = true
+    this.props.isOpen = false
   }
 
   startVoting(): void {
+    this.props.isOpen = true
+  }
+
+  setParticipantVote(participant: MeetingParticipant, points: number): void {
     if (!this.props.isOpen) {
-      this.props.isOpen = true
-    }
-  }
-
-  closeVoting(): boolean {
-    return (this.props.isOpen = false)
-  }
-
-  setVoteByParticipant(participant: MeetingParticipant, points: number): void {
-    if (this.allParticipantsVoted()) {
-      this.props.isOpen = false
       throw new VotingIsClosed()
     }
 
-    this.props.votes.set(participant.userId(), points)
+    this.props.userVotes.set(participant.userId(), points)
+
+    if (this.allParticipantsVoted()) {
+      this.props.isOpen = false
+    }
   }
 
   // Private methods
 
   private allParticipantsVoted(): boolean {
-    return this.participants.every((participant) => {
-      return this.props.votes.has(participant.userId())
+    return this.props.participants.every((participant) => {
+      return this.props.userVotes.has(participant.userId())
     })
   }
-  private participants: MeetingParticipant[] = []
 }
 
 // Errors
