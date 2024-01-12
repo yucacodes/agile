@@ -1,4 +1,5 @@
 import {
+  type MeetingParticipantVotedEventDto,
   type MeetingParticipantDisconnectedEventDto,
   type MeetingParticipantJoinedEventDto,
 } from '@application'
@@ -8,6 +9,7 @@ import { type SocketEmit } from '@framework/presentation'
 export type MeetingEmmitedEventsMap = {
   ParticipantJoined: SocketEmit<MeetingParticipantJoinedEventDto>
   ParticipantDisconnected: SocketEmit<MeetingParticipantDisconnectedEventDto>
+  ParticipantVoted: SocketEmit<MeetingParticipantVotedEventDto>
 }
 
 export type MeetingEmmitedEvent = keyof MeetingEmmitedEventsMap

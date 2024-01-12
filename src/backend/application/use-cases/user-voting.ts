@@ -1,4 +1,8 @@
-import { MeetingsRepository } from '@domain'
+import {
+  MeetingEventsBus,
+  MeetingParticipantVotedEvent,
+  MeetingsRepository,
+} from '@domain'
 import { singleton } from 'tsyringe'
 import { UseCase, type AuthInformationDto } from '@framework/application'
 import type { VotingInformationDto, UserVotingRequestDto } from '../dtos'
@@ -11,7 +15,8 @@ export class UserVoting extends UseCase<
 > {
   constructor(
     private meetingsRepository: MeetingsRepository,
-    private timeManager: TimeManager
+    private timeManager: TimeManager,
+    private meetingEventsBus: MeetingEventsBus
   ) {
     super()
   }
@@ -49,6 +54,13 @@ export class UserVoting extends UseCase<
     }
 
     voting.setParticipantVote(participant, point)
+
+    this.meetingEventsBus.notify(
+      MeetingParticipantVotedEvent.factory({
+        meetingParticipant: participant,
+        votingId: voting,
+      })
+    )
 
     return {
       userId: participant.userId(),
