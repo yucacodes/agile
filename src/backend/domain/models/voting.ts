@@ -37,7 +37,7 @@ export class Voting extends Entity<VotingProps> {
   }
 
   votes(): Map<string, number> {
-    return this.props.userVotes
+    return new Map(this.props.userVotes)
   }
 
   manualCloseVoting(): void {
@@ -48,9 +48,19 @@ export class Voting extends Entity<VotingProps> {
     this.props.isOpen = true
   }
 
-  setParticipantVote(participant: MeetingParticipant, points: number): void {
-    if (!this.props.isOpen) {
+  setParticipantVote(
+    participant: MeetingParticipant,
+    points: number,
+    timeManager: TimeManager
+  ): void {
+    if (!this.isOpen(timeManager)) {
       throw new VotingIsClosed()
+    }
+
+    const allowedPoints = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 100]
+
+    if (!allowedPoints.includes(points)) {
+      throw new InvalidPoints()
     }
 
     this.props.userVotes.set(participant.userId(), points)
@@ -72,3 +82,4 @@ export class Voting extends Entity<VotingProps> {
 // Errors
 
 export class VotingIsClosed extends Error {}
+export class InvalidPoints extends Error {}

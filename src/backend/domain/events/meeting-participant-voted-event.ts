@@ -4,13 +4,13 @@ import { MeetingEvent } from './meeting-event'
 
 export interface MeetingParticipantVotedEventFactoryProps {
   meetingParticipant: MeetingParticipant
-  votingId: Voting
+  voting: Voting
 }
 
 export interface MeetingParticipantVotedEventProps {
   meetingParticipant: MeetingParticipant
-  votingId: Voting
-  isOpen: boolean
+  voting: Voting
+  votingClosed: boolean
 }
 
 export class MeetingParticipantVotedEvent extends MeetingEvent {
@@ -19,8 +19,8 @@ export class MeetingParticipantVotedEvent extends MeetingEvent {
   ): MeetingParticipantVotedEvent {
     return new MeetingParticipantVotedEvent({
       meetingParticipant: props.meetingParticipant,
-      votingId: props.votingId,
-      isOpen: false,
+      voting: props.voting,
+      votingClosed: false,
     })
   }
 
@@ -36,11 +36,11 @@ export class MeetingParticipantVotedEvent extends MeetingEvent {
     return this.props.meetingParticipant
   }
 
-  votinId(): Voting {
-    return this.props.votingId
+  voting(): string {
+    return this.props.voting.id()
   }
 
-  isOpen(timeManager: TimeManager): boolean {
-    return this.props.votingId.isOpen(timeManager)
+  votingClosed(timeManager: TimeManager): boolean {
+    return this.props.voting.isOpen(timeManager)
   }
 }

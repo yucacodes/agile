@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator'
 
 export interface UserVotingRequestDto {
   meetingId: string
@@ -15,7 +15,8 @@ export class UserVotingRequestDtoValidator implements UserVotingRequestDto {
   @IsNotEmpty()
   votingId: string = ''
 
-  @IsString()
-  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  @Max(100)
   point: number = 0
 }
