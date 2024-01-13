@@ -5,11 +5,13 @@ import {
   verifyPasswordHash,
   type EntityProps,
 } from '@framework/domain'
+import { Voting, type VotingProps } from './voting'
 import type { MeetingParticipant } from './meeting-participant'
 
 export interface MeetingProps extends EntityProps {
   secretHash: string
   participants: Map<string, MeetingParticipant>
+  votings: Voting[]
 }
 
 export class Meeting extends Entity<MeetingProps> {
@@ -22,6 +24,7 @@ export class Meeting extends Entity<MeetingProps> {
       ...this.factoryBaseProps(),
       secretHash: generatePasswordHash(secret, this.SECRET_SALT_ROUNDS),
       participants: new Map(),
+      votings: [],
     })
     return { meeting, secret }
   }
@@ -54,6 +57,25 @@ export class Meeting extends Entity<MeetingProps> {
 
   participants(): Map<string, MeetingParticipant> {
     return new Map(this.props.participants)
+  }
+
+  addVoting(votingProps: VotingProps): void {
+    const voting = new Voting(votingProps)
+    this.props.votings.push(voting)
+  }
+
+  getVotings(): readonly Voting[] {
+    return [...this.props.votings]
+  }
+
+  votingById(votingId: string): Voting | undefined {
+    return this.props.votings.find((voting) => voting.id() === votingId)
+  }
+
+  closeAllVotings(): void {
+    for (const voting of this.props.votings) {
+      voting.manualCloseVoting()
+    }
   }
 
   // Private methods

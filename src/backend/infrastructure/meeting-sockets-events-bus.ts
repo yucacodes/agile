@@ -4,6 +4,7 @@ import { Logger } from '@framework/presentation'
 import {
   ParticipantDisconnectedEventEmitter,
   ParticipantJoinedEventEmitter,
+  ParticipantVotedEventEmitter,
 } from '@presentation'
 import { Server as SocketIoServer } from 'socket.io'
 
@@ -15,7 +16,8 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
     @inject('SocketIoServer')
     private socketIoServer: SocketIoServer,
     private participantJoinedEventEmitter: ParticipantJoinedEventEmitter,
-    private participantDisconnectedEventEmitter: ParticipantDisconnectedEventEmitter
+    private participantDisconnectedEventEmitter: ParticipantDisconnectedEventEmitter,
+    private participantVotedEventEmitter: ParticipantVotedEventEmitter
   ) {
     super()
     this.emitters().forEach((x) =>
@@ -29,6 +31,7 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
     return [
       this.participantJoinedEventEmitter,
       this.participantDisconnectedEventEmitter,
+      this.participantVotedEventEmitter,
     ]
   }
 
