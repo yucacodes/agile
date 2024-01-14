@@ -3,7 +3,7 @@ import {
   MeetingParticipantVotedEvent,
   MeetingsRepository,
 } from '@domain'
-import { singleton } from 'tsyringe'
+import { singleton } from '@framework/injection'
 import { UseCase, type AuthInformationDto } from '@framework/application'
 import type { VotingInformationDto, UserVotingRequestDto } from '../dtos'
 import { TimeManager } from '@framework/domain'
