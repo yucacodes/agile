@@ -48,6 +48,7 @@
     "vitest": "^0.34.6"
   },
   "dependencies": {
+    "@yucacodes/ui-qwik": "^0.0.14",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "pino": "^8.16.2",

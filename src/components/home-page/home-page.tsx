@@ -4,9 +4,10 @@ import { Title } from '~/components/title/Title'
 
 import { useNavigate } from '@builder.io/qwik-city'
 import { Footer } from '~/components/footer/Footer'
-import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
 
 import style from './home.module.css'
+import { Button } from '@yucacodes/ui-qwik'
+
 import { StateProvider } from '~/context/ProviderContext'
 
 export const HomePage = component$(() => {
@@ -31,7 +32,9 @@ export const HomePage = component$(() => {
               communicate point stories from agile teams
             </p>
           </div>
-          <PrimaryButton action={action} text="START A SESSION" />
+          <Button onClick$={action} contained primary size="1.2rem">
+            START A SESSION
+          </Button>
         </div>
         <Footer />
       </main>
