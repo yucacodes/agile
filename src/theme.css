@@ -10,4 +10,9 @@
   --accent-color: #ff6d00;
   --accent-color-rgb: 255, 109, 0;
   --accent-color-contrast: #fff;
+
+ 
+  --btn-padding: 0.9em 1.5em;
+  --btn-border-radius: 2em;
+
 }
