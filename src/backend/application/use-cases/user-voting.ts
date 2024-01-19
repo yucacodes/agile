@@ -53,12 +53,12 @@ export class UserVoting extends UseCase<
       throw new Error('Participant not found.')
     }
 
-    voting.setParticipantVote(participant, point)
+    voting.setParticipantVote(participant, point, this.timeManager)
 
     this.meetingEventsBus.notify(
       MeetingParticipantVotedEvent.factory({
         meetingParticipant: participant,
-        votingId: voting,
+        voting: voting,
       })
     )
 

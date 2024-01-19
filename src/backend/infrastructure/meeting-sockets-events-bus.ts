@@ -2,8 +2,10 @@ import { MeetingEventsBus, type MeetingEvent } from '@domain'
 import { inject, singleton } from '@framework/injection'
 import { Logger } from '@framework/presentation'
 import {
+  ParticipantClosedVoteEventEmitter,
   ParticipantDisconnectedEventEmitter,
   ParticipantJoinedEventEmitter,
+  ParticipantStartedVoteEventEmitter,
   ParticipantVotedEventEmitter,
 } from '@presentation'
 import { Server as SocketIoServer } from 'socket.io'
@@ -17,7 +19,9 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
     private socketIoServer: SocketIoServer,
     private participantJoinedEventEmitter: ParticipantJoinedEventEmitter,
     private participantDisconnectedEventEmitter: ParticipantDisconnectedEventEmitter,
-    private participantVotedEventEmitter: ParticipantVotedEventEmitter
+    private participantVotedEventEmitter: ParticipantVotedEventEmitter,
+    private participantStartedVoteEventEmitter: ParticipantStartedVoteEventEmitter,
+    private participantClosedVoteEventEmitter: ParticipantClosedVoteEventEmitter
   ) {
     super()
     this.emitters().forEach((x) =>
@@ -32,6 +36,8 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
       this.participantJoinedEventEmitter,
       this.participantDisconnectedEventEmitter,
       this.participantVotedEventEmitter,
+      this.participantStartedVoteEventEmitter,
+      this.participantClosedVoteEventEmitter,
     ]
   }
 
