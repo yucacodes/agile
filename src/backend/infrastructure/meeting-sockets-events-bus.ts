@@ -5,7 +5,7 @@ import {
   ParticipantClosedVoteEventEmitter,
   ParticipantDisconnectedEventEmitter,
   ParticipantJoinedEventEmitter,
-  ParticipantStartedVoteEventEmitter,
+  ManagerStartedVotingEventEmitter,
   ParticipantVotedEventEmitter,
 } from '@presentation'
 import { Server as SocketIoServer } from 'socket.io'
@@ -20,7 +20,7 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
     private participantJoinedEventEmitter: ParticipantJoinedEventEmitter,
     private participantDisconnectedEventEmitter: ParticipantDisconnectedEventEmitter,
     private participantVotedEventEmitter: ParticipantVotedEventEmitter,
-    private participantStartedVoteEventEmitter: ParticipantStartedVoteEventEmitter,
+    private managerStartedVotingEventEmitter: ManagerStartedVotingEventEmitter,
     private participantClosedVoteEventEmitter: ParticipantClosedVoteEventEmitter
   ) {
     super()
@@ -36,7 +36,7 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
       this.participantJoinedEventEmitter,
       this.participantDisconnectedEventEmitter,
       this.participantVotedEventEmitter,
-      this.participantStartedVoteEventEmitter,
+      this.managerStartedVotingEventEmitter,
       this.participantClosedVoteEventEmitter,
     ]
   }

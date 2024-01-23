@@ -1,14 +1,18 @@
 import {
   MeetingEventsBus,
-  MeetingParticipantClosedVoteEvent,
+  VotingStartedEvent,
   MeetingsRepository,
+  Meeting,
 } from '@domain'
 import { type AuthInformationDto, UseCase } from '@framework/application'
 import { singleton } from '@framework/injection'
-import { type UserCloseVotingRequestDto } from '../dtos'
+import { type ManagerStartedVotingRequestDto } from '../dtos'
 
 @singleton()
-export class UserCloseVoting extends UseCase<UserCloseVotingRequestDto, void> {
+export class ManagerStartedVoting extends UseCase<
+  ManagerStartedVotingRequestDto,
+  void
+> {
   constructor(
     private meetingsRepository: MeetingsRepository,
     private meetingEventsBus: MeetingEventsBus
@@ -17,12 +21,12 @@ export class UserCloseVoting extends UseCase<UserCloseVotingRequestDto, void> {
   }
 
   async perform(
-    request: UserCloseVotingRequestDto,
+    request: ManagerStartedVotingRequestDto,
     authInformation: AuthInformationDto | null
   ): Promise<void> {
     if (!authInformation) throw new Error('Invalid auth information')
 
-    const { meetingId, votingId } = request
+    const { meetingId } = request
 
     const meeting = await this.meetingsRepository.fetchById(meetingId)
 
@@ -40,19 +44,15 @@ export class UserCloseVoting extends UseCase<UserCloseVotingRequestDto, void> {
       throw new Error('You do not have permission to start the voting.')
     }
 
-    const voting = meeting.votingById(votingId)
-
-    if (!voting) {
-      throw new Error('Voting not found.')
-    }
-
-    voting.manualCloseVoting()
+    // meeting.getVotings().forEach((voting) => voting.startVoting())
 
     this.meetingEventsBus.notify(
-      MeetingParticipantClosedVoteEvent.factory({
-        meetingParticipant: meeting.participantById(authInformation.userId)!,
-        voting,
+      VotingStartedEvent.factory({
+        meetingParticipant: participant,
       })
     )
+
+    const { meeting: votes } = Meeting.factory()
+    this.meetingsRepository.save(votes)
   }
 }

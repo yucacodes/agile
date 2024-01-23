@@ -6,8 +6,8 @@ import {
   UserDisconnectedFromMeetingEventController,
   UserVotingEventController,
   type MeetingSocket,
-  UserStartVotingEventController,
-  UserCloseVotingEventController,
+  ManagerStartedVotingEventController,
+  ManagerClosedVotingEventController,
 } from '@presentation'
 
 @singleton()
@@ -19,8 +19,8 @@ export class MeetingSocketsEventsListener {
     private joinMeetingEventController: JoinMeetingEventController,
     private userDisconnectedFromMeetingEventController: UserDisconnectedFromMeetingEventController,
     private userVotingFromMeetingEventController: UserVotingEventController,
-    private userStartVotingEventController: UserStartVotingEventController,
-    private userCloseVotingEventController: UserCloseVotingEventController
+    private managerStartedVotingEventController: ManagerStartedVotingEventController,
+    private managerClosedVotingEventController: ManagerClosedVotingEventController
   ) {
     this.controllers().forEach((x) =>
       this.logger.info(`Controller Registered for ${x.socketEvent()} Event`)
@@ -35,8 +35,8 @@ export class MeetingSocketsEventsListener {
       this.joinMeetingEventController,
       this.userDisconnectedFromMeetingEventController,
       this.userVotingFromMeetingEventController,
-      this.userStartVotingEventController,
-      this.userCloseVotingEventController,
+      this.managerStartedVotingEventController,
+      this.managerClosedVotingEventController,
     ]
   }
 
