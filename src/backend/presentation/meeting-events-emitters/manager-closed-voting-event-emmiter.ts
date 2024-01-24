@@ -13,10 +13,10 @@ import { meetingRoomId } from '../meeting-sockets'
 
 @singleton()
 @socketEventEmitter({
-  socketEvent: 'ParticipantClosedVote',
+  socketEvent: 'ManagerClosedVoting',
   domainEvent: VotingClosedEvent,
 })
-export class ParticipantClosedVoteEventEmitter extends SocketEventEmitter<
+export class ManagerClosedVotingEventEmitter extends SocketEventEmitter<
   VotingClosedEvent,
   ManagerClosedVotingEventDto
 > {

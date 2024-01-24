@@ -2,7 +2,7 @@ import { MeetingEventsBus, type MeetingEvent } from '@domain'
 import { inject, singleton } from '@framework/injection'
 import { Logger } from '@framework/presentation'
 import {
-  ParticipantClosedVoteEventEmitter,
+  ManagerClosedVotingEventEmitter,
   ParticipantDisconnectedEventEmitter,
   ParticipantJoinedEventEmitter,
   ManagerStartedVotingEventEmitter,
@@ -21,7 +21,7 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
     private participantDisconnectedEventEmitter: ParticipantDisconnectedEventEmitter,
     private participantVotedEventEmitter: ParticipantVotedEventEmitter,
     private managerStartedVotingEventEmitter: ManagerStartedVotingEventEmitter,
-    private participantClosedVoteEventEmitter: ParticipantClosedVoteEventEmitter
+    private managerClosedVotingEventEmitter: ManagerClosedVotingEventEmitter
   ) {
     super()
     this.emitters().forEach((x) =>
@@ -37,7 +37,7 @@ export class MeetingSocketsEventsBus extends MeetingEventsBus {
       this.participantDisconnectedEventEmitter,
       this.participantVotedEventEmitter,
       this.managerStartedVotingEventEmitter,
-      this.participantClosedVoteEventEmitter,
+      this.managerClosedVotingEventEmitter,
     ]
   }
 
