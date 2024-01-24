@@ -2,11 +2,12 @@ import {
   MeetingEventsBus,
   VotingStartedEvent,
   MeetingsRepository,
-  Meeting,
+  Voting,
 } from '@domain'
 import { type AuthInformationDto, UseCase } from '@framework/application'
 import { singleton } from '@framework/injection'
 import { type ManagerStartedVotingRequestDto } from '../dtos'
+import { TimeManager } from '@framework/domain'
 
 @singleton()
 export class ManagerStartedVoting extends UseCase<
@@ -15,7 +16,8 @@ export class ManagerStartedVoting extends UseCase<
 > {
   constructor(
     private meetingsRepository: MeetingsRepository,
-    private meetingEventsBus: MeetingEventsBus
+    private meetingEventsBus: MeetingEventsBus,
+    private timeManager: TimeManager
   ) {
     super()
   }
@@ -44,15 +46,29 @@ export class ManagerStartedVoting extends UseCase<
       throw new Error('You do not have permission to start the voting.')
     }
 
-    // meeting.getVotings().forEach((voting) => voting.startVoting())
+    const participants = meeting.participants()
+    const voting = Voting.factory({
+      timeLimit: new Date(),
+    })
+
+    participants.forEach((participant) => {
+      voting.setParticipantVote(participant, 0, this.timeManager)
+    })
+
+    meeting.addVoting({
+      timeLimit: voting.timeLimit(),
+      isOpen: true,
+      userVotes: new Map(),
+      participants: [...participants],
+    })
 
     this.meetingEventsBus.notify(
       VotingStartedEvent.factory({
         meetingParticipant: participant,
+        voting,
       })
     )
 
-    const { meeting: votes } = Meeting.factory()
-    this.meetingsRepository.save(votes)
+    this.meetingsRepository.save(meeting)
   }
 }

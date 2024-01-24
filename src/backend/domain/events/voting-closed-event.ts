@@ -29,12 +29,8 @@ export class VotingClosedEvent extends MeetingEvent {
     return this.props.meetingParticipant.meetingId()
   }
 
-  meetingParticipant(): MeetingParticipant {
-    return this.props.meetingParticipant
-  }
-
-  voting(): Voting {
-    return this.props.voting
+  voting(): string {
+    return this.props.voting.id()
   }
 
   time(): Date {

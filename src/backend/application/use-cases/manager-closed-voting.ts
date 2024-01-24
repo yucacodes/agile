@@ -2,7 +2,6 @@ import {
   MeetingEventsBus,
   VotingClosedEvent,
   MeetingsRepository,
-  Meeting,
 } from '@domain'
 import { type AuthInformationDto, UseCase } from '@framework/application'
 import { singleton } from '@framework/injection'
@@ -59,7 +58,6 @@ export class ManagerClosedVoting extends UseCase<
       })
     )
 
-    const { meeting: votes } = Meeting.factory()
-    this.meetingsRepository.save(votes)
+    this.meetingsRepository.save(meeting)
   }
 }
