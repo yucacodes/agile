@@ -10,6 +10,7 @@ export interface VotingProps extends EntityProps {
 
 export interface VotingFactoryProps {
   timeLimit: Date
+  participants: MeetingParticipant[]
 }
 
 export class Voting extends Entity<VotingProps> {

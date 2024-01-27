@@ -8,7 +8,7 @@ import { singleton } from '@framework/injection'
 import { type ManagerClosedVotingRequestDto } from '../dtos'
 
 @singleton()
-export class ManagerClosedVoting extends UseCase<
+export class ManagerCloseVoting extends UseCase<
   ManagerClosedVotingRequestDto,
   void
 > {

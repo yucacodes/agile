@@ -1,5 +1,5 @@
 import {
-  ManagerClosedVoting,
+  ManagerCloseVoting,
   ManagerClosedVotingRequestDtoValidator,
   type ManagerClosedVotingRequestDto,
 } from '@application'
@@ -8,7 +8,6 @@ import { singleton } from '@framework/injection'
 import {
   SocketEventController,
   socketEventController,
-  type GenericSocket,
 } from '@framework/presentation'
 
 @singleton()
@@ -16,27 +15,18 @@ import {
   socketEvent: 'ManagerClosedVoting',
   requestValidator: ManagerClosedVotingRequestDtoValidator,
 })
-export class ManagerClosedVotingEventController extends SocketEventController<
+export class ManagerCloseVotingEventController extends SocketEventController<
   ManagerClosedVotingRequestDto,
   void
 > {
-  constructor(private managerClosedVoting: ManagerClosedVoting) {
+  constructor(private managerCloseVoting: ManagerCloseVoting) {
     super()
-  }
-
-  protected override request(
-    socket: GenericSocket
-  ): ManagerClosedVotingRequestDto {
-    return {
-      meetingId: (socket.data as any).meetingId,
-      votingId: (socket.data as any).votingId,
-    }
   }
 
   protected async handle(
     request: ManagerClosedVotingRequestDto,
     authData: AuthInformationDto | null
   ): Promise<void> {
-    await this.managerClosedVoting.perform(request, authData)
+    await this.managerCloseVoting.perform(request, authData)
   }
 }
