@@ -1,18 +1,19 @@
-import { type Voting, type VotingClosedEvent } from '@domain'
+import { type VotingClosedEvent } from '@domain'
 import { singleton } from '@framework/injection'
+import { type VotingDto, VotingDtoMapper } from './voting-dto'
 
 export interface ManagerClosedVotingEventDto {
-  voting: Voting
+  voting: VotingDto
   time: string
 }
 
 @singleton()
 export class ManagerClosedVotingEventDtoMapper {
-  constructor() {}
+  constructor(private votingtDtoMapper: VotingDtoMapper) {}
 
   makeDto(obj: VotingClosedEvent): ManagerClosedVotingEventDto {
     return {
-      voting: obj.voting(),
+      voting: this.votingtDtoMapper.makeDto(obj.voting()),
       time: obj.time.toString(),
     }
   }
