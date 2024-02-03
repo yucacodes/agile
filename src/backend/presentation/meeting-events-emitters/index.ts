@@ -1,3 +1,5 @@
 export * from './participant-disconnected-event-emmiter'
 export * from './participant-joined-event-emmiter'
 export * from './participant-voted-event-emmiter'
+export * from './manager-started-voting-event-emmiter'
+export * from './manager-closed-voting-event-emmiter'

@@ -59,8 +59,7 @@ export class Meeting extends Entity<MeetingProps> {
     return new Map(this.props.participants)
   }
 
-  addVoting(votingProps: VotingProps): void {
-    const voting = new Voting(votingProps)
+  addVoting(voting: Voting): void {
     this.props.votings.push(voting)
   }
 
