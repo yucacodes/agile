@@ -1,7 +1,12 @@
-import { component$ } from '@builder.io/qwik'
+import { $, component$, useContext } from '@builder.io/qwik'
 import style from './points.module.css'
+import { StateProvider } from '~/context/ProviderContext'
+
 
 export const Points = component$(() => {
+
+  const { socket, user, idMeeting, secret, isStartedMeeting } = useContext(StateProvider)
+  
   const points = [
     { value: 0, display: '0 POINTS' },
     { value: 0.5, display: '1/2 POINT' },
@@ -16,10 +21,21 @@ export const Points = component$(() => {
     { value: null, display: '??' },
   ]
 
+  const handleVote = $((point: number) => {
+    socket.value?.emit('UserVoting', {
+    meetingId: idMeeting.value!,
+    point,
+    votingId: secret.value!,
+    }, (payload) => {
+      console.log(payload);
+      
+    })
+  })
+
   return (
     <section class={style.pointsContainer}>
       {points.map((point) => (
-        <button key={point.value} class={style.points}>
+        <button onClick$={ () => handleVote(point.value!)} key={point.value} class={style.points}>
           {point.display}
         </button>
       ))}

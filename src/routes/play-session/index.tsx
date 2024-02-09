@@ -124,10 +124,12 @@ export default component$(() => {
         </section>
       </div>
 
+
+
       <section class={style.buttonsContainer}>
 
         {
-          !isStartedMeeting.value &&     <HasPermission><PrimaryButton action={InitVoting} text="START VOTING" /></HasPermission>
+          !isStartedMeeting.value && <HasPermission><PrimaryButton action={InitVoting} text="START VOTING" /></HasPermission>
         }
 
         {
@@ -142,9 +144,9 @@ export default component$(() => {
             </>
           )
         }
-              <HasPermission>
-                <SecondaryButton action={shareLink} text="SHARED SESSION" />
-              </HasPermission>
+        <HasPermission>
+          <SecondaryButton action={shareLink} text="SHARED SESSION" />
+        </HasPermission>
       </section>
     </main>
   )
