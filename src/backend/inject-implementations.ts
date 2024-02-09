@@ -4,7 +4,7 @@ import { ServerTimeManager } from '@framework/infrastructure'
 import { container } from '@framework/injection'
 import {
   MeetingSocketsEventsBus,
-  MeetingsDummyRepository,
+  MeetingsRedisRepository,
 } from '@infrastructure'
 import { createServer } from 'http'
 import { Server as SocketIoServer } from 'socket.io'
@@ -20,7 +20,7 @@ container.register('SocketIoServer', { useValue: socketIoServer })
 container.registerType(TimeManager as any, ServerTimeManager)
 
 // Repositories
-container.registerType(MeetingsRepository as any, MeetingsDummyRepository)
+container.registerType(MeetingsRepository as any, MeetingsRedisRepository)
 
 // Events Buses
 container.registerType(MeetingEventsBus as any, MeetingSocketsEventsBus)

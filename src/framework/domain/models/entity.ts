@@ -1,4 +1,5 @@
 import { generate as generateId } from 'short-uuid'
+import { Model } from './model'
 
 export interface EntityProps {
   id: string
@@ -9,7 +10,7 @@ export interface EntityProps {
   wasUpdated?: boolean
 }
 
-export abstract class Entity<P extends EntityProps> {
+export abstract class Entity<P extends EntityProps> extends Model<P> {
   protected static factoryBaseProps(): EntityProps {
     return {
       id: generateId(),
@@ -20,29 +21,21 @@ export abstract class Entity<P extends EntityProps> {
     }
   }
 
-  protected readonly props: P
-
   constructor(props: P) {
-    this.props = new Proxy(props, {
-      set(target, key, value) {
-        Object.assign(target, { [key]: value })
-        target.updatedAt = new Date()
-        target.wasUpdated = true
-        return true
-      },
-    })
+    super(
+      new Proxy(props, {
+        set(target, key, value) {
+          ;(target as any)[key] = value // eslint-disable-line
+          target.updatedAt = new Date()
+          target.wasUpdated = true
+          return true
+        },
+      })
+    )
   }
 
   id() {
     return this.props.id
-  }
-
-  isNew(): boolean {
-    return this.props.isNew ?? false
-  }
-
-  wasUpdated(): boolean {
-    return this.props.wasUpdated ?? false
   }
 
   createdAt(): Date {
@@ -53,10 +46,25 @@ export abstract class Entity<P extends EntityProps> {
     return new Date(this.props.updatedAt)
   }
 
-  public setAsSaved() {
+  discardedAt(): Date | undefined {
+    return this.props.discardedAt && new Date(this.props.discardedAt)
+  }
+
+  protected isNew(): boolean {
+    return this.props.isNew ?? false
+  }
+
+  protected wasUpdated(): boolean {
+    return this.props.wasUpdated ?? false
+  }
+
+  protected setAsSaved() {
     this.props.isNew = false
     this.props.wasUpdated = false
   }
 
-  public abstract validate(): void
+  protected setAsUpdated() {
+    this.props.updatedAt = new Date()
+    this.props.wasUpdated = true
+  }
 }
