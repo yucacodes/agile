@@ -33,7 +33,12 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 export default component$(() => {
   const location = useLocation()
   const { addNotification } = useToast()
-  const { socket, user, idMeeting, secret } = useContext(StateProvider)
+  const { socket, user, idMeeting, secret, isStartedMeeting } = useContext(StateProvider)
+
+  useTask$(({ track, cleanup }) => {
+    track(() => socket.value)
+
+  })
 
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
@@ -62,15 +67,32 @@ export default component$(() => {
     })
   })
 
-  const action = $(() => {})
+  const action = $(() => { })
 
   const shareLink = $(() => {
     (navigator as any).clipboard.writeText(
-      `${
-        location.url.protocol + '//' + location.url.host
+      `${location.url.protocol + '//' + location.url.host
       }/join-session?secret=${secret.value}&id=${idMeeting.value}`
     )
   })
+
+  const InitVoting = $(() => {
+    if (!idMeeting.value) {
+      addNotification({
+        message: 'Error al iniciar la votación',
+        status: 'error',
+      })
+    } else {
+      socket.value?.emit('ManagerStartedVoting', {
+        meetingId: idMeeting.value,
+      }, (payload) => {
+        isStartedMeeting.value! = true
+
+      })
+    }
+
+  })
+
 
   return (
     <main class={style.container}>
@@ -92,7 +114,7 @@ export default component$(() => {
           />
 
           <section class={style.tableInMobile}>
-            <PlayersTable  />
+            <PlayersTable />
           </section>
 
           <Points />
@@ -103,15 +125,26 @@ export default component$(() => {
       </div>
 
       <section class={style.buttonsContainer}>
-        <HasPermission>
-          <PrimaryButton action={action} text="CLEAR VOTES" />
-        </HasPermission>
-        <HasPermission>
-          <PrimaryButton action={action} text="SHOW VOTES" />
-        </HasPermission>
-        <HasPermission>
-          <SecondaryButton action={shareLink} text="SHARED SESSION" />
-        </HasPermission>
+
+        {
+          !isStartedMeeting.value &&     <HasPermission><PrimaryButton action={InitVoting} text="START VOTING" /></HasPermission>
+        }
+
+        {
+          isStartedMeeting?.value && (
+            <>
+              <HasPermission>
+                <PrimaryButton action={action} text="CLEAR VOTES" />
+              </HasPermission>
+              <HasPermission>
+                <PrimaryButton action={action} text="SHOW VOTES" />
+              </HasPermission>
+            </>
+          )
+        }
+              <HasPermission>
+                <SecondaryButton action={shareLink} text="SHARED SESSION" />
+              </HasPermission>
       </section>
     </main>
   )
