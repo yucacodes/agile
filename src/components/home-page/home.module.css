@@ -1,0 +1,31 @@
+.container {
+  height: inherit;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding-inline: 6rem;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+}
+
+.textsContainer {
+  text-align: center;
+  display: grid;
+  gap: 2rem;
+}
+
+.informativeText {
+  align-self: flex-end;
+  font-size: 16px;
+}
+
+.spacer {
+  flex: 1;
+}

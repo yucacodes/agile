@@ -1,0 +1,14 @@
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.number {
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.text {
+  font-size: 16px;
+}
