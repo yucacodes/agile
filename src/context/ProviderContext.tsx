@@ -30,6 +30,7 @@ export interface State {
   createSocket:  QRL<() => void> 
   participants: Signal<MeetingParticipantDto[]>
   isStartedMeeting: Signal<boolean>
+  votingId: Signal<string | undefined>
 }
 
 export const StateProvider = createContextId<State>('StateProvider')
@@ -46,6 +47,7 @@ export const Provider = component$(() => {
     createSocket,
     participants :  useSignal<MeetingParticipantDto[]>([]),
     isStartedMeeting: useSignal<boolean>(false),
+    votingId: useSignal<string | undefined>(undefined),
   })
 
   useContextProvider(StateProvider, state)

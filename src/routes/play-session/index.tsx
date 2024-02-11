@@ -33,12 +33,8 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 export default component$(() => {
   const location = useLocation()
   const { addNotification } = useToast()
-  const { socket, user, idMeeting, secret, isStartedMeeting } = useContext(StateProvider)
+  const { socket, user, idMeeting, secret, isStartedMeeting, votingId } = useContext(StateProvider)
 
-  useTask$(({ track, cleanup }) => {
-    track(() => socket.value)
-
-  })
 
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
@@ -62,8 +58,14 @@ export default component$(() => {
       }
     })
 
+    socket.value?.on('ManagerStartedVoting', (payload) => {
+      if (payload.votingId) {
+        votingId!.value = payload.votingId
+      }
+    })
+
     cleanup(() => {
-      socket.value?.off('ParticipantJoined')
+      socket.value?.close()
     })
   })
 

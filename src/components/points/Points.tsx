@@ -5,7 +5,7 @@ import { StateProvider } from '~/context/ProviderContext'
 
 export const Points = component$(() => {
 
-  const { socket, user, idMeeting, secret, isStartedMeeting } = useContext(StateProvider)
+  const { socket, user, idMeeting, secret, isStartedMeeting, votingId } = useContext(StateProvider)
   
   const points = [
     { value: 0, display: '0 POINTS' },
@@ -25,7 +25,7 @@ export const Points = component$(() => {
     socket.value?.emit('UserVoting', {
     meetingId: idMeeting.value!,
     point,
-    votingId: secret.value!,
+    votingId: votingId.value!,
     }, (payload) => {
       console.log(payload);
       
@@ -35,7 +35,10 @@ export const Points = component$(() => {
   return (
     <section class={style.pointsContainer}>
       {points.map((point) => (
-        <button onClick$={ () => handleVote(point.value!)} key={point.value} class={style.points}>
+        <button 
+        disabled={isStartedMeeting.value}
+        onClick$={ () => handleVote(point.value!)} key={point.value} 
+        class={[isStartedMeeting.value ? style.disabled : '',style.points, ]}>
           {point.display}
         </button>
       ))}
