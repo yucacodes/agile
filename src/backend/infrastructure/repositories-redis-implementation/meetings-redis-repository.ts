@@ -9,13 +9,13 @@ export class MeetingsRedisRepository extends MeetingsRepository {
     super()
   }
 
-  async fetchById(id: string): Promise<Meeting | null> {
+  async findById(id: string): Promise<Meeting | null> {
     const dbo = (await client.json.get(this.redisKey(id))) as any
     if (dbo == null) return null
     return this.mapper.revert(dbo)
   }
 
-  async fetchByIds(ids: string[]): Promise<Map<string, Meeting>> {
+  async findByIds(ids: string[]): Promise<Map<string, Meeting>> {
     let dbos = (await Promise.all(
       ids.map((id) => client.json.get(this.redisKey(id)))
     )) as any[]

@@ -1,16 +1,16 @@
-import { type MeetingParticipant } from '@domain'
+import { type Participant } from '@domain'
 import { NoSqlDboMapper } from '@framework/infrastructure'
 
 export interface MeetingParticipantNoSqlDbo {}
 
 export class MeetingParticipantNoSqlDboMapper extends NoSqlDboMapper<
-  MeetingParticipant,
+  Participant,
   MeetingParticipantNoSqlDbo
 > {
-  makeDbo(obj: MeetingParticipant): MeetingParticipantNoSqlDbo {
+  makeDbo(obj: Participant): MeetingParticipantNoSqlDbo {
     throw new Error('Method not implemented.')
   }
-  loadDbo(dbo: MeetingParticipantNoSqlDbo): MeetingParticipant {
+  loadDbo(dbo: MeetingParticipantNoSqlDbo): Participant {
     throw new Error('Method not implemented.')
   }
 }

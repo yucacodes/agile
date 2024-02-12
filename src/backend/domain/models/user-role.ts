@@ -1,2 +1,3 @@
-export const userRolesValues = ['MeetingParticipant'] as const
-export type UserRole = (typeof userRolesValues)[number]
+export enum UserRole {
+  MeetingParticipant = 'MeetingParticipant'
+}

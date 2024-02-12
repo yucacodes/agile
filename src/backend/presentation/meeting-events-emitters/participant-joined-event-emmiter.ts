@@ -2,7 +2,7 @@ import {
   MeetingParticipantJoinedEventDtoMapper,
   type MeetingParticipantJoinedEventDto,
 } from '@application'
-import { MeetingParticipantJoinedEvent } from '@domain'
+import { ParticipantJoinedEvent } from '@domain'
 import { singleton } from '@framework/injection'
 import {
   SocketEventEmitter,
@@ -14,10 +14,10 @@ import { meetingRoomId } from '../meeting-sockets'
 @singleton()
 @socketEventEmitter({
   socketEvent: 'ParticipantJoined',
-  domainEvent: MeetingParticipantJoinedEvent,
+  domainEvent: ParticipantJoinedEvent,
 })
 export class ParticipantJoinedEventEmitter extends SocketEventEmitter<
-  MeetingParticipantJoinedEvent,
+  ParticipantJoinedEvent,
   MeetingParticipantJoinedEventDto
 > {
   constructor(
@@ -27,7 +27,7 @@ export class ParticipantJoinedEventEmitter extends SocketEventEmitter<
   }
 
   protected emit(
-    domainEvent: MeetingParticipantJoinedEvent
+    domainEvent: ParticipantJoinedEvent
   ): EmittedResult<MeetingParticipantJoinedEventDto> {
     return {
       roomId: meetingRoomId({ meetingId: domainEvent.meetingId() }),

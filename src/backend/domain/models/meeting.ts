@@ -5,7 +5,7 @@ import {
   type TimeProvider,
 } from '@framework/domain'
 import { Entity, type EntityProps } from '../core'
-import type { MeetingParticipant } from './meeting-participant'
+import type { Participant } from './participant'
 import { Voting } from './voting'
 
 export interface MeetingFactoryProps {
@@ -14,7 +14,7 @@ export interface MeetingFactoryProps {
 
 export interface MeetingProps extends EntityProps {
   secretHash: string
-  participants: Map<string, MeetingParticipant>
+  participants: Map<string, Participant>
   votings: Map<string, Voting>
 }
 
@@ -42,18 +42,18 @@ export class Meeting extends Entity<MeetingProps> {
     return { meeting, secret }
   }
 
-  addParticipant(participant: MeetingParticipant, providedSecret: string) {
+  addParticipant(participant: Participant, providedSecret: string) {
     if (!this.isValidSecret(providedSecret)) {
       throw new ParticipantProvideInvalidSecretError()
     }
     this.props.participants.set(participant.userId(), participant)
   }
 
-  participant(userId: string): MeetingParticipant | undefined {
+  participant(userId: string): Participant | undefined {
     return this.props.participants.get(userId)
   }
 
-  participants(): Map<string, MeetingParticipant> {
+  participants(): Map<string, Participant> {
     return new Map(this.props.participants)
   }
 

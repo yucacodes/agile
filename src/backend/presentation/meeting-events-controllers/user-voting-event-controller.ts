@@ -1,5 +1,5 @@
 import {
-  UserVoting,
+  ParticipantVotes,
   UserVotingRequestDtoValidator,
   type UserVotingRequestDto,
   type VotingInformationDto,
@@ -19,7 +19,7 @@ export class UserVotingEventController extends SocketEventController<
   UserVotingRequestDto,
   VotingInformationDto
 > {
-  constructor(private userVoting: UserVoting) {
+  constructor(private userVoting: ParticipantVotes) {
     super()
   }
 

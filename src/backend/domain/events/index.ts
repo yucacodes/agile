@@ -1,7 +1,7 @@
 export * from './meeting-event'
-export * from './meeting-events-bus'
-export * from './meeting-participant-disconnected-event'
-export * from './meting-participant-joined-event'
-export * from './meeting-participant-voted-event'
-export * from './voting-started-event'
+export * from './participant-disconnected-event'
+export * from './participant-joined-event'
+export * from './participant-voted-event'
 export * from './voting-closed-event'
+export * from './voting-started-event'
+

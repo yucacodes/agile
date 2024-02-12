@@ -1,8 +1,22 @@
-import { type AuthInformationDto } from '../dtos'
+import { singleton } from 'tsyringe'
+import { type Constructor } from '../../generics'
 
-export abstract class UseCase<Request, Result> {
-  abstract perform(
-    request: Request,
-    authInformation: AuthInformationDto | null,
-  ): Promise<Result>
+export type UseCase<Req, Res, Auth> = {
+  perform(request: Req, auth: Auth | null): Res
+}
+
+export interface useCaseConfig {
+  roles?: string[]
+  noLogin?: boolean
+}
+
+export function useCase(config: useCaseConfig) {
+  return <Req, Res, Auth>(
+    constructor: Constructor<UseCase<Req, Res, Auth>>
+  ) => {
+    constructor.prototype.__config__ = function __config__() {
+      return config
+    }
+    singleton()(constructor)
+  }
 }

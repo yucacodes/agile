@@ -1,4 +1,4 @@
-import { type MeetingParticipantDisconnectedEvent } from '@domain'
+import { type ParticipantDisconnectedEvent } from '@domain'
 import { singleton } from '@framework/injection'
 import {
   MeetingParticipantDtoMapper,
@@ -17,11 +17,11 @@ export class MeetingParticipantDisconnectedEventDtoMapper {
   ) {}
 
   makeDto(
-    obj: MeetingParticipantDisconnectedEvent
+    obj: ParticipantDisconnectedEvent
   ): MeetingParticipantDisconnectedEventDto {
     return {
       meetingParticipant: this.meetingParticipantDtoMapper.makeDto(
-        obj.meetingParticipant()
+        obj.participant()
       ),
       time: obj.time.toString(),
     }

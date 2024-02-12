@@ -1,4 +1,4 @@
-import type { MeetingParticipant } from '@domain'
+import type { Participant } from '@domain'
 import { singleton } from '@framework/injection'
 
 export interface MeetingParticipantDto {
@@ -10,7 +10,7 @@ export interface MeetingParticipantDto {
 
 @singleton()
 export class MeetingParticipantDtoMapper {
-  makeDto(obj: MeetingParticipant): MeetingParticipantDto {
+  makeDto(obj: Participant): MeetingParticipantDto {
     return {
       userId: obj.userId(),
       name: obj.name(),
@@ -19,7 +19,7 @@ export class MeetingParticipantDtoMapper {
     }
   }
 
-  makeMapDtos(map: Map<string, MeetingParticipant>): {
+  makeMapDtos(map: Map<string, Participant>): {
     [key: string]: MeetingParticipantDto
   } {
     const result: { [key: string]: MeetingParticipantDto } = {}

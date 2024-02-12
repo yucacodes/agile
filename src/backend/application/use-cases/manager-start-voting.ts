@@ -1,41 +1,32 @@
 import {
   MeetingEventsBus,
-  VotingStartedEvent,
   MeetingsRepository,
-  Voting,
+  UserRole,
+  VotingStartedEvent,
 } from '@domain'
-import { type AuthInformationDto, UseCase } from '@framework/application'
-import { singleton } from '@framework/injection'
+import { useCase, type AuthInformationDto } from '@framework/application'
 import { type ManagerStartedVotingRequestDto } from '../dtos'
+import { TimeProvider } from '@framework/domain'
 
-@singleton()
-export class ManagerStartVoting extends UseCase<
-  ManagerStartedVotingRequestDto,
-  void
-> {
+@useCase({ roles: [UserRole.MeetingParticipant] })
+export class ManagerStartVoting {
   constructor(
+    private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
     private meetingEventsBus: MeetingEventsBus
-  ) {
-    super()
-  }
+  ) {}
 
   async perform(
     request: ManagerStartedVotingRequestDto,
-    authInformation: AuthInformationDto | null
+    authInformation: AuthInformationDto
   ): Promise<void> {
-    if (!authInformation) throw new Error('Invalid auth information')
-
     const { meetingId } = request
-
-    const meeting = await this.meetingsRepository.fetchById(meetingId)
-
+    const meeting = await this.meetingsRepository.findById(meetingId)
     if (!meeting) {
       throw new Error('Invalid meeting')
     }
 
     const participant = meeting.participant(authInformation.userId)
-
     if (!participant) {
       throw new Error('Participant not found.')
     }
@@ -44,21 +35,16 @@ export class ManagerStartVoting extends UseCase<
       throw new Error('You do not have permission to start the voting.')
     }
 
-    const participants = [...meeting.participants().values()]
-    const voting = Voting.factory({
-      timeLimit: new Date(),
-      participants,
-    })
-
-    meeting.addVoting(voting)
+    const voting = meeting.newVoting()
 
     this.meetingEventsBus.notify(
       VotingStartedEvent.factory({
-        meetingParticipant: participant,
+        meeting,
         voting,
+        timeProvider: this.timeProvider,
       })
     )
 
-    this.meetingsRepository.save(meeting)
+    this.meetingsRepository.saveUpdate(meeting)
   }
 }

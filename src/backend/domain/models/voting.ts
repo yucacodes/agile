@@ -1,18 +1,18 @@
 import { type TimeProvider } from '@framework/domain'
 import { Entity, type EntityProps } from '../core'
-import type { MeetingParticipant } from './meeting-participant'
+import type { Participant } from './participant'
 
 export interface VotingProps extends EntityProps {
   timeLimit: Date
   closedAt?: Date
   participantVotes: Map<string, number>
-  participants: Map<string, MeetingParticipant>
+  participants: Map<string, Participant>
 }
 
 export interface VotingFactoryProps {
   timeProvider: TimeProvider
   timeLimit: Date
-  participants: Map<string, MeetingParticipant>
+  participants: Map<string, Participant>
 }
 
 export class Voting extends Entity<VotingProps> {
@@ -53,7 +53,7 @@ export class Voting extends Entity<VotingProps> {
     return new Set([1, 2, 3, 5, 8, 13, 20, 100])
   }
 
-  setParticipantVote(participant: MeetingParticipant, points: number): void {
+  setParticipantVote(participant: Participant, points: number): void {
     if (!this.isOpen()) {
       throw new VotingIsClosed()
     }

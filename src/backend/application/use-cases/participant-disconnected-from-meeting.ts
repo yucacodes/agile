@@ -1,55 +1,44 @@
 import {
   MeetingEventsBus,
   MeetingsRepository,
+  ParticipantDisconnectedEvent,
   UserRole,
-  VotingClosedEvent,
 } from '@domain'
 import { useCase, type AuthInformationDto } from '@framework/application'
-import { type ManagerClosedVotingRequestDto } from '../dtos'
 import { TimeProvider } from '@framework/domain'
+import { type MeetingParticipantDisconnectedRequestDto } from '../dtos'
 
 @useCase({ roles: [UserRole.MeetingParticipant] })
-export class ManagerCloseVoting {
+export class ParticipantDisconectedFromMeeting {
   constructor(
     private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
     private meetingEventsBus: MeetingEventsBus
   ) {}
-
   async perform(
-    request: ManagerClosedVotingRequestDto,
+    request: MeetingParticipantDisconnectedRequestDto,
     authInformation: AuthInformationDto
   ): Promise<void> {
-    const { meetingId, votingId } = request
-    const meeting = await this.meetingsRepository.findById(meetingId)
+    const meeting = await this.meetingsRepository.findById(request.meetingId)
     if (!meeting) {
       throw new Error('Invalid meeting')
     }
 
     const participant = meeting.participant(authInformation.userId)
     if (!participant) {
-      throw new Error('Participant not found.')
+      throw new Error('Invalid participant')
     }
 
-    if (!participant.isManager()) {
-      throw new Error('You do not have permission to close the voting.')
-    }
-
-    const voting = meeting.voting(votingId)
-    if (!voting) {
-      throw new Error('Voting not found.')
-    }
-
-    voting.manualClose()
+    participant.setAsDisconnected()
 
     this.meetingEventsBus.notify(
-      VotingClosedEvent.factory({
+      ParticipantDisconnectedEvent.factory({
         meeting,
-        voting,
+        participant,
         timeProvider: this.timeProvider,
       })
     )
 
-    this.meetingsRepository.saveUpdate(meeting)
+    await this.meetingsRepository.saveUpdate(meeting)
   }
 }

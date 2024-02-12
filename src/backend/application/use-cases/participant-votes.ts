@@ -1,49 +1,37 @@
 import {
   MeetingEventsBus,
-  MeetingParticipantVotedEvent,
+  ParticipantVotedEvent,
   MeetingsRepository,
+  UserRole,
 } from '@domain'
-import { singleton } from '@framework/injection'
-import { UseCase, type AuthInformationDto } from '@framework/application'
-import type { VotingInformationDto, UserVotingRequestDto } from '../dtos'
+import { useCase, type AuthInformationDto } from '@framework/application'
+import type { UserVotingRequestDto, VotingInformationDto } from '../dtos'
 import { TimeProvider } from '@framework/domain'
 
-@singleton()
-export class UserVoting extends UseCase<
-  UserVotingRequestDto,
-  VotingInformationDto
-> {
+@useCase({ roles: [UserRole.MeetingParticipant] })
+export class ParticipantVotes {
   constructor(
+    private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
-    private timeManager: TimeProvider,
     private meetingEventsBus: MeetingEventsBus
-  ) {
-    super()
-  }
+  ) {}
 
   async perform(
     request: UserVotingRequestDto,
-    authInformation?: AuthInformationDto | null
+    authInformation: AuthInformationDto
   ): Promise<VotingInformationDto> {
-    if (!authInformation) throw new Error('Invalid auth information')
-
     const { meetingId, votingId, point } = request
-
-    const meeting = await this.meetingsRepository.fetchById(meetingId)
-
+    const meeting = await this.meetingsRepository.findById(meetingId)
     if (!meeting) {
       throw new Error('Meeting not found.')
     }
 
-    const voting = meeting.votingById(votingId)
-
+    const voting = meeting.voting(votingId)
     if (!voting) {
       throw new Error('Voting not found.')
     }
 
-    const isVotingOpen = voting.isOpen(this.timeManager)
-
-    if (!isVotingOpen) {
+    if (!voting.isOpen()) {
       throw new Error('Voting is closed.')
     }
 
@@ -53,12 +41,14 @@ export class UserVoting extends UseCase<
       throw new Error('Participant not found.')
     }
 
-    voting.setParticipantVote(participant, point, this.timeManager)
+    voting.setParticipantVote(participant, point)
 
     this.meetingEventsBus.notify(
-      MeetingParticipantVotedEvent.factory({
-        meetingParticipant: participant,
+      ParticipantVotedEvent.factory({
+        meeting,
+        participant,
         voting: voting,
+        timeProvider: this.timeProvider,
       })
     )
 

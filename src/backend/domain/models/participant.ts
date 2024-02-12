@@ -1,22 +1,22 @@
 import { Model } from '../core/model'
 import type { User } from './user'
 
-export interface MeetingParticipantProps {
+export interface ParticipantProps {
   userId: string
   name: string
   isManager: boolean
   isConnected: boolean
 }
 
-export interface MeetingParticipantFactoryProps {
+export interface ParticipantFactoryProps {
   user: User
   name: string
   isManager?: boolean
 }
 
-export class MeetingParticipant extends Model<MeetingParticipantProps> {
-  static factory(props: MeetingParticipantFactoryProps): MeetingParticipant {
-    return new MeetingParticipant({
+export class Participant extends Model<ParticipantProps> {
+  static factory(props: ParticipantFactoryProps): Participant {
+    return new Participant({
       userId: props.user.id(),
       name: props.name,
       isManager: props.isManager ?? false,

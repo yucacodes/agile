@@ -10,7 +10,7 @@ import {
   type Signal,
   type QRL,
 } from '@builder.io/qwik'
-import { MeetingParticipant } from '@domain'
+import { Participant } from '@domain'
 import type { MeetingClientSocket } from '@presentation'
 import { useSocket } from '~/hooks/useSocket'
 

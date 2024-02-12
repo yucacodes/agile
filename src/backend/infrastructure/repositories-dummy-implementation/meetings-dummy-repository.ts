@@ -10,11 +10,11 @@ export class MeetingsDummyRepository extends MeetingsRepository {
   private helper: DummyRepositoryHelper<MeetingProps, Meeting> =
     new DummyRepositoryHelper(items)
 
-  async fetchById(id: string): Promise<Meeting | null> {
+  async findById(id: string): Promise<Meeting | null> {
     return this.helper.fetchById(id)
   }
 
-  async fetchByIds(ids: string[]): Promise<Map<string, Meeting>> {
+  async findByIds(ids: string[]): Promise<Map<string, Meeting>> {
     return this.helper.fetchByIds(ids)
   }
 

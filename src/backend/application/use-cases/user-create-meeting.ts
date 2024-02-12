@@ -1,47 +1,52 @@
-import { Meeting, MeetingParticipant, MeetingsRepository } from '@domain'
-import { GenerateAuthInformation, UseCase } from '@framework/application'
-import { User } from '@framework/domain'
-import { singleton } from '@framework/injection'
+import {
+  Meeting,
+  Participant,
+  MeetingsRepository,
+  User,
+  UserRole,
+} from '@domain'
+import { GenerateAuthInformation, useCase } from '@framework/application'
+import { TimeProvider } from '@framework/domain'
 import {
   MeetingDtoMapper,
   type MeetingWithAuthInformationDto,
   type UserCreateMeetingRequestDto,
 } from '../dtos'
 
-@singleton()
-export class UserCreateMeeting extends UseCase<
-  UserCreateMeetingRequestDto,
-  MeetingWithAuthInformationDto
-> {
+@useCase({ noLogin: true })
+export class UserCreateMeeting {
   constructor(
+    private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
     private generateMeetingAuthInformation: GenerateAuthInformation,
     private meetingDtoMapper: MeetingDtoMapper
-  ) {
-    super()
-  }
+  ) {}
 
   async perform(
     request: UserCreateMeetingRequestDto
   ): Promise<MeetingWithAuthInformationDto> {
-    const { meeting: newMeeting, secret: meetingSecret } = Meeting.factory()
+    const { meeting, secret } = Meeting.factory({
+      timeProvider: this.timeProvider,
+    })
 
-    const user = User.factory({ roles: ['MeetingParticipant'] })
+    const user = User.factory({
+      timeProvider: this.timeProvider,
+      roles: [UserRole.MeetingParticipant],
+    })
 
-    const firstParticipant = MeetingParticipant.factory({
-      meeting: newMeeting,
+    const manager = Participant.factory({
       name: request.name,
       isManager: true,
       user,
     })
 
-    newMeeting.addParticipant(firstParticipant, meetingSecret)
+    meeting.addParticipant(manager, secret)
 
-    await this.meetingsRepository.save(newMeeting)
+    await this.meetingsRepository.saveNew(meeting)
 
     return {
-      secret: meetingSecret,
-      meeting: this.meetingDtoMapper.makeDto(newMeeting),
+      secret,
+      meeting: this.meetingDtoMapper.makeDto(meeting),
       authInfo: this.generateMeetingAuthInformation.perform(user),
     }
   }

@@ -2,7 +2,7 @@ import {
   MeetingParticipantVotedEventDtoMapper,
   type MeetingParticipantVotedEventDto,
 } from '@application'
-import { MeetingParticipantVotedEvent } from '@domain'
+import { ParticipantVotedEvent } from '@domain'
 import { singleton } from '@framework/injection'
 import {
   SocketEventEmitter,
@@ -15,10 +15,10 @@ import { TimeProvider } from '@framework/domain'
 @singleton()
 @socketEventEmitter({
   socketEvent: 'ParticipantVoted',
-  domainEvent: MeetingParticipantVotedEvent,
+  domainEvent: ParticipantVotedEvent,
 })
 export class ParticipantVotedEventEmitter extends SocketEventEmitter<
-  MeetingParticipantVotedEvent,
+  ParticipantVotedEvent,
   MeetingParticipantVotedEventDto
 > {
   constructor(
@@ -29,7 +29,7 @@ export class ParticipantVotedEventEmitter extends SocketEventEmitter<
   }
 
   protected emit(
-    domainEvent: MeetingParticipantVotedEvent
+    domainEvent: ParticipantVotedEvent
   ): EmittedResult<MeetingParticipantVotedEventDto> {
     return {
       roomId: meetingRoomId({ meetingId: domainEvent.meetingId() }),

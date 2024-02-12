@@ -12,7 +12,7 @@ export class ManagerStartedVotingEventDtoMapper {
 
   makeDto(obj: VotingStartedEvent): ManagerStartedVotingEventDto {
     return {
-      votingId: obj.voting(),
+      votingId: obj.votingId(),
       time: obj.time.toString(),
     }
   }
