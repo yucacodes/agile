@@ -10,7 +10,7 @@ import {
   type EmittedResult,
 } from '@framework/presentation'
 import { meetingRoomId } from '../meeting-sockets'
-import { TimeManager } from '@framework/domain'
+import { TimeProvider } from '@framework/domain'
 
 @singleton()
 @socketEventEmitter({
@@ -23,7 +23,7 @@ export class ParticipantVotedEventEmitter extends SocketEventEmitter<
 > {
   constructor(
     private meetingParticipantVotedEventDtoMapper: MeetingParticipantVotedEventDtoMapper,
-    private timeManager: TimeManager
+    private timeManager: TimeProvider
   ) {
     super()
   }

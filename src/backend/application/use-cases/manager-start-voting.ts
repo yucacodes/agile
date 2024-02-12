@@ -34,7 +34,7 @@ export class ManagerStartVoting extends UseCase<
       throw new Error('Invalid meeting')
     }
 
-    const participant = meeting.participantById(authInformation.userId)
+    const participant = meeting.participant(authInformation.userId)
 
     if (!participant) {
       throw new Error('Participant not found.')

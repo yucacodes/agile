@@ -1,81 +1,85 @@
-import { Entity, type TimeManager, type EntityProps } from '@framework/domain'
+import { type TimeProvider } from '@framework/domain'
+import { Entity, type EntityProps } from '../core'
 import type { MeetingParticipant } from './meeting-participant'
 
 export interface VotingProps extends EntityProps {
   timeLimit: Date
-  isOpen: boolean
-  userVotes: Map<string, number>
-  participants: MeetingParticipant[]
+  closedAt?: Date
+  participantVotes: Map<string, number>
+  participants: Map<string, MeetingParticipant>
 }
 
 export interface VotingFactoryProps {
+  timeProvider: TimeProvider
   timeLimit: Date
-  participants: MeetingParticipant[]
+  participants: Map<string, MeetingParticipant>
 }
 
 export class Voting extends Entity<VotingProps> {
   static factory(props: VotingFactoryProps): Voting {
-    return new Voting({
-      ...this.factoryBaseProps(),
-      timeLimit: props.timeLimit,
-      isOpen: false,
-      userVotes: new Map(),
-      participants: [],
-    })
+    return new Voting(
+      {
+        ...this.factoryEntityProps(props.timeProvider),
+        timeLimit: props.timeLimit,
+        participantVotes: new Map(),
+        participants: props.participants,
+      },
+      props.timeProvider
+    )
   }
 
-  validate(): void {
-    // TODO: implement
+  constructor(props: VotingProps, timeProvider: TimeProvider) {
+    super(props, timeProvider)
   }
 
   timeLimit(): Date {
-    return this.props.timeLimit
+    return new Date(this.props.timeLimit)
   }
 
-  isOpen(timeManager: TimeManager): boolean {
-    if (!this.props.isOpen) return false
-    return this.props.timeLimit.getTime() > timeManager.now().getTime()
+  isOpen(): boolean {
+    if (this.props.closedAt) return false
+    return this.props.timeLimit.getTime() >= this.timeProvider.now().getTime()
   }
 
   votes(): Map<string, number> {
-    return new Map(this.props.userVotes)
+    return new Map(this.props.participantVotes)
   }
 
-  manualCloseVoting(): void {
-    this.props.isOpen = false
+  manualClose(): void {
+    this.props.closedAt = this.timeProvider.now()
   }
 
-  startVoting(): void {
-    this.props.isOpen = true
+  allowedPoints(): Set<number> {
+    return new Set([1, 2, 3, 5, 8, 13, 20, 100])
   }
 
-  setParticipantVote(
-    participant: MeetingParticipant,
-    points: number,
-    timeManager: TimeManager
-  ): void {
-    if (!this.isOpen(timeManager)) {
+  setParticipantVote(participant: MeetingParticipant, points: number): void {
+    if (!this.isOpen()) {
       throw new VotingIsClosed()
     }
+    if (!this.props.participants.has(participant.userId())) {
+      throw new InvalidParticipant()
+    }
 
-    const allowedPoints = [0, 0.5, 1, 2, 3, 5, 8, 13, 20, 100]
+    const allowedPoints = this.allowedPoints()
 
-    if (!allowedPoints.includes(points)) {
+    if (!allowedPoints.has(points)) {
       throw new InvalidPoints()
     }
 
-    this.props.userVotes.set(participant.userId(), points)
+    this.props.participantVotes.set(participant.userId(), points)
 
     if (this.allParticipantsVoted()) {
-      this.props.isOpen = false
+      this.props.closedAt = this.timeProvider.now()
     }
+
+    this.notifyUpdate()
   }
 
   // Private methods
-
   private allParticipantsVoted(): boolean {
-    return this.props.participants.every((participant) => {
-      return this.props.userVotes.has(participant.userId())
+    return Array.from(this.props.participants.keys()).every((userId) => {
+      return this.props.participantVotes.has(userId)
     })
   }
 }
@@ -84,3 +88,4 @@ export class Voting extends Entity<VotingProps> {
 
 export class VotingIsClosed extends Error {}
 export class InvalidPoints extends Error {}
+export class InvalidParticipant extends Error {}

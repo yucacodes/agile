@@ -25,3 +25,5 @@ export abstract class NoSqlDboMapper<T, DBO> extends DboMapper {
     throw new Error('Not implemented')
   }
 }
+
+

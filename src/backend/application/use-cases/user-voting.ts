@@ -6,7 +6,7 @@ import {
 import { singleton } from '@framework/injection'
 import { UseCase, type AuthInformationDto } from '@framework/application'
 import type { VotingInformationDto, UserVotingRequestDto } from '../dtos'
-import { TimeManager } from '@framework/domain'
+import { TimeProvider } from '@framework/domain'
 
 @singleton()
 export class UserVoting extends UseCase<
@@ -15,7 +15,7 @@ export class UserVoting extends UseCase<
 > {
   constructor(
     private meetingsRepository: MeetingsRepository,
-    private timeManager: TimeManager,
+    private timeManager: TimeProvider,
     private meetingEventsBus: MeetingEventsBus
   ) {
     super()
@@ -47,7 +47,7 @@ export class UserVoting extends UseCase<
       throw new Error('Voting is closed.')
     }
 
-    const participant = meeting.participantById(authInformation.userId)
+    const participant = meeting.participant(authInformation.userId)
 
     if (!participant) {
       throw new Error('Participant not found.')

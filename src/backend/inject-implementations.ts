@@ -1,5 +1,5 @@
 import { MeetingEventsBus, MeetingsRepository } from '@domain'
-import { TimeManager } from '@framework/domain'
+import { TimeProvider } from '@framework/domain'
 import { ServerTimeManager } from '@framework/infrastructure'
 import { container } from '@framework/injection'
 import {
@@ -17,7 +17,7 @@ const socketIoServer = new SocketIoServer(httpServer as any)
 container.register('SocketIoServer', { useValue: socketIoServer })
 
 // TimeManager
-container.registerType(TimeManager as any, ServerTimeManager)
+container.registerType(TimeProvider as any, ServerTimeManager)
 
 // Repositories
 container.registerType(MeetingsRepository as any, MeetingsRedisRepository)

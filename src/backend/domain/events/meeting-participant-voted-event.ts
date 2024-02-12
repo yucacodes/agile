@@ -1,4 +1,4 @@
-import { type TimeManager } from '@framework/domain'
+import { type TimeProvider } from '@framework/domain'
 import { type Voting, type MeetingParticipant } from '../models'
 import { MeetingEvent } from './meeting-event'
 
@@ -40,7 +40,7 @@ export class MeetingParticipantVotedEvent extends MeetingEvent {
     return this.props.voting.id()
   }
 
-  votingClosed(timeManager: TimeManager): boolean {
+  votingClosed(timeManager: TimeProvider): boolean {
     return this.props.voting.isOpen(timeManager)
   }
 }

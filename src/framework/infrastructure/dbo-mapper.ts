@@ -1,9 +1,20 @@
-import { type Model } from '../domain'
+import { singleton } from 'tsyringe'
+import { type Constructor } from '../generics'
 
-type ModelProps<M> = M extends Model<infer P> ? P : unknown
+export type DboMapper<M, DBO> = {
+  map(model: M): DBO
+  revert(dbo: DBO): M
+}
 
-export class DboMapper {
-  modelProps<M extends Model<unknown>>(model: M): ModelProps<M> {
-    return model['props'] as any
+export interface dboMapperConfig<M> {
+  model: Constructor<M>
+}
+
+export function dboMapper<M>(config: dboMapperConfig<M>) {
+  return <DBO>(constructor: Constructor<DboMapper<M, DBO>>) => {
+    constructor.prototype.__config__ = function __config__() {
+      return config
+    }
+    singleton()(constructor)
   }
 }

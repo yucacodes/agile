@@ -1,5 +1,5 @@
 import type { MeetingParticipantVotedEvent } from '@domain'
-import type { TimeManager } from '@framework/domain'
+import type { TimeProvider } from '@framework/domain'
 import { singleton } from '@framework/injection'
 
 export interface MeetingParticipantVotedEventDto {
@@ -13,7 +13,7 @@ export interface MeetingParticipantVotedEventDto {
 export class MeetingParticipantVotedEventDtoMapper {
   makeDto(
     obj: MeetingParticipantVotedEvent,
-    timeManager: TimeManager
+    timeManager: TimeProvider
   ): MeetingParticipantVotedEventDto {
     const meetingParticipant = obj.meetingParticipant()
     return {

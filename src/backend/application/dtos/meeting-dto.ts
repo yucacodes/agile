@@ -5,6 +5,7 @@ import {
   MeetingParticipantDtoMapper,
   type MeetingParticipantDto,
 } from './meeting-participant-dto'
+import { dboMapper } from '@framework/infrastructure'
 
 export interface MeetingDto extends EntityDto {
   participants: { [key: string]: MeetingParticipantDto }

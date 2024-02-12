@@ -36,7 +36,7 @@ export class UserDisconnectedFromMeeting extends UseCase<
 
     this.meetingEventsBus.notify(
       MeetingParticipantDisconnectedEvent.factory({
-        meetingParticipant: meeting.participantById(authInformation.userId)!,
+        meetingParticipant: meeting.participant(authInformation.userId)!,
       })
     )
   }

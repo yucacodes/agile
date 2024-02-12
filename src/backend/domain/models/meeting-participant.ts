@@ -1,9 +1,8 @@
-import { type Meeting } from './meeting'
-import type { User } from '@framework/domain'
+import { Model } from '../core/model'
+import type { User } from './user'
 
 export interface MeetingParticipantProps {
   userId: string
-  meetingId: string
   name: string
   isManager: boolean
   isConnected: boolean
@@ -11,23 +10,19 @@ export interface MeetingParticipantProps {
 
 export interface MeetingParticipantFactoryProps {
   user: User
-  meeting: Meeting
   name: string
   isManager?: boolean
 }
 
-export class MeetingParticipant {
+export class MeetingParticipant extends Model<MeetingParticipantProps> {
   static factory(props: MeetingParticipantFactoryProps): MeetingParticipant {
     return new MeetingParticipant({
       userId: props.user.id(),
-      meetingId: props.meeting.id(),
       name: props.name,
       isManager: props.isManager ?? false,
       isConnected: true,
     })
-  }
-
-  constructor(private props: MeetingParticipantProps) {}
+  }  
 
   userId(): string {
     return this.props.userId
@@ -41,10 +36,6 @@ export class MeetingParticipant {
     return this.props.isConnected
   }
 
-  meetingId(): string {
-    return this.props.meetingId
-  }
-
   name(): string {
     return this.props.name
   }
@@ -55,9 +46,5 @@ export class MeetingParticipant {
 
   setAsConnected() {
     this.props.isConnected = true
-  }
-
-  validate(): void {
-    // TODO: implement
   }
 }

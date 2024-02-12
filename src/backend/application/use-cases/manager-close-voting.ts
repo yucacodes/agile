@@ -33,7 +33,7 @@ export class ManagerCloseVoting extends UseCase<
       throw new Error('Invalid meeting')
     }
 
-    const participant = meeting.participantById(authInformation.userId)
+    const participant = meeting.participant(authInformation.userId)
 
     if (!participant) {
       throw new Error('Participant not found.')
@@ -49,7 +49,7 @@ export class ManagerCloseVoting extends UseCase<
       throw new Error('Voting not found.')
     }
 
-    voting.manualCloseVoting()
+    voting.manualClose()
 
     this.meetingEventsBus.notify(
       VotingClosedEvent.factory({
