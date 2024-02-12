@@ -60,7 +60,17 @@ export default component$(() => {
 
     socket.value?.on('ManagerStartedVoting', (payload) => {
       if (payload.votingId) {
-        votingId!.value = payload.votingId
+        votingId!.value = payload.votingId;
+        isStartedMeeting!.value = true
+      }
+
+    })
+
+    socket.value?.on('ManagerClosedVoting', (payload) => {
+      console.log(payload);
+    
+      if (payload.voting) {
+        isStartedMeeting!.value = false
       }
     })
 
@@ -88,10 +98,28 @@ export default component$(() => {
       socket.value?.emit('ManagerStartedVoting', {
         meetingId: idMeeting.value,
       }, (payload) => {
-        isStartedMeeting.value! = true
+      
 
       })
     }
+
+  })
+
+    const CloseVoting = $(() => {
+      if (!idMeeting.value) {
+        addNotification({
+          message: 'Error al iniciar la votación',
+          status: 'error',
+        })
+      } else {
+        socket.value?.emit('ManagerClosedVoting', {
+          meetingId: idMeeting.value!,
+          votingId: votingId.value!
+        }, (payload) => {
+        
+  
+        })
+      }
 
   })
 
@@ -138,7 +166,7 @@ export default component$(() => {
           isStartedMeeting?.value && (
             <>
               <HasPermission>
-                <PrimaryButton action={action} text="CLEAR VOTES" />
+                <PrimaryButton action={CloseVoting} text="Cerrar Votacion" />
               </HasPermission>
               <HasPermission>
                 <PrimaryButton action={action} text="SHOW VOTES" />
@@ -153,6 +181,8 @@ export default component$(() => {
     </main>
   )
 })
+
+
 
 export const head: DocumentHead = {
   title: 'Play Session',
