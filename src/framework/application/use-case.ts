@@ -1,5 +1,5 @@
 import { singleton } from 'tsyringe'
-import { type Constructor } from '../../generics'
+import { type Constructor } from '../generics'
 
 export type UseCase<Req, Res, Auth> = {
   perform(request: Req, auth: Auth | null): Res
