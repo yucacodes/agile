@@ -4,9 +4,10 @@ import {
   UserRole,
   VotingStartedEvent,
 } from '@domain'
-import { useCase, type AuthInformationDto } from '@framework/application'
-import { type ManagerStartedVotingRequestDto } from '../dtos'
+import { useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
+import type { AuthInformationDto } from '../dtos'
+import { type ManagerStartedVotingRequestDto } from '../dtos'
 
 @useCase({ roles: [UserRole.MeetingParticipant] })
 export class ManagerStartVoting {

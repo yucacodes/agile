@@ -46,7 +46,7 @@ export class UserCreateMeeting {
 
     return {
       secret,
-      meeting: this.meetingDtoMapper.makeDto(meeting),
+      meeting: this.meetingDtoMapper.map(meeting),
       authInfo: this.generateMeetingAuthInformation.perform(user),
     }
   }

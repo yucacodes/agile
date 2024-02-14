@@ -4,9 +4,10 @@ import {
   UserRole,
   VotingClosedEvent,
 } from '@domain'
-import { useCase, type AuthInformationDto } from '@framework/application'
-import { type ManagerClosedVotingRequestDto } from '../dtos'
+import { useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
+import type { AuthInformationDto } from '../dtos'
+import { type ManagerClosedVotingRequestDto } from '../dtos'
 
 @useCase({ roles: [UserRole.MeetingParticipant] })
 export class ManagerCloseVoting {
@@ -50,6 +51,6 @@ export class ManagerCloseVoting {
       })
     )
 
-    this.meetingsRepository.saveUpdate(meeting)
+    await this.meetingsRepository.saveUpdate(meeting)
   }
 }

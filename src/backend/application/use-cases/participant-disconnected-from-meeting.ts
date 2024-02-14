@@ -4,9 +4,12 @@ import {
   ParticipantDisconnectedEvent,
   UserRole,
 } from '@domain'
-import { useCase, type AuthInformationDto } from '@framework/application'
+import { useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
-import { type MeetingParticipantDisconnectedRequestDto } from '../dtos'
+import {
+  type AuthInformationDto,
+  type MeetingParticipantDisconnectedRequestDto,
+} from '../dtos'
 
 @useCase({ roles: [UserRole.MeetingParticipant] })
 export class ParticipantDisconectedFromMeeting {

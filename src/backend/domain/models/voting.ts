@@ -2,16 +2,16 @@ import { type TimeProvider } from '@framework/domain'
 import { Entity, type EntityProps } from '../core'
 import type { Participant } from './participant'
 
+export interface VotingFactoryProps {
+  timeProvider: TimeProvider
+  timeLimit: Date
+  participants: Map<string, Participant>
+}
+
 export interface VotingProps extends EntityProps {
   timeLimit: Date
   closedAt?: Date
   participantVotes: Map<string, number>
-  participants: Map<string, Participant>
-}
-
-export interface VotingFactoryProps {
-  timeProvider: TimeProvider
-  timeLimit: Date
   participants: Map<string, Participant>
 }
 

@@ -1,12 +1,12 @@
 import {
   MeetingEventsBus,
-  ParticipantVotedEvent,
   MeetingsRepository,
+  ParticipantVotedEvent,
   UserRole,
 } from '@domain'
-import { useCase, type AuthInformationDto } from '@framework/application'
-import type { UserVotingRequestDto, VotingInformationDto } from '../dtos'
+import { useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
+import type { AuthInformationDto, UserVotingRequestDto } from '../dtos'
 
 @useCase({ roles: [UserRole.MeetingParticipant] })
 export class ParticipantVotes {
@@ -19,7 +19,7 @@ export class ParticipantVotes {
   async perform(
     request: UserVotingRequestDto,
     authInformation: AuthInformationDto
-  ): Promise<VotingInformationDto> {
+  ): Promise<void> {
     const { meetingId, votingId, point } = request
     const meeting = await this.meetingsRepository.findById(meetingId)
     if (!meeting) {
@@ -51,11 +51,5 @@ export class ParticipantVotes {
         timeProvider: this.timeProvider,
       })
     )
-
-    return {
-      userId: participant.userId(),
-      point,
-      votingId: voting.id(),
-    }
   }
 }

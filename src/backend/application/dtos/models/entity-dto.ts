@@ -1,4 +1,4 @@
-import type { Entity, EntityProps } from '@framework/domain'
+import type { Entity, EntityProps } from '@domain'
 
 export interface EntityDto {
   id: string
@@ -7,7 +7,7 @@ export interface EntityDto {
 }
 
 export class EntityDtoMapper {
-  makeDto<P extends EntityProps, E extends Entity<P>>(obj: E): EntityDto {
+  map<P extends EntityProps, E extends Entity<P>>(obj: E): EntityDto {
     return {
       id: obj.id(),
       createdAt: obj.createdAt().toISOString(),
