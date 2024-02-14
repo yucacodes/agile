@@ -1,12 +1,13 @@
 import {
   Meeting,
-  Participant,
   MeetingsRepository,
+  Participant,
   User,
   UserRole,
 } from '@domain'
-import { GenerateAuthInformation, useCase } from '@framework/application'
+import { useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
+import { GenerateAuthInformation } from '../auth'
 import {
   MeetingDtoMapper,
   type MeetingWithAuthInformationDto,
