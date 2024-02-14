@@ -1,5 +1,5 @@
 import {
-  UserDisconnectedFromMeeting,
+  ParticipantDisconectedFromMeeting,
   MeetingParticipantDisconnectedRequestDtoValidator,
   type MeetingParticipantDisconnectedRequestDto,
 } from '@application'
@@ -21,7 +21,7 @@ export class UserDisconnectedFromMeetingEventController extends SocketEventContr
   void
 > {
   constructor(
-    private userDisconnectedFromMeeting: UserDisconnectedFromMeeting
+    private userDisconnectedFromMeeting: ParticipantDisconectedFromMeeting
   ) {
     super()
   }

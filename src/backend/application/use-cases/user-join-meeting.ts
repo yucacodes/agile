@@ -1,33 +1,29 @@
 import {
-  MeetingEventsBus,
   MeetingsRepository,
   Participant,
   ParticipantJoinedEvent,
   User,
-  UserRole,
 } from '@domain'
-import { useCase } from '@framework/application'
+import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
-import { GenerateAuthInformation } from '../auth'
 import {
   MeetingDtoMapper,
-  type MeetingWithAuthInformationDto,
+  type AuthInformationDto,
+  type MeetingDto,
   type UserJoinMeetingRequestDto,
 } from '../dtos'
 
-@useCase({ noLogin: true })
+@useCase({ allowNoAuth: true })
 export class UserJoinMeeting {
   constructor(
+    private authorization: Authorization<AuthInformationDto>,
     private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
-    private generateAuthInformation: GenerateAuthInformation,
     private meetingDtoMapper: MeetingDtoMapper,
-    private meetingEventsBus: MeetingEventsBus
+    private eventsBus: EventsBus
   ) {}
 
-  async perform(
-    request: UserJoinMeetingRequestDto
-  ): Promise<MeetingWithAuthInformationDto> {
+  async perform(request: UserJoinMeetingRequestDto): Promise<MeetingDto> {
     const meeting = await this.meetingsRepository.findById(request.meetingId)
 
     if (!meeting) {
@@ -35,7 +31,6 @@ export class UserJoinMeeting {
     }
 
     const user = User.factory({
-      roles: [UserRole.MeetingParticipant],
       timeProvider: this.timeProvider,
     })
 
@@ -46,18 +41,20 @@ export class UserJoinMeeting {
 
     meeting.addParticipant(participant, request.secret)
 
-    this.meetingEventsBus.notify(
-      ParticipantJoinedEvent.factory({
-        participant,
-        meeting,
-        timeProvider: this.timeProvider,
-      })
-    )
+    const event = ParticipantJoinedEvent.factory({
+      participant,
+      meeting,
+      timeProvider: this.timeProvider,
+    })
 
-    return {
-      meeting: this.meetingDtoMapper.map(meeting),
-      authInfo: this.generateAuthInformation.perform(user),
-      secret: request.secret,
-    }
+    this.eventsBus.notify({ event, channel: `meeting/${meeting.id}` })
+    this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
+
+    this.authorization.set({
+      userId: user.id(),
+      roles: [`meeting/${meeting.id()}/participant`],
+    })
+
+    return this.meetingDtoMapper.map(meeting)
   }
 }

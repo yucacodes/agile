@@ -1,3 +1,5 @@
+export * from './auth-provider'
+export * from './controller'
 export * from './sockets'
 export * from './environment'
 export * from './logger'

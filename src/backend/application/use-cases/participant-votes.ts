@@ -1,25 +1,19 @@
-import {
-  MeetingEventsBus,
-  MeetingsRepository,
-  ParticipantVotedEvent,
-  UserRole,
-} from '@domain'
-import { useCase } from '@framework/application'
+import { MeetingsRepository, ParticipantVotedEvent } from '@domain'
+import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
 import type { AuthInformationDto, UserVotingRequestDto } from '../dtos'
 
-@useCase({ roles: [UserRole.MeetingParticipant] })
+@useCase({ allowRole: (req) => `meeting/${req.meetingId}/participant` })
 export class ParticipantVotes {
   constructor(
+    private authorization: Authorization<AuthInformationDto>,
     private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
-    private meetingEventsBus: MeetingEventsBus
+    private eventsBus: EventsBus
   ) {}
 
-  async perform(
-    request: UserVotingRequestDto,
-    authInformation: AuthInformationDto
-  ): Promise<void> {
+  async perform(request: UserVotingRequestDto): Promise<void> {
+    const auth = this.authorization.get()
     const { meetingId, votingId, point } = request
     const meeting = await this.meetingsRepository.findById(meetingId)
     if (!meeting) {
@@ -35,7 +29,7 @@ export class ParticipantVotes {
       throw new Error('Voting is closed.')
     }
 
-    const participant = meeting.participant(authInformation.userId)
+    const participant = meeting.participant(auth.userId)
 
     if (!participant) {
       throw new Error('Participant not found.')
@@ -43,13 +37,13 @@ export class ParticipantVotes {
 
     voting.setParticipantVote(participant, point)
 
-    this.meetingEventsBus.notify(
-      ParticipantVotedEvent.factory({
-        meeting,
-        participant,
-        voting: voting,
-        timeProvider: this.timeProvider,
-      })
-    )
+    const event = ParticipantVotedEvent.factory({
+      meeting,
+      participant,
+      voting: voting,
+      timeProvider: this.timeProvider,
+    })
+
+    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
   }
 }

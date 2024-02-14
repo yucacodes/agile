@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe'
 import { type Constructor } from '../generics'
-import { type Mapper } from './mapper'
+import { type Mapper } from '../mapper'
 
 export interface DtoAutoMapperConfig {
   modelMappers: Map<Function, Mapper<any, any>>

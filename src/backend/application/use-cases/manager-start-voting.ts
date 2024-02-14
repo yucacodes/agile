@@ -1,33 +1,27 @@
-import {
-  MeetingEventsBus,
-  MeetingsRepository,
-  UserRole,
-  VotingStartedEvent,
-} from '@domain'
-import { useCase } from '@framework/application'
+import { MeetingsRepository, VotingStartedEvent } from '@domain'
+import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
 import type { AuthInformationDto } from '../dtos'
 import { type ManagerStartedVotingRequestDto } from '../dtos'
 
-@useCase({ roles: [UserRole.MeetingParticipant] })
+@useCase({ allowRole: (req) => `meeting/${req.meetingId}/participant` })
 export class ManagerStartVoting {
   constructor(
+    private eventsBus: EventsBus,
+    private authorization: Authorization<AuthInformationDto>,
     private timeProvider: TimeProvider,
-    private meetingsRepository: MeetingsRepository,
-    private meetingEventsBus: MeetingEventsBus
+    private meetingsRepository: MeetingsRepository
   ) {}
 
-  async perform(
-    request: ManagerStartedVotingRequestDto,
-    authInformation: AuthInformationDto
-  ): Promise<void> {
+  async perform(request: ManagerStartedVotingRequestDto): Promise<void> {
+    const auth = this.authorization.get()
     const { meetingId } = request
     const meeting = await this.meetingsRepository.findById(meetingId)
     if (!meeting) {
       throw new Error('Invalid meeting')
     }
 
-    const participant = meeting.participant(authInformation.userId)
+    const participant = meeting.participant(auth.userId)
     if (!participant) {
       throw new Error('Participant not found.')
     }
@@ -38,14 +32,14 @@ export class ManagerStartVoting {
 
     const voting = meeting.newVoting()
 
-    this.meetingEventsBus.notify(
-      VotingStartedEvent.factory({
-        meeting,
-        voting,
-        timeProvider: this.timeProvider,
-      })
-    )
+    const event = VotingStartedEvent.factory({
+      meeting,
+      voting,
+      timeProvider: this.timeProvider,
+    })
 
-    this.meetingsRepository.saveUpdate(meeting)
+    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
+
+    await this.meetingsRepository.saveUpdate(meeting)
   }
 }
