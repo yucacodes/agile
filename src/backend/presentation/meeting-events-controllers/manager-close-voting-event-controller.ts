@@ -1,7 +1,7 @@
 import {
   ManagerCloseVoting,
-  ManagerClosedVotingRequestDtoValidator,
-  type ManagerClosedVotingRequestDto,
+  ManagerCloseVotingRequestDtoValidator,
+  type ManagerCloseVotingRequestDto,
 } from '@application'
 import { type AuthInformationDto } from '@framework/application'
 import { singleton } from '@framework/injection'
@@ -13,10 +13,10 @@ import {
 @singleton()
 @socketEventController({
   socketEvent: 'ManagerClosedVoting',
-  requestValidator: ManagerClosedVotingRequestDtoValidator,
+  requestValidator: ManagerCloseVotingRequestDtoValidator,
 })
 export class ManagerCloseVotingEventController extends SocketEventController<
-  ManagerClosedVotingRequestDto,
+  ManagerCloseVotingRequestDto,
   void
 > {
   constructor(private managerCloseVoting: ManagerCloseVoting) {
@@ -24,7 +24,7 @@ export class ManagerCloseVotingEventController extends SocketEventController<
   }
 
   protected async handle(
-    request: ManagerClosedVotingRequestDto,
+    request: ManagerCloseVotingRequestDto,
     authData: AuthInformationDto | null
   ): Promise<void> {
     await this.managerCloseVoting.perform(request, authData)

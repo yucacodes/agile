@@ -1,9 +1,16 @@
 import { MeetingsRepository, ParticipantVotedEvent } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
-import type { AuthInformationDto, UserVotingRequestDto } from '../dtos'
+import {
+  ParticipantVotesRequestDtoValidator,
+  type AuthInformationDto,
+  type ParticipantVotesRequestDto,
+} from '../dtos'
 
-@useCase({ allowRole: (req) => `meeting/${req.meetingId}/participant` })
+@useCase({
+  allowRole: (req) => `meeting/${req.meetingId}/participant`,
+  requestValidator: ParticipantVotesRequestDtoValidator,
+})
 export class ParticipantVotes {
   constructor(
     private authorization: Authorization<AuthInformationDto>,
@@ -12,7 +19,7 @@ export class ParticipantVotes {
     private eventsBus: EventsBus
   ) {}
 
-  async perform(request: UserVotingRequestDto): Promise<void> {
+  async perform(request: ParticipantVotesRequestDto): Promise<void> {
     const auth = this.authorization.get()
     const { meetingId, votingId, point } = request
     const meeting = await this.meetingsRepository.findById(meetingId)

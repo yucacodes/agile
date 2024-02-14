@@ -1,12 +1,12 @@
 import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator'
 
-export interface UserVotingRequestDto {
+export interface ParticipantVotesRequestDto {
   meetingId: string
   votingId: string
   point: number
 }
 
-export class UserVotingRequestDtoValidator implements UserVotingRequestDto {
+export class ParticipantVotesRequestDtoValidator implements ParticipantVotesRequestDto {
   @IsString()
   @IsNotEmpty()
   meetingId: string = ''

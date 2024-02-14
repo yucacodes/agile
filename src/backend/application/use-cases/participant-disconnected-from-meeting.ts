@@ -1,12 +1,9 @@
 import { MeetingsRepository, ParticipantDisconnectedEvent } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
-import {
-  type AuthInformationDto,
-  type MeetingParticipantDisconnectedRequestDto,
-} from '../dtos'
+import { type AuthInformationDto } from '../dtos'
 
-@useCase({ allowRole: (req) => `meeting/${req.meetingId}/participant` })
+@useCase({ allowRole: '*' })
 export class ParticipantDisconectedFromMeeting {
   constructor(
     private authorization: Authorization<AuthInformationDto>,
@@ -15,11 +12,18 @@ export class ParticipantDisconectedFromMeeting {
     private eventsBus: EventsBus
   ) {}
 
-  async perform(
-    request: MeetingParticipantDisconnectedRequestDto
-  ): Promise<void> {
+  async perform(): Promise<void> {
     const auth = this.authorization.get()
-    const meeting = await this.meetingsRepository.findById(request.meetingId)
+    const meetingId = auth.roles
+      .find((x) => x.startsWith('meeting'))
+      ?.split('/')
+      .at(1)
+
+    if (!meetingId) {
+      throw new Error('Invalid meeting id')
+    }
+
+    const meeting = await this.meetingsRepository.findById(meetingId)
     if (!meeting) {
       throw new Error('Invalid meeting')
     }

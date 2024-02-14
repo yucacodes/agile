@@ -2,9 +2,15 @@ import { MeetingsRepository, VotingClosedEvent } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
 import type { AuthInformationDto } from '../dtos'
-import { type ManagerClosedVotingRequestDto } from '../dtos'
+import {
+  ManagerCloseVotingRequestDtoValidator,
+  type ManagerCloseVotingRequestDto,
+} from '../dtos'
 
-@useCase({ allowRole: (req) => `meeting/${req.meetingId}/participant` })
+@useCase({
+  allowRole: (req) => `meeting/${req.meetingId}/participant`,
+  requestValidator: ManagerCloseVotingRequestDtoValidator,
+})
 export class ManagerCloseVoting {
   constructor(
     private authorization: Authorization<AuthInformationDto>,
@@ -13,7 +19,7 @@ export class ManagerCloseVoting {
     private eventsBus: EventsBus
   ) {}
 
-  async perform(request: ManagerClosedVotingRequestDto): Promise<void> {
+  async perform(request: ManagerCloseVotingRequestDto): Promise<void> {
     const authInfo = this.authorization.get()
     const { meetingId, votingId } = request
     const meeting = await this.meetingsRepository.findById(meetingId)

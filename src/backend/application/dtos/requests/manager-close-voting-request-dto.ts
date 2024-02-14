@@ -1,12 +1,12 @@
 import { IsNotEmpty, IsString } from 'class-validator'
 
-export interface ManagerClosedVotingRequestDto {
+export interface ManagerCloseVotingRequestDto {
   meetingId: string
   votingId: string
 }
 
-export class ManagerClosedVotingRequestDtoValidator
-  implements ManagerClosedVotingRequestDto
+export class ManagerCloseVotingRequestDtoValidator
+  implements ManagerCloseVotingRequestDto
 {
   @IsString()
   @IsNotEmpty()

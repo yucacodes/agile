@@ -7,20 +7,23 @@ export type UseCase<Req, Res> = {
 
 export type useCaseConfigForSingleRole<Req> = {
   allowRole: string | ((req: Req) => string)
+  requestValidator?: Constructor<Req>
 }
 
 export type useCaseConfigForMultipleRoles<Req> = {
   allowRoles: string[] | ((req: Req) => string[])
+  requestValidator?: Constructor<Req>
 }
 
-export type useCaseConfigForNoAuthorization = {
+export type useCaseConfigForNoAuthorization<Req> = {
   allowNoAuth: boolean
+  requestValidator?: Constructor<Req>
 }
 
 export type useCaseConfig<Req> =
   | useCaseConfigForSingleRole<Req>
   | useCaseConfigForMultipleRoles<Req>
-  | useCaseConfigForNoAuthorization
+  | useCaseConfigForNoAuthorization<Req>
 
 export function useCase<Req>(config: useCaseConfig<Req>) {
   return <Res>(constructor: Constructor<UseCase<Req, Res>>) => {

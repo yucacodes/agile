@@ -1,28 +1,8 @@
-import { type UseCase } from '@framework/application'
-import { type Mapper } from '@framework/application/mapper'
 import { type Constructor } from '@framework/generics'
-import {
-  type Controller,
-  type HttpMethod,
-} from '@framework/presentation/controller'
+import { type Mapper } from '@framework/mapper'
+import { type ControllerConfig } from '@framework/presentation/controller'
 
 export abstract class Server {}
-
-export type InlineWsControllerConfig = {
-  event: string
-  useCase: Constructor<UseCase<any, any, any>>
-}
-
-export type InlineHttpControllerConfig = {
-  method: HttpMethod
-  path: string
-  useCase: Constructor<UseCase<any, any, any>>
-}
-
-export type ControllerConfig =
-  | Constructor<Controller>
-  | InlineWsControllerConfig
-  | InlineHttpControllerConfig
 
 export type InlineWsEmitterConfig<M, DTO> = {
   model: Constructor<M>

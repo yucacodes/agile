@@ -1,7 +1,7 @@
 import {
   ParticipantVotes,
-  UserVotingRequestDtoValidator,
-  type UserVotingRequestDto,
+  ParticipantVotesRequestDtoValidator,
+  type ParticipantVotesRequestDto,
   type VotingInformationDto,
 } from '@application'
 import { singleton } from '@framework/injection'
@@ -13,10 +13,10 @@ import {
 @singleton()
 @socketEventController({
   socketEvent: 'UserVoting',
-  requestValidator: UserVotingRequestDtoValidator,
+  requestValidator: ParticipantVotesRequestDtoValidator,
 })
 export class UserVotingEventController extends SocketEventController<
-  UserVotingRequestDto,
+  ParticipantVotesRequestDto,
   VotingInformationDto
 > {
   constructor(private userVoting: ParticipantVotes) {
@@ -24,7 +24,7 @@ export class UserVotingEventController extends SocketEventController<
   }
 
   protected handle(
-    request: UserVotingRequestDto
+    request: ParticipantVotesRequestDto
   ): Promise<VotingInformationDto> {
     return this.userVoting.perform(request)
   }
