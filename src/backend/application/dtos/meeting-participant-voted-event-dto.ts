@@ -1,26 +1,21 @@
-import type { ParticipantVotedEvent } from '@domain'
-import type { TimeProvider } from '@framework/domain'
-import { singleton } from '@framework/injection'
+import { ParticipantVotedEvent } from '@domain'
+import { dtoMapper } from '@framework/application'
 
 export interface MeetingParticipantVotedEventDto {
-  meetingParticipantId: string
-  meetingParticipantName: string
+  meetingId: string
   votingId: string
+  participantUserId: string
   votingClosed: boolean
 }
 
-@singleton()
+@dtoMapper({ model: ParticipantVotedEvent })
 export class MeetingParticipantVotedEventDtoMapper {
-  makeDto(
-    obj: ParticipantVotedEvent,
-    timeManager: TimeProvider
-  ): MeetingParticipantVotedEventDto {
-    const meetingParticipant = obj.participant()
+  map(obj: ParticipantVotedEvent): MeetingParticipantVotedEventDto {
     return {
-      meetingParticipantId: meetingParticipant.meetingId(),
-      meetingParticipantName: meetingParticipant.name(),
+      meetingId: obj.meetingId(),
       votingId: obj.votingId(),
-      votingClosed: obj.votingClosed(timeManager),
+      participantUserId: obj.participant().userId(),
+      votingClosed: obj.isVotingClosed(),
     }
   }
 }

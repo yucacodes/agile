@@ -33,7 +33,7 @@ export class ParticipantVotedEventEmitter extends SocketEventEmitter<
   ): EmittedResult<MeetingParticipantVotedEventDto> {
     return {
       roomId: meetingRoomId({ meetingId: domainEvent.meetingId() }),
-      data: this.meetingParticipantVotedEventDtoMapper.makeDto(
+      data: this.meetingParticipantVotedEventDtoMapper.map(
         domainEvent,
         this.timeManager
       ),

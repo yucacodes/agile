@@ -28,15 +28,13 @@ export class MeetingsRedisRepository extends MeetingsRepository {
     )
   }
 
-  protected async persistNewEntities(entities: Meeting[]): Promise<void> {
-    const dbos = this.mapper.makeArrayDbo(entities) as any[]
-    await Promise.all(
-      dbos.map((x) => client.json.set(this.redisKey(x.id), '$', x))
-    )
+  async saveNew(entity: Meeting): Promise<void> {
+    const dbo = this.mapper.map(entity) as any
+    client.json.set(this.redisKey(entity.id()), '$', dbo)
   }
 
-  protected async persistEntitiesUpdates(entities: Meeting[]): Promise<void> {
-    return this.persistNewEntities(entities)
+  async saveUpdate(entity: Meeting): Promise<void> {
+    return this.saveNew(entity)
   }
 
   private redisKey(id: string) {

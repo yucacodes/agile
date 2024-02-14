@@ -38,10 +38,10 @@ export default component$(() => {
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('ParticipantJoined', (payload) => {
-      if (payload.meetingParticipantId) {
+      if (payload.participantId) {
 
         addNotification({
-          message: `Se has unido a la sesión ${payload.meetingParticipantName}`,
+          message: `Se has unido a la sesión ${payload.participantName}`,
           status: 'success',
         })
       }

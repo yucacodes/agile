@@ -1,21 +1,21 @@
-import type { ParticipantJoinedEvent } from '@domain'
-import { singleton } from '@framework/injection'
+import { ParticipantJoinedEvent } from '@domain'
+import { dtoMapper } from '@framework/application'
+import { ParticipantDtoMapper, type ParticipantDto } from './participant-dto'
 
 export interface MeetingParticipantJoinedEventDto {
-  meetingParticipantId: string
-  meetingParticipantName: string
+  meetingId: string
+  participant: ParticipantDto
   time: string
 }
 
-@singleton()
+@dtoMapper({ model: ParticipantJoinedEvent })
 export class MeetingParticipantJoinedEventDtoMapper {
-  makeDto(
-    obj: ParticipantJoinedEvent
-  ): MeetingParticipantJoinedEventDto {
-    const meetingParticipant = obj.participant()
+  constructor(private participantDtoMapper: ParticipantDtoMapper) {}
+
+  map(obj: ParticipantJoinedEvent): MeetingParticipantJoinedEventDto {
     return {
-      meetingParticipantId: meetingParticipant.meetingId(),
-      meetingParticipantName: meetingParticipant.name(),
+      meetingId: obj.meetingId(),
+      participant: this.participantDtoMapper.map(obj.participant()),
       time: obj.time().toISOString(),
     }
   }

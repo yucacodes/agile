@@ -21,7 +21,7 @@ export class MeetingDtoMapper {
   makeDto(obj: Meeting): MeetingDto {
     return {
       ...this.entityDtoMapper.makeDto(obj),
-      participants: this.meetingParticipantDtoMapper.makeMapDtos(
+      participants: this.meetingParticipantDtoMapper.mapMap(
         obj.participants()
       ),
     }

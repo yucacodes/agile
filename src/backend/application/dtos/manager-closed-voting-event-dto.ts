@@ -13,7 +13,7 @@ export class ManagerClosedVotingEventDtoMapper {
 
   map(obj: VotingClosedEvent): ManagerClosedVotingEventDto {
     return {
-      voting: this.votingtDtoMapper.makeDto(obj.voting()),
+      voting: this.votingtDtoMapper.map(obj.voting()),
       time: obj.time.toString(),
     }
   }

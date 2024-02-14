@@ -1,14 +1,14 @@
-import type { Voting } from '@domain'
-import { singleton } from '@framework/injection'
+import { Voting } from '@domain'
+import { dtoMapper } from '@framework/application'
 
 export interface VotingDto {
   votingId: string
   userVotes: { [key: string]: number }
 }
 
-@singleton()
+@dtoMapper({ model: Voting })
 export class VotingDtoMapper {
-  makeDto(obj: Voting): VotingDto {
+  map(obj: Voting): VotingDto {
     const userVotes: { [key: string]: number } = {}
     for (const [key, num] of obj.votes()) userVotes[key] = num
     return {
