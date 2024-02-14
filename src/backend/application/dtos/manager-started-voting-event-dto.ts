@@ -1,16 +1,16 @@
-import { type VotingStartedEvent } from '@domain'
-import { singleton } from '@framework/injection'
+import { VotingStartedEvent } from '@domain'
+import { dtoMapper } from '@framework/application'
 
 export interface ManagerStartedVotingEventDto {
   votingId: string
   time: string
 }
 
-@singleton()
+@dtoMapper({ model: VotingStartedEvent })
 export class ManagerStartedVotingEventDtoMapper {
   constructor() {}
 
-  makeDto(obj: VotingStartedEvent): ManagerStartedVotingEventDto {
+  map(obj: VotingStartedEvent): ManagerStartedVotingEventDto {
     return {
       votingId: obj.votingId(),
       time: obj.time.toString(),

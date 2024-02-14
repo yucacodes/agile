@@ -1,17 +1,13 @@
 import { singleton } from 'tsyringe'
 import { type Constructor } from '../generics'
-
-export type DtoMapper<M, DTO> = {
-  map(model: M): DTO
-}
+import { type Mapper } from './mapper'
 
 export interface dtoMapperConfig<M> {
-  group?: string
   model: Constructor<M>
 }
 
 export function dtoMapper<M>(config: dtoMapperConfig<M>) {
-  return <DTO>(constructor: Constructor<DtoMapper<M, DTO>>) => {
+  return <DTO>(constructor: Constructor<Mapper<M, DTO>>) => {
     constructor.prototype.__config__ = function __config__() {
       return config
     }

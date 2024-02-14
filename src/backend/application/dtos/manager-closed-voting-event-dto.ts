@@ -7,7 +7,7 @@ export interface ManagerClosedVotingEventDto {
   time: string
 }
 
-@dtoMapper({ group: 'MeetingManager', model: VotingClosedEvent })
+@dtoMapper({ model: VotingClosedEvent })
 export class ManagerClosedVotingEventDtoMapper {
   constructor(private votingtDtoMapper: VotingDtoMapper) {}
 
