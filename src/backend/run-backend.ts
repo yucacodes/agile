@@ -26,7 +26,7 @@ socketIoServer.on('connection', (socket) => {
 })
 
 // Run Server
-const port = environment.getEnvironmentVariableAsNumber('PORT', 3000)
+const port = environment.getNumber('PORT', 3000)
 httpServer.listen(port, () => {
   logger.info(`Running on port ${port}`)
 })

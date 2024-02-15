@@ -1,13 +1,14 @@
 export class Authorization<Auth> {
-  allowed(): boolean {
-    return false
-  }
+  constructor(
+    private getAction: () => Auth,
+    private setAction: (auth: Auth) => void
+  ) {}
 
   get(): Auth {
-    return null as any
+    return this.getAction()
   }
 
   set(auth: Auth) {
-    console.log(auth)
+    this.setAction(auth)
   }
 }

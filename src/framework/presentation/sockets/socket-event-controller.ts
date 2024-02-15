@@ -1,73 +1,46 @@
-import { plainToInstance } from 'class-transformer'
-import { validate } from 'class-validator'
-
-import { type AuthInformationDto } from '@framework/application'
-import { Logger } from '../logger'
-import { type GenericSocket, type SocketCallback } from './sockets-types'
-
-interface RequestValidator<Request> {
-  new (): Request & object
-}
+import { Authorization } from '@framework/application'
+import type { Socket } from 'socket.io'
+import { container } from 'tsyringe'
+import type { AuthProvider } from '../auth-provider'
+import type { InlineEventControllerConfig } from '../controller'
+import type { Logger } from '../logger'
+import { type SocketCallback } from './sockets-types'
 
 export interface SocketEventControllerConfig {
   socketEvent: string
-  requestValidator: RequestValidator<any>
   logger: Logger
+  authProvider: AuthProvider<any>
 }
 
-export type SocketEventControllerClass = {
-  new (...args: any): SocketEventController<any, any>
-}
-
-export abstract class SocketEventController<Request, Result> {
+export abstract class SocketEventController {
   eventsCount = 0
 
-  private config(): SocketEventControllerConfig {
-    throw new Error(
-      `Should configure ${this.constructor.name} using @socketEventController(config) decorator`
-    )
+  constructor(protected config: SocketEventControllerConfig) {}
+
+  protected getAuthInfo(socket: Socket) {
+    const { authProvider } = this.config
+    // TODO: Validate
+    return (authProvider.getWsAuth && authProvider.getWsAuth(socket)) ?? null
   }
 
-  socketEvent() {
-    const { socketEvent } = this.config()
-    return socketEvent
+  protected setAuthInfo(socket: Socket, auth: any) {
+    const { authProvider } = this.config
+    // TODO: Validate
+    return authProvider.setWsAuth && authProvider.setWsAuth(socket, auth)
   }
 
-  protected request(socket: GenericSocket, input: any): Request {
-    return input
-  }
-
-  protected authData(
-    socket: GenericSocket,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    input: any
-  ): AuthInformationDto | undefined {
-    return socket.data.auth
-  }
-
-  public listenFor(socket: GenericSocket) {
-    const { socketEvent, requestValidator, logger } = this.config()
+  public listenFor(socket: Socket) {
+    const { socketEvent, logger } = this.config
     const listener = async (
       input: any,
-      callback: SocketCallback<Result> | undefined
+      callback: SocketCallback<any> | undefined
     ) => {
       this.eventsCount++
       const eventId = this.eventsCount
       try {
         logger.info(`(${eventId}) Start event`)
-        const request = this.request(socket, input)
-        const auth = this.authData(socket, input)
-        const validableRequest = plainToInstance(requestValidator, request)
-        const requestErrors = await validate(validableRequest)
-
-        if (requestErrors.length > 0) {
-          logger.error(`(${eventId}) Bad Request`, requestErrors)
-          return callback && callback({ success: false })
-        }
-
-        const data = await this.handle(request, auth ?? null)
+        const data = await this.handleEvent(socket, input)
         logger.info(`(${eventId}) Success request`)
-        this.onSuccess(socket, data)
         return callback && callback({ success: true, data })
       } catch (error) {
         logger.error(`(${eventId}) Request Error`, error as Error)
@@ -77,29 +50,36 @@ export abstract class SocketEventController<Request, Result> {
     return [socketEvent as any, listener] as const
   }
 
-  protected abstract handle(
-    request: Request,
-    authData: AuthInformationDto | null
-  ): Promise<Result>
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onSuccess(socket: GenericSocket, result: Result): void {}
+  protected abstract handleEvent(socket: Socket, input: any): Promise<any>
 }
 
-export interface socketEventControllerProps {
-  socketEvent: string
-  requestValidator: RequestValidator<any>
-}
+export class SocketEventControllerForUseCase extends SocketEventController {
+  constructor(
+    logger: Logger,
+    authProvider: AuthProvider<any>,
+    private inlineConfig: InlineEventControllerConfig
+  ) {
+    super({
+      authProvider,
+      logger,
+      socketEvent: inlineConfig.event,
+    })
+  }
 
-export function socketEventController(props: socketEventControllerProps) {
-  return (constructor: SocketEventControllerClass) => {
-    const _config: SocketEventControllerConfig = {
-      socketEvent: props.socketEvent,
-      requestValidator: props.requestValidator,
-      logger: new Logger(`${props.socketEvent}EventController`),
-    }
-    constructor.prototype.config = function config() {
-      return _config
-    }
+  protected async handleEvent(socket: Socket, input: any): Promise<any> {
+    const requestContainer = container.createChildContainer()
+    requestContainer.register(Authorization, {
+      useValue: new Authorization(
+        () => {
+          return this.getAuthInfo(socket)
+        },
+        (auth) => {
+          this.setAuthInfo(socket, auth)
+        }
+      ),
+    })
+
+    const useCase = requestContainer.resolve(this.inlineConfig.useCase)
+    await useCase.perform(input)
   }
 }
