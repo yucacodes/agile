@@ -3,7 +3,7 @@ import { type Constructor } from '../generics'
 import { type EventController } from './event-controller'
 import type { HttpController } from './http-controller'
 
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS'
+export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'options'
 
 export type InlineEventControllerConfig = {
   event: string
