@@ -1,36 +1,45 @@
-import { Authorization } from '@framework/application'
+import { Authorization } from '../../application'
 import type { Socket } from 'socket.io'
-import { container } from 'tsyringe'
+
+import { Logger } from '../../logger'
 import type { AuthProvider } from '../auth-provider'
 import type { InlineEventControllerConfig } from '../controller'
-import type { Logger } from '../logger'
 import { type SocketCallback } from './sockets-types'
+import { type DependencyContainer, container } from '../../injection'
 
 export interface SocketEventControllerConfig {
   socketEvent: string
-  logger: Logger
-  authProvider: AuthProvider<any>
+  authProvider?: AuthProvider<any>
 }
 
 export abstract class SocketEventController {
   eventsCount = 0
+  logger: Logger
 
-  constructor(protected config: SocketEventControllerConfig) {}
+  constructor(protected config: SocketEventControllerConfig) {
+    this.logger = new Logger(`${config.socketEvent}:EventController`)
+  }
 
   protected getAuthInfo(socket: Socket) {
     const { authProvider } = this.config
-    // TODO: Validate
-    return (authProvider.getWsAuth && authProvider.getWsAuth(socket)) ?? null
+    return (
+      (authProvider &&
+        authProvider.getSocketAuth &&
+        authProvider.getSocketAuth(socket)) ??
+      null
+    )
   }
 
-  protected setAuthInfo(socket: Socket, auth: any) {
+  protected setAuthInfo(socket: Socket, auth: unknown) {
     const { authProvider } = this.config
-    // TODO: Validate
-    return authProvider.setWsAuth && authProvider.setWsAuth(socket, auth)
+
+    authProvider &&
+      authProvider.setSocketAuth &&
+      authProvider.setSocketAuth(socket, auth)
   }
 
   public listenFor(socket: Socket) {
-    const { socketEvent, logger } = this.config
+    const { socketEvent } = this.config
     const listener = async (
       input: any,
       callback: SocketCallback<any> | undefined
@@ -38,48 +47,51 @@ export abstract class SocketEventController {
       this.eventsCount++
       const eventId = this.eventsCount
       try {
-        logger.info(`(${eventId}) Start event`)
-        const data = await this.handleEvent(socket, input)
-        logger.info(`(${eventId}) Success request`)
+        this.logger.info(`event (${eventId})`)
+        const requestContainer = container.createChildContainer()
+        requestContainer.register(Authorization, {
+          useValue: new Authorization(
+            () => {
+              return this.getAuthInfo(socket)
+            },
+            (auth) => {
+              this.setAuthInfo(socket, auth)
+            }
+          ),
+        })
+        const data = await this.handleRequest(requestContainer, input)
+        this.logger.info(`(${eventId}) success`)
         return callback && callback({ success: true, data })
       } catch (error) {
-        logger.error(`(${eventId}) Request Error`, error as Error)
+        this.logger.error(`(${eventId}) error`, error as Error)
         return callback && callback({ success: false })
       }
     }
     return [socketEvent as any, listener] as const
   }
 
-  protected abstract handleEvent(socket: Socket, input: any): Promise<any>
+  protected abstract handleRequest(
+    container: DependencyContainer,
+    request: any
+  ): Promise<any>
 }
 
 export class SocketEventControllerForUseCase extends SocketEventController {
   constructor(
-    logger: Logger,
-    authProvider: AuthProvider<any>,
-    private inlineConfig: InlineEventControllerConfig
+    private inlineConfig: InlineEventControllerConfig,
+    authProvider: AuthProvider<any> | null
   ) {
     super({
-      authProvider,
-      logger,
+      authProvider: authProvider ?? undefined,
       socketEvent: inlineConfig.event,
     })
   }
 
-  protected async handleEvent(socket: Socket, input: any): Promise<any> {
-    const requestContainer = container.createChildContainer()
-    requestContainer.register(Authorization, {
-      useValue: new Authorization(
-        () => {
-          return this.getAuthInfo(socket)
-        },
-        (auth) => {
-          this.setAuthInfo(socket, auth)
-        }
-      ),
-    })
-
-    const useCase = requestContainer.resolve(this.inlineConfig.useCase)
+  protected async handleRequest(
+    container: DependencyContainer,
+    input: any
+  ): Promise<any> {
+    const useCase = container.resolve(this.inlineConfig.useCase)
     await useCase.perform(input)
   }
 }

@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe'
+import { singleton } from '../injection'
 import { type Constructor } from '../generics'
 
 export type DboMapper<M, DBO> = {

@@ -1,5 +1,5 @@
-import { TimeProvider } from '@framework/domain'
-import { singleton } from '@framework/injection'
+import { TimeProvider } from '../domain'
+import { singleton } from '../injection'
 
 @singleton()
 export class ServerTimeProvider extends TimeProvider {

@@ -1,16 +1,27 @@
-import { type Participant } from '@domain'
-import { NoSqlDboMapper } from '@framework/infrastructure'
+import { Participant } from '@domain'
+import { dboMapper } from '@framework/infrastructure'
 
-export interface MeetingParticipantNoSqlDbo {}
+export interface ParticipantNoSqlDbo {}
 
-export class MeetingParticipantNoSqlDboMapper extends NoSqlDboMapper<
-  Participant,
-  MeetingParticipantNoSqlDbo
-> {
-  makeDbo(obj: Participant): MeetingParticipantNoSqlDbo {
+@dboMapper({ model: Participant })
+export class ParticipantNoSqlDboMapper {
+  map(obj: Participant): ParticipantNoSqlDbo {
     throw new Error('Method not implemented.')
   }
-  loadDbo(dbo: MeetingParticipantNoSqlDbo): Participant {
+
+  mapMap(map: Map<string, Participant>): {
+    [key: string]: ParticipantNoSqlDbo
+  } {
+    throw new Error('Method not implemented.')
+  }
+
+  revert(dbo: ParticipantNoSqlDbo): Participant {
+    throw new Error('Method not implemented.')
+  }
+
+  revertMap(dbo: {
+    [key: string]: ParticipantNoSqlDbo
+  }): Map<string, Participant> {
     throw new Error('Method not implemented.')
   }
 }

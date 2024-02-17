@@ -1,7 +1,6 @@
-import { type Meeting, type MeetingProps, MeetingsRepository } from '@domain'
-import { DummyRepositoryHelper } from '@framework/infrastructure'
+import { MeetingsRepository, type Meeting, type MeetingProps } from '@domain'
 import { singleton } from '@framework/injection'
-
+import { DummyRepositoryHelper } from './dummy-repository-helper'
 
 const items: Map<string, Meeting> = new Map()
 
@@ -18,11 +17,10 @@ export class MeetingsDummyRepository extends MeetingsRepository {
     return this.helper.fetchByIds(ids)
   }
 
-  protected async persistNewEntities(entities: Meeting[]): Promise<void> {
-    this.helper.persistEntities(entities)
+  async saveNew(entity: Meeting): Promise<void> {
+    this.helper.persistEntities([entity])
   }
-
-  protected async persistEntitiesUpdates(entities: Meeting[]): Promise<void> {
-    this.helper.persistEntities(entities)
+  async saveUpdate(entity: Meeting): Promise<void> {
+    this.helper.persistEntities([entity])
   }
 }

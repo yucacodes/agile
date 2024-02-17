@@ -1,4 +1,4 @@
-import type { Entity, EntityProps } from '@framework/domain'
+import type { Entity, EntityProps } from '../../domain'
 
 export class DummyRepositoryHelper<P extends EntityProps, E extends Entity<P>> {
   constructor(private items: Map<string, E> = new Map()) {}

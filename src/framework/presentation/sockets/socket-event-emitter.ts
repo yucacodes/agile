@@ -1,5 +1,5 @@
 import { type Server as SocketIoServer } from 'socket.io'
-import { Logger } from '../logger'
+import { Logger } from '../../logger'
 
 export type EmittedResult<Data> = {
   roomId: string

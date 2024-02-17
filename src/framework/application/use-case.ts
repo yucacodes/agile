@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe'
+import { singleton } from '../injection'
 import { type Constructor } from '../generics'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'

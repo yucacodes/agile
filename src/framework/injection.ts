@@ -1,3 +1,3 @@
 await import('reflect-metadata')
-export const { container, singleton, inject  } = await import('tsyringe')
-
+export type { DependencyContainer } from 'tsyringe'
+export const { container, singleton, inject } = await import('tsyringe')
