@@ -2,9 +2,7 @@ import { MeetingsRepository } from '@domain'
 import { TimeProvider } from '@framework/domain'
 import { ServerTimeProvider } from '@framework/infrastructure'
 import { container } from '@framework/injection'
-import {
-  MeetingsDummyRepository
-} from '@infrastructure'
+import { MeetingsDummyRepository } from '@infrastructure'
 
 // Servers
 // const httpServer = createServer()

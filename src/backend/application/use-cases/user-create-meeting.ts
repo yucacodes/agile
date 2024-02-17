@@ -6,9 +6,13 @@ import {
   type AuthInformationDto,
   type MeetingDto,
   type UserCreateMeetingRequestDto,
+  UserCreateMeetingRequestDtoValidator,
 } from '../dtos'
 
-@useCase({ allowNoAuth: true })
+@useCase({
+  disableAuthValidation: true,
+  requestValidator: UserCreateMeetingRequestDtoValidator,
+})
 export class UserCreateMeeting {
   constructor(
     private authorization: Authorization<AuthInformationDto>,

@@ -8,12 +8,16 @@ import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
 import {
   MeetingDtoMapper,
+  UserJoinMeetingRequestDtoValidator,
   type AuthInformationDto,
   type MeetingDto,
   type UserJoinMeetingRequestDto,
 } from '../dtos'
 
-@useCase({ allowNoAuth: true })
+@useCase({
+  disableAuthValidation: true,
+  requestValidator: UserJoinMeetingRequestDtoValidator,
+})
 export class UserJoinMeeting {
   constructor(
     private authorization: Authorization<AuthInformationDto>,

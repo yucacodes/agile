@@ -3,7 +3,7 @@ import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
 import { type AuthInformationDto } from '../dtos'
 
-@useCase({ allowRole: '*' })
+@useCase({ allowAnyRole: true, disableRequestValidation: true })
 export class ParticipantDisconectedFromMeeting {
   constructor(
     private authorization: Authorization<AuthInformationDto>,

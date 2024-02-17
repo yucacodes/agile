@@ -9,6 +9,8 @@ export class MeetingsRedisRepository extends MeetingsRepository {
     super()
   }
 
+  // await repositoriesRedisClient.connect()
+
   async findById(id: string): Promise<Meeting | null> {
     const dbo = (await client.json.get(this.redisKey(id))) as any
     if (dbo == null) return null

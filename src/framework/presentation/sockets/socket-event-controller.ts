@@ -1,11 +1,11 @@
-import { Authorization } from '../../application'
 import type { Socket } from 'socket.io'
+import { Authorization } from '../../application'
 
+import { container, type DependencyContainer } from '../../injection'
 import { Logger } from '../../logger'
 import type { AuthProvider } from '../auth-provider'
 import type { InlineEventControllerConfig } from '../controller'
 import { type SocketCallback } from './sockets-types'
-import { type DependencyContainer, container } from '../../injection'
 
 export interface SocketEventControllerConfig {
   socketEvent: string
@@ -26,6 +26,17 @@ export abstract class SocketEventController {
       (authProvider &&
         authProvider.getSocketAuth &&
         authProvider.getSocketAuth(socket)) ??
+      null
+    )
+  }
+
+  protected getAuthRoles(socket: Socket) {
+    const { authProvider } = this.config
+    return (
+      (authProvider &&
+        authProvider.authRoles &&
+        authProvider.getSocketAuth &&
+        authProvider.authRoles(authProvider.getSocketAuth(socket))) ??
       null
     )
   }
@@ -51,9 +62,8 @@ export abstract class SocketEventController {
         const requestContainer = container.createChildContainer()
         requestContainer.register(Authorization, {
           useValue: new Authorization(
-            () => {
-              return this.getAuthInfo(socket)
-            },
+            this.getAuthInfo(socket),
+            this.getAuthRoles(socket),
             (auth) => {
               this.setAuthInfo(socket, auth)
             }
@@ -91,6 +101,10 @@ export class SocketEventControllerForUseCase extends SocketEventController {
     container: DependencyContainer,
     input: any
   ): Promise<any> {
+    container.afterResolution(this.inlineConfig.useCase, (_, uc) => {
+      // eslint-disable-next-line no-extra-semi
+      ;([uc].flat()[0] as any).__container__ = container
+    })
     const useCase = container.resolve(this.inlineConfig.useCase)
     await useCase.perform(input)
   }

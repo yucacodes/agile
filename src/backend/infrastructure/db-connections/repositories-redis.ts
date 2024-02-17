@@ -7,5 +7,3 @@ export const repositoriesRedisClient = createClient({
 repositoriesRedisClient.on('error', (err) =>
   console.log('Redis Client Error', err)
 )
-
-await repositoriesRedisClient.connect()
