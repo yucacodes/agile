@@ -4,6 +4,7 @@ import {
   ManagerStartVoting,
   ManagerStartedVotingEventDtoMapper,
   MeetingParticipantDisconnectedEventDtoMapper,
+  MeetingParticipantVotedEventDtoMapper,
   ParticipantDisconectedFromMeeting,
   ParticipantVotes,
   UserCreateMeeting,
@@ -11,6 +12,7 @@ import {
 } from '@application'
 import {
   ParticipantDisconnectedEvent,
+  ParticipantVotedEvent,
   VotingClosedEvent,
   VotingStartedEvent,
 } from '@domain'
@@ -20,14 +22,19 @@ import { listen } from '../presentation/listen-events'
 
 @server({
   controllers: [
+    { event: listen.Vote, useCase: ParticipantVotes },
     { event: listen.StartMeeting, useCase: UserCreateMeeting },
     { event: listen.JoinMeeting, useCase: UserJoinMeeting },
     { event: listen.StartVoting, useCase: ManagerStartVoting },
-    { event: listen.Vote, useCase: ParticipantVotes },
     { event: listen.CloseVoting, useCase: ManagerCloseVoting },
     { event: listen.Disconnect, useCase: ParticipantDisconectedFromMeeting },
   ],
   emitters: [
+    {
+      model: ParticipantVotedEvent,
+      event: emit.ParticipantVoted,
+      mapper: MeetingParticipantVotedEventDtoMapper,
+    },
     {
       model: VotingClosedEvent,
       event: emit.VotingClosed,
