@@ -106,6 +106,6 @@ export class SocketEventControllerForUseCase extends SocketEventController {
       ;([uc].flat()[0] as any).__container__ = container
     })
     const useCase = container.resolve(this.inlineConfig.useCase)
-    await useCase.perform(input)
+    return await useCase.perform(input)
   }
 }
