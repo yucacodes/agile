@@ -2,7 +2,7 @@ import { type SocketListener } from '@framework/presentation'
 import type {
   ManagerCloseVotingRequestDto,
   ManagerStartVotingRequestDto,
-  MeetingAndSecretDto,
+  MeetingAndAuthInfoDto,
   MeetingDto,
   ParticipantVotesRequestDto,
   UserCreateMeetingRequestDto,
@@ -23,16 +23,16 @@ export const listen = {
 export type ListenEventsMap = {
   [listen.StartMeeting]: SocketListener<
     UserCreateMeetingRequestDto,
-    MeetingAndSecretDto
+    MeetingAndAuthInfoDto
   >
-  [listen.JoinMeeting]: SocketListener<UserJoinMeetingRequestDto, MeetingDto>
+  [listen.JoinMeeting]: SocketListener<UserJoinMeetingRequestDto, MeetingAndAuthInfoDto>
   [listen.StartVoting]: SocketListener<ParticipantVotesRequestDto, void>
   [listen.Vote]: SocketListener<
     ManagerStartVotingRequestDto,
-    MeetingAndSecretDto
+    MeetingAndAuthInfoDto
   >
   [listen.CloseVoting]: SocketListener<
     ManagerCloseVotingRequestDto,
-    MeetingAndSecretDto
+    MeetingAndAuthInfoDto
   >
 }

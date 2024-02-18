@@ -5,11 +5,11 @@ import {
   useTask$,
   type NoSerialize
 } from '@builder.io/qwik'
-import type { MeetingClientSocket } from '@presentation'
+import type { ClientSocket } from '@presentation'
 import { io } from 'socket.io-client'
 
 export const useSocket = (serverPath: string) => {
-  const socket = useSignal<NoSerialize<MeetingClientSocket>>(undefined)
+  const socket = useSignal<NoSerialize<ClientSocket>>(undefined)
   const isOnline = useSignal<boolean | undefined>(false)
 
 
@@ -19,7 +19,7 @@ export const useSocket = (serverPath: string) => {
    * @return {void} No return value.
    */
   const createSocket = $(() => {
-    const wsClient: MeetingClientSocket = io(serverPath, {
+    const wsClient: ClientSocket = io(serverPath, {
       transports: ['websocket'],
       protocols: ['websocket'],
     })

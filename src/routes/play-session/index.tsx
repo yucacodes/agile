@@ -1,14 +1,8 @@
+import { $, component$, useContext, useTask$ } from '@builder.io/qwik'
 import {
-  $,
-  component$,
-  useContext,
-  useTask$,
-  useVisibleTask$,
-} from '@builder.io/qwik'
-import {
-  type RequestHandler,
   useLocation,
   type DocumentHead,
+  type RequestHandler,
 } from '@builder.io/qwik-city'
 import { HasPermission } from '~/components/hasPermission/hasPermission'
 import { PlayersTable } from '~/components/players-table/PlayersTable'
@@ -16,8 +10,8 @@ import { Points } from '~/components/points/Points'
 import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
 import { SecondaryButton } from '~/components/secondary-button/SecondaryButton'
 import { StateProvider } from '~/context/ProviderContext'
-import style from './play-session-page.module.css'
 import { useToast } from '~/hooks/useToast'
+import style from './play-session-page.module.css'
 
 export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
   const secret = url.searchParams.get('secret')
@@ -38,23 +32,19 @@ export default component$(() => {
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('ParticipantJoined', (payload) => {
-      if (payload.participantId) {
-
+      if (payload.participant.userId) {
         addNotification({
-          message: `Se has unido a la sesión ${payload.participantName}`,
+          message: `Se has unido a la sesión ${payload.participant.userId}`,
           status: 'success',
         })
       }
     })
 
-
     socket.value?.on('ParticipantDisconnected', (payload) => {
-      if (payload.meetingParticipant) {
-        addNotification({
-          message: `${payload.meetingParticipant.name} ha dejado la sesión`,
-          status: 'error',
-        })
-      }
+      addNotification({
+        message: `${payload.meetingParticipant.name} ha dejado la sesión`,
+        status: 'error',
+      })
     })
 
     cleanup(() => {
@@ -65,7 +55,8 @@ export default component$(() => {
   const action = $(() => {})
 
   const shareLink = $(() => {
-    (navigator as any).clipboard.writeText(
+    // eslint-disable-next-line no-extra-semi
+    ;(navigator as any).clipboard.writeText(
       `${
         location.url.protocol + '//' + location.url.host
       }/join-session?secret=${secret.value}&id=${idMeeting.value}`
@@ -92,7 +83,7 @@ export default component$(() => {
           />
 
           <section class={style.tableInMobile}>
-            <PlayersTable  />
+            <PlayersTable />
           </section>
 
           <Points />

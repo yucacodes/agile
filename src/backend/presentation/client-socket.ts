@@ -1,8 +1,5 @@
-import type { Socket as ClientSocket } from 'socket.io-client'
+import type { Socket } from 'socket.io-client'
 import type { EmmitedEventsMap } from './emited-events'
 import type { ListenEventsMap } from './listen-events'
 
-export type MeetingClientSocket = ClientSocket<
-  EmmitedEventsMap,
-  ListenEventsMap
->
+export type ClientSocket = Socket<EmmitedEventsMap, ListenEventsMap>
