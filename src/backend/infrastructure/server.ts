@@ -15,30 +15,32 @@ import {
   VotingStartedEvent,
 } from '@domain'
 import { Server, server } from '@framework/infrastructure'
+import { emit } from '../presentation/emited-events'
+import { listen } from '../presentation/listen-events'
 
 @server({
   controllers: [
-    { event: 'StartMeeting', useCase: UserCreateMeeting },
-    { event: 'JoinMeeting', useCase: UserJoinMeeting },
-    { event: 'StartVoting', useCase: ManagerStartVoting },
-    { event: 'Vote', useCase: ParticipantVotes },
-    { event: 'ClosedVoting', useCase: ManagerCloseVoting },
-    { event: 'disconnect', useCase: ParticipantDisconectedFromMeeting },
+    { event: listen.StartMeeting, useCase: UserCreateMeeting },
+    { event: listen.JoinMeeting, useCase: UserJoinMeeting },
+    { event: listen.StartVoting, useCase: ManagerStartVoting },
+    { event: listen.Vote, useCase: ParticipantVotes },
+    { event: listen.CloseVoting, useCase: ManagerCloseVoting },
+    { event: listen.Disconnect, useCase: ParticipantDisconectedFromMeeting },
   ],
   emitters: [
     {
       model: VotingClosedEvent,
-      event: 'VotingClosed',
+      event: emit.VotingClosed,
       mapper: ManagerClosedVotingEventDtoMapper,
     },
     {
       model: VotingStartedEvent,
-      event: 'VotingStarted',
+      event: emit.VotingClosed,
       mapper: ManagerStartedVotingEventDtoMapper,
     },
     {
       model: ParticipantDisconnectedEvent,
-      event: 'ParticipantDisconnected',
+      event: emit.ParticipantDisconnected,
       mapper: MeetingParticipantDisconnectedEventDtoMapper,
     },
   ],

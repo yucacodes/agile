@@ -1,12 +1,12 @@
 import { Meeting, MeetingsRepository, Participant, User } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
+import type { MeetingAndSecretDto } from '../dtos'
 import {
   MeetingDtoMapper,
-  type AuthInformationDto,
-  type MeetingDto,
-  type UserCreateMeetingRequestDto,
   UserCreateMeetingRequestDtoValidator,
+  type AuthInformationDto,
+  type UserCreateMeetingRequestDto,
 } from '../dtos'
 
 @useCase({
@@ -22,7 +22,9 @@ export class UserCreateMeeting {
     private eventsBus: EventsBus
   ) {}
 
-  async perform(request: UserCreateMeetingRequestDto): Promise<MeetingDto> {
+  async perform(
+    request: UserCreateMeetingRequestDto
+  ): Promise<MeetingAndSecretDto> {
     const { meeting, secret } = Meeting.factory({
       timeProvider: this.timeProvider,
     })
@@ -48,6 +50,9 @@ export class UserCreateMeeting {
 
     this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
 
-    return this.meetingDtoMapper.map(meeting)
+    return {
+      meeting: this.meetingDtoMapper.map(meeting),
+      secret,
+    }
   }
 }

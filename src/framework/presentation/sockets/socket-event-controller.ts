@@ -58,7 +58,7 @@ export abstract class SocketEventController {
       this.eventsCount++
       const eventId = this.eventsCount
       try {
-        this.logger.info(`event (${eventId})`)
+        this.logger.info(`(${eventId}) received`)
         const requestContainer = container.createChildContainer()
         requestContainer.register(Authorization, {
           useValue: new Authorization(
