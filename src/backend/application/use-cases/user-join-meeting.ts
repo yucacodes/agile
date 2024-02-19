@@ -6,11 +6,11 @@ import {
 } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework/application'
 import { TimeProvider } from '@framework/domain'
+import type { MeetingAndAuthInfoDto } from '../dtos'
 import {
   MeetingDtoMapper,
   UserJoinMeetingRequestDtoValidator,
   type AuthInformationDto,
-  type MeetingDto,
   type UserJoinMeetingRequestDto,
 } from '../dtos'
 
@@ -27,7 +27,9 @@ export class UserJoinMeeting {
     private eventsBus: EventsBus
   ) {}
 
-  async perform(request: UserJoinMeetingRequestDto): Promise<MeetingDto> {
+  async perform(
+    request: UserJoinMeetingRequestDto
+  ): Promise<MeetingAndAuthInfoDto> {
     const meeting = await this.meetingsRepository.findById(request.meetingId)
 
     if (!meeting) {
@@ -54,11 +56,16 @@ export class UserJoinMeeting {
     this.eventsBus.notify({ event, channel: `meeting/${meeting.id}` })
     this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
 
-    this.authorization.set({
+    const auth = {
       userId: user.id(),
       roles: [`meeting/${meeting.id()}/participant`],
-    })
+    }
+    this.authorization.set(auth)
 
-    return this.meetingDtoMapper.map(meeting)
+    return {
+      secret: request.secret,
+      meeting: this.meetingDtoMapper.map(meeting),
+      authInfo: auth,
+    }
   }
 }
