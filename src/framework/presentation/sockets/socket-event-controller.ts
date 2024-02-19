@@ -1,56 +1,28 @@
 import type { Socket } from 'socket.io'
-import { Authorization } from '../../application'
+import { Authorization, EventsBus } from '../../application'
 
+import type { Server as SocketsServer } from 'socket.io'
 import { container, type DependencyContainer } from '../../injection'
 import { Logger } from '../../logger'
-import type { AuthProvider } from '../auth-provider'
+import type { SocketAuthProvider } from '../auth-provider'
 import type { InlineEventControllerConfig } from '../controller'
+import { SocketAuthorization } from '../socket-authorization'
+import { SocketEventsBus } from './socket-events-bus'
 import { type SocketCallback } from './sockets-types'
-
-export interface SocketEventControllerConfig {
-  socketEvent: string
-  authProvider?: AuthProvider<any>
-}
 
 export abstract class SocketEventController {
   eventsCount = 0
   logger: Logger
 
-  constructor(protected config: SocketEventControllerConfig) {
-    this.logger = new Logger(`${config.socketEvent}:EventController`)
-  }
-
-  protected getAuthInfo(socket: Socket) {
-    const { authProvider } = this.config
-    return (
-      (authProvider &&
-        authProvider.getSocketAuth &&
-        authProvider.getSocketAuth(socket)) ??
-      null
-    )
-  }
-
-  protected getAuthRoles(socket: Socket) {
-    const { authProvider } = this.config
-    return (
-      (authProvider &&
-        authProvider.authRoles &&
-        authProvider.getSocketAuth &&
-        authProvider.authRoles(authProvider.getSocketAuth(socket))) ??
-      null
-    )
-  }
-
-  protected setAuthInfo(socket: Socket, auth: unknown) {
-    const { authProvider } = this.config
-
-    authProvider &&
-      authProvider.setSocketAuth &&
-      authProvider.setSocketAuth(socket, auth)
+  constructor(
+    private controledEvent: string,
+    private socketsServer: SocketsServer,
+    private authProvider: SocketAuthProvider<any>
+  ) {
+    this.logger = new Logger(`${controledEvent}:Controller`)
   }
 
   public listenFor(socket: Socket) {
-    const { socketEvent } = this.config
     const listener = async (
       input: any,
       callback: SocketCallback<any> | undefined
@@ -60,14 +32,11 @@ export abstract class SocketEventController {
       try {
         this.logger.info(`(${eventId}) received`)
         const requestContainer = container.createChildContainer()
-        requestContainer.register(Authorization, {
-          useValue: new Authorization(
-            this.getAuthInfo(socket),
-            this.getAuthRoles(socket),
-            (auth) => {
-              this.setAuthInfo(socket, auth)
-            }
-          ),
+        requestContainer.register(Authorization as any, {
+          useValue: new SocketAuthorization(this.authProvider),
+        })
+        requestContainer.register(EventsBus as any, {
+          useValue: new SocketEventsBus(new Map(), this.socketsServer, socket),
         })
         const data = await this.handleRequest(requestContainer, input)
         this.logger.info(`(${eventId}) success`)
@@ -77,7 +46,7 @@ export abstract class SocketEventController {
         return callback && callback({ success: false })
       }
     }
-    return [socketEvent as any, listener] as const
+    return [this.controledEvent as any, listener] as const
   }
 
   protected abstract handleRequest(
