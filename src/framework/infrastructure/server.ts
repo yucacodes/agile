@@ -21,6 +21,7 @@ import {
   type ControllerConfig,
   type EmitterConfig,
 } from '../presentation'
+import { implementationConfig } from './implementation'
 import { ServerTimeProvider } from './server-time-provider'
 
 export interface ServerRunConfig {
@@ -41,6 +42,7 @@ export abstract class Server {
     this.expressApp = express()
     this.httpServer = createServer(this.expressApp)
     this.socketsServer = new SocketsServer()
+    this.registerImplementations()
     this.resolveAuthProviders()
     this.eventsEmiters = this.resolveEventsEmitters()
     this.eventsControllers = this.resolveEventsControllers()
@@ -48,7 +50,6 @@ export abstract class Server {
   }
 
   run(runConfig: ServerRunConfig) {
-    container.register(TimeProvider as any, ServerTimeProvider)
     this.httpServer.listen(runConfig.port, () => {
       this.logger.info(`Running on port ${runConfig.port}`)
     })
@@ -56,6 +57,15 @@ export abstract class Server {
 
   private __config__(): serverConfig {
     throw new Error(`Should config the server using @server decorator`)
+  }
+
+  private registerImplementations() {
+    container.register(TimeProvider as any, ServerTimeProvider)
+    const { implementations } = this.__config__()
+    implementations?.forEach((x) => {
+      const config = x.prototype.__config__() as implementationConfig<any>
+      container.register(config.base, x)
+    })
   }
 
   private resolveAuthProviders() {

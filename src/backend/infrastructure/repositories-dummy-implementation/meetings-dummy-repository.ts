@@ -1,10 +1,10 @@
 import { MeetingsRepository, type Meeting, type MeetingProps } from '@domain'
-import { singleton } from '@framework/injection'
+import { implementation } from '@framework/infrastructure'
 import { DummyRepositoryHelper } from './dummy-repository-helper'
 
 const items: Map<string, Meeting> = new Map()
 
-@singleton()
+@implementation({ base: MeetingsRepository })
 export class MeetingsDummyRepository extends MeetingsRepository {
   private helper: DummyRepositoryHelper<MeetingProps, Meeting> =
     new DummyRepositoryHelper(items)
