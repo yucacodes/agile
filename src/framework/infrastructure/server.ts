@@ -6,12 +6,16 @@ import { type Constructor } from '../generics'
 import { container } from '../injection'
 import { Logger } from '../logger'
 import type {
-  AuthProvider,
+  AuthProviderConfig,
   EventController,
+  HttpAuthProvider,
   InlineEventControllerConfig,
+  SocketAuthProvider,
   SocketEventController,
+  SocketEventEmitter,
 } from '../presentation'
 import {
+  socketAuthProviderDecoratorToken,
   SocketEventControllerForUseCase,
   type ControllerConfig,
   type EmitterConfig,
@@ -22,20 +26,23 @@ export interface ServerRunConfig {
 }
 
 export abstract class Server {
+  private logger = new Logger('Server')
   private expressApp: Application
   private httpServer: HttpServer
-  private socketsServer: SocketsServer | undefined
-  private eventsControllers: SocketEventController[] | undefined
-  private logger = new Logger('Server')
+  private socketsServer: SocketsServer
+  private eventsEmiters: Map<Function, SocketEventEmitter>
+  private eventsControllers: SocketEventController[]
+  private socketAuthProvider: SocketAuthProvider<any> | null = null
+  private httpAuthProvider: HttpAuthProvider<any> | null = null
 
   constructor() {
     this.expressApp = express()
     this.httpServer = createServer(this.expressApp)
-
-    this.eventsControllers = this.buildEventsControllers()
-    if (this.eventsControllers?.length) {
-      this.addEventsListeners()
-    }
+    this.socketsServer = new SocketsServer()
+    this.resolveAuthProviders()
+    this.eventsEmiters = this.resolveEventsEmitters()
+    this.eventsControllers = this.resolveEventsControllers()
+    this.addEventsListeners()
   }
 
   run(runConfig: ServerRunConfig) {
@@ -45,11 +52,21 @@ export abstract class Server {
   }
 
   private __config__(): serverConfig {
-    throw `Should config the server using @server decorator`
+    throw new Error(`Should config the server using @server decorator`)
+  }
+
+  private resolveAuthProviders() {
+    const { authProviders } = this.__config__()
+    authProviders?.forEach((x) => {
+      if ((x as any)[socketAuthProviderDecoratorToken]) {
+        this.socketAuthProvider = container.resolve(x as any)
+      } else {
+        throw new Error(`Not supported auth provider`)
+      }
+    })
   }
 
   private addEventsListeners() {
-    this.socketsServer = new SocketsServer()
     this.socketsServer.listen(this.httpServer)
     this.socketsServer.use((socket, next) => {
       this.logger.info(`Socket connection: ${socket.conn.remoteAddress}`)
@@ -59,24 +76,38 @@ export abstract class Server {
       next()
     })
     this.socketsServer.on('connection', (socket) => {
-      this.eventsControllers &&
-        this.eventsControllers.forEach((x) => socket.on(...x.listenFor(socket)))
+      this.eventsControllers.forEach((x) => socket.on(...x.listenFor(socket)))
     })
   }
 
-  private buildEventsControllers(): SocketEventController[] | undefined {
-    const config = this.__config__()
-    const authProvider = config.authProvider
-      ? container.resolve(config.authProvider)
-      : null
+  private resolveEventsEmitters(): Map<Function, SocketEventEmitter> {
+    const { emitters } = this.__config__()
+    return new Map(
+      emitters?.map((x) => {
+        return [
+          x.model,
+          { event: x.event, mapper: container.resolve(x.mapper) },
+        ]
+      })
+    )
+  }
 
-    return config.controllers?.map((x) => {
-      const inlineConfig = this.inlineEventControllerConfig(x)
-      if (inlineConfig) {
-        return new SocketEventControllerForUseCase(inlineConfig, authProvider)
-      }
-      throw new Error(`Controller configuration not supported`)
-    })
+  private resolveEventsControllers(): SocketEventController[] {
+    const { controllers } = this.__config__()
+    return (
+      controllers?.map((x) => {
+        const inlineConfig = this.inlineEventControllerConfig(x)
+        if (inlineConfig) {
+          return new SocketEventControllerForUseCase(
+            inlineConfig,
+            this.socketsServer,
+            this.socketAuthProvider,
+            this.eventsEmiters
+          )
+        }
+        throw new Error(`Controller configuration not supported`)
+      }) ?? []
+    )
   }
 
   private inlineEventControllerConfig(
@@ -98,7 +129,7 @@ export abstract class Server {
 export interface serverConfig {
   controllers?: ControllerConfig[]
   emitters?: EmitterConfig[]
-  authProvider?: Constructor<AuthProvider<unknown>>
+  authProviders?: AuthProviderConfig[]
 }
 
 export function server(config: serverConfig) {

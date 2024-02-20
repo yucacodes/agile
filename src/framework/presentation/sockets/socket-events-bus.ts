@@ -1,18 +1,19 @@
 import type { Socket, Server as SocketsServer } from 'socket.io'
 import type { Notification, Subscription } from '../../application'
 import { EventsBus } from '../../application'
-import type { Constructor } from '../../generics'
-import { container } from '../../injection'
+import { Logger } from '../../logger'
 import type { Mapper } from '../../mapper'
 
-export interface SocketEmittedEventHandler {
+export interface SocketEventEmitter {
   event: string
-  mapper: Constructor<Mapper<any, any>>
+  mapper: Mapper<any, any>
 }
 
 export class SocketEventsBus extends EventsBus {
+  private logger = new Logger('EventsBus')
+
   constructor(
-    private handlers: Map<Function, SocketEmittedEventHandler>,
+    private handlers: Map<Function, SocketEventEmitter>,
     private socketsServer: SocketsServer,
     private socket: Socket | null
   ) {
@@ -20,26 +21,30 @@ export class SocketEventsBus extends EventsBus {
   }
 
   notify<E extends Object>(notification: Notification<E>): void {
-    const handler = this.handlers.get(notification.constructor)
+    const handler = this.handlers.get(notification.event.constructor)
     if (!handler)
       throw new Error(
-        `Not found Emmiter for ${notification.constructor.name} event`
+        `Not found Emmiter for ${notification.event.constructor.name}`
       )
-    const mapper = container.resolve(handler.mapper)
-    const out = mapper.map(notification.event)
+    const out = handler.mapper.map(notification.event)
     const origin = this.socket ?? this.socketsServer
-    origin.in(notification.channel).emit(out)
+    origin.in(notification.channel).emit(handler.event, out)
+    this.logger.info(
+      `emmited '${handler.event}' to channel '${notification.channel}'`
+    )
   }
 
   subscribe(subscription: Subscription): void {
     if (!this.socket)
       throw `Not way to subscribe to channel out a socket context`
     this.socket.join(subscription.channel)
+    this.logger.info(`subscription to channel '${subscription.channel}'`)
   }
 
   unsubscribe(subscription: Subscription): void {
     if (!this.socket)
       throw `Not way to unsubscribe from channel out a socket context`
     this.socket.leave(subscription.channel)
+    this.logger.info(`cancel subscription to channel '${subscription.channel}'`)
   }
 }

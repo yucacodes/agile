@@ -7,7 +7,7 @@ import { Logger } from '../../logger'
 import type { InlineEventControllerConfig } from '../controller'
 import type { SocketAuthProvider } from './socket-auth-provider'
 import { SocketAuthorization } from './socket-authorization'
-import type { SocketEmittedEventHandler } from './socket-events-bus'
+import type { SocketEventEmitter } from './socket-events-bus'
 import { SocketEventsBus } from './socket-events-bus'
 import { type SocketCallback } from './sockets-types'
 
@@ -18,8 +18,8 @@ export abstract class SocketEventController {
   constructor(
     private controledEvent: string,
     private socketsServer: SocketsServer,
-    private authProvider: SocketAuthProvider<any>,
-    private emitedEventsHandlers: Map<Function, SocketEmittedEventHandler>
+    private authProvider: SocketAuthProvider<any> | null,
+    private eventsEmiters: Map<Function, SocketEventEmitter>
   ) {
     this.logger = new Logger(`${controledEvent}:Controller`)
   }
@@ -39,7 +39,7 @@ export abstract class SocketEventController {
         })
         requestContainer.register(EventsBus as any, {
           useValue: new SocketEventsBus(
-            this.emitedEventsHandlers,
+            this.eventsEmiters,
             this.socketsServer,
             socket
           ),
@@ -65,10 +65,10 @@ export class SocketEventControllerForUseCase extends SocketEventController {
   constructor(
     private inlineConfig: InlineEventControllerConfig,
     socketsServer: SocketsServer,
-    authProvider: SocketAuthProvider<any>,
-    emitedEventsHandlers: Map<Function, SocketEmittedEventHandler>
+    authProvider: SocketAuthProvider<any> | null,
+    eventsEmiters: Map<Function, SocketEventEmitter>
   ) {
-    super(inlineConfig.event, socketsServer, authProvider, emitedEventsHandlers)
+    super(inlineConfig.event, socketsServer, authProvider, eventsEmiters)
   }
 
   protected async handleRequest(

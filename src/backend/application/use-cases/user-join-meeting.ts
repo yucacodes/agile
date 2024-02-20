@@ -53,7 +53,7 @@ export class UserJoinMeeting {
       timeProvider: this.timeProvider,
     })
 
-    this.eventsBus.notify({ event, channel: `meeting/${meeting.id}` })
+    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
     this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
 
     const auth = {

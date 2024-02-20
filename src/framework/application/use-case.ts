@@ -113,7 +113,7 @@ async function performAuthValidation(
     throw new Error(`Invalid UseCase config`)
   }
 
-  const authorization = container.resolve(Authorization)
+  const authorization = container.resolve(Authorization as any) as Authorization<any>
   const roles = authorization.roles()
   if (allowAnyRole && roles.length > 0) return
   for (const allowedRole of __allowRoles__) {

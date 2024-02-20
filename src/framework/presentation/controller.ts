@@ -1,7 +1,7 @@
-import { type UseCase } from '@framework/application'
+import { type UseCase } from '../application'
 import { type Constructor } from '../generics'
 import { type EventController } from './event-controller'
-import type { HttpController } from './http-controller'
+import type { HttpController } from './http/http-controller'
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'options'
 

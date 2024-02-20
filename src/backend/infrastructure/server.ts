@@ -4,6 +4,7 @@ import {
   ManagerStartVoting,
   ManagerStartedVotingEventDtoMapper,
   MeetingParticipantDisconnectedEventDtoMapper,
+  MeetingParticipantJoinedEventDtoMapper,
   MeetingParticipantVotedEventDtoMapper,
   ParticipantDisconectedFromMeeting,
   ParticipantVotes,
@@ -12,6 +13,7 @@ import {
 } from '@application'
 import {
   ParticipantDisconnectedEvent,
+  ParticipantJoinedEvent,
   ParticipantVotedEvent,
   VotingClosedEvent,
   VotingStartedEvent,
@@ -19,8 +21,10 @@ import {
 import { Server, server } from '@framework/infrastructure'
 import { emit } from '../presentation/emited-events'
 import { listen } from '../presentation/listen-events'
+import { SocketAuthProvider } from '../presentation/socket-auth-provider'
 
 @server({
+  authProviders: [SocketAuthProvider],
   controllers: [
     { event: listen.Vote, useCase: ParticipantVotes },
     { event: listen.StartMeeting, useCase: UserCreateMeeting },
@@ -30,6 +34,11 @@ import { listen } from '../presentation/listen-events'
     { event: listen.Disconnect, useCase: ParticipantDisconectedFromMeeting },
   ],
   emitters: [
+    {
+      model: ParticipantJoinedEvent,
+      event: emit.ParticipantJoined,
+      mapper: MeetingParticipantJoinedEventDtoMapper,
+    },
     {
       model: ParticipantVotedEvent,
       event: emit.ParticipantVoted,
