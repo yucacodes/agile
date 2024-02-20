@@ -1,3 +1,4 @@
+import { TimeProvider } from '@framework/domain'
 import type { Application } from 'express'
 import { default as express } from 'express'
 import { createServer, type Server as HttpServer } from 'http'
@@ -20,6 +21,7 @@ import {
   type ControllerConfig,
   type EmitterConfig,
 } from '../presentation'
+import { ServerTimeProvider } from './server-time-provider'
 
 export interface ServerRunConfig {
   port: number
@@ -46,6 +48,7 @@ export abstract class Server {
   }
 
   run(runConfig: ServerRunConfig) {
+    container.register(TimeProvider as any, ServerTimeProvider)
     this.httpServer.listen(runConfig.port, () => {
       this.logger.info(`Running on port ${runConfig.port}`)
     })
@@ -126,10 +129,13 @@ export abstract class Server {
   }
 }
 
+export type ImplementationConfig = Constructor<Object>
+
 export interface serverConfig {
   controllers?: ControllerConfig[]
   emitters?: EmitterConfig[]
   authProviders?: AuthProviderConfig[]
+  implementations?: ImplementationConfig[]
 }
 
 export function server(config: serverConfig) {

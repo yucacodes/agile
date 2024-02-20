@@ -22,6 +22,7 @@ import { Server, server } from '@framework/infrastructure'
 import { emit } from '../presentation/emited-events'
 import { listen } from '../presentation/listen-events'
 import { SocketAuthProvider } from '../presentation/socket-auth-provider'
+import { MeetingsDummyRepository } from './repositories-dummy-implementation'
 
 @server({
   authProviders: [SocketAuthProvider],
@@ -59,6 +60,11 @@ import { SocketAuthProvider } from '../presentation/socket-auth-provider'
       event: emit.ParticipantDisconnected,
       mapper: MeetingParticipantDisconnectedEventDtoMapper,
     },
+  ],
+  implementations: [
+    ...(process.env.NODE_ENV === 'production'
+      ? [MeetingsDummyRepository]
+      : [MeetingsDummyRepository]),
   ],
 })
 export class AgileServer extends Server {}
