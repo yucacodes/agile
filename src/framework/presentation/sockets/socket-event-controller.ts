@@ -4,9 +4,10 @@ import { Authorization, EventsBus } from '../../application'
 import type { Server as SocketsServer } from 'socket.io'
 import { container, type DependencyContainer } from '../../injection'
 import { Logger } from '../../logger'
-import type { SocketAuthProvider } from '../auth-provider'
 import type { InlineEventControllerConfig } from '../controller'
-import { SocketAuthorization } from '../socket-authorization'
+import type { SocketAuthProvider } from './socket-auth-provider'
+import { SocketAuthorization } from './socket-authorization'
+import type { SocketEmittedEventHandler } from './socket-events-bus'
 import { SocketEventsBus } from './socket-events-bus'
 import { type SocketCallback } from './sockets-types'
 
@@ -17,7 +18,8 @@ export abstract class SocketEventController {
   constructor(
     private controledEvent: string,
     private socketsServer: SocketsServer,
-    private authProvider: SocketAuthProvider<any>
+    private authProvider: SocketAuthProvider<any>,
+    private emitedEventsHandlers: Map<Function, SocketEmittedEventHandler>
   ) {
     this.logger = new Logger(`${controledEvent}:Controller`)
   }
@@ -33,10 +35,14 @@ export abstract class SocketEventController {
         this.logger.info(`(${eventId}) received`)
         const requestContainer = container.createChildContainer()
         requestContainer.register(Authorization as any, {
-          useValue: new SocketAuthorization(this.authProvider),
+          useValue: new SocketAuthorization(this.authProvider, socket),
         })
         requestContainer.register(EventsBus as any, {
-          useValue: new SocketEventsBus(new Map(), this.socketsServer, socket),
+          useValue: new SocketEventsBus(
+            this.emitedEventsHandlers,
+            this.socketsServer,
+            socket
+          ),
         })
         const data = await this.handleRequest(requestContainer, input)
         this.logger.info(`(${eventId}) success`)
@@ -58,12 +64,11 @@ export abstract class SocketEventController {
 export class SocketEventControllerForUseCase extends SocketEventController {
   constructor(
     private inlineConfig: InlineEventControllerConfig,
-    authProvider: AuthProvider<any> | null
+    socketsServer: SocketsServer,
+    authProvider: SocketAuthProvider<any>,
+    emitedEventsHandlers: Map<Function, SocketEmittedEventHandler>
   ) {
-    super({
-      authProvider: authProvider ?? undefined,
-      socketEvent: inlineConfig.event,
-    })
+    super(inlineConfig.event, socketsServer, authProvider, emitedEventsHandlers)
   }
 
   protected async handleRequest(

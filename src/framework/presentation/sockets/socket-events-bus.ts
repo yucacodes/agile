@@ -36,4 +36,10 @@ export class SocketEventsBus extends EventsBus {
       throw `Not way to subscribe to channel out a socket context`
     this.socket.join(subscription.channel)
   }
+
+  unsubscribe(subscription: Subscription): void {
+    if (!this.socket)
+      throw `Not way to unsubscribe from channel out a socket context`
+    this.socket.leave(subscription.channel)
+  }
 }
