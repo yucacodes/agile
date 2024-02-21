@@ -124,7 +124,9 @@ async function performAuthValidation(
   const roles = authorization.roles()
   if (allowAnyRole && roles.length > 0) return
   for (const allowedRole of __allowRoles__) {
-    if (roles.includes(allowedRole)) return
+    if (roles.includes(allowedRole)) {
+      return true
+    }
   }
 
   throw new Error(`Not allow action for provided authorization roles`)
