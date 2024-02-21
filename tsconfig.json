@@ -21,6 +21,7 @@
     "types": ["node", "vite/client", "bun-types"],
     "paths": {
       "@framework/*": ["./src/framework/*"],
+      "@framework": ["./src/framework"],
       "@domain": ["./src/backend/domain"],
       "@application": ["./src/backend/application"],
       "@presentation": ["./src/backend/presentation"],

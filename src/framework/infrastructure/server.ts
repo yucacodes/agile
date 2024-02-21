@@ -21,7 +21,7 @@ import {
   type ControllerConfig,
   type EmitterConfig,
 } from '../presentation'
-import { implementationConfig } from './implementation'
+import type { implementationConfig } from './implementation'
 import { ServerTimeProvider } from './server-time-provider'
 
 export interface ServerRunConfig {
@@ -63,8 +63,11 @@ export abstract class Server {
     container.register(TimeProvider as any, ServerTimeProvider)
     const { implementations } = this.__config__()
     implementations?.forEach((x) => {
-      const config = x.prototype.__config__() as implementationConfig<any>
-      container.register(config.base, x)
+      if (x === false) return
+      ;[x].flat().forEach((x) => {
+        const config = x.prototype.__config__() as implementationConfig<any>
+        container.register(config.base as any, x)
+      })
     })
   }
 
@@ -139,7 +142,10 @@ export abstract class Server {
   }
 }
 
-export type ImplementationConfig = Constructor<Object>
+export type ImplementationConfig =
+  | Constructor<Object>
+  | false
+  | [Constructor<Object>]
 
 export interface serverConfig {
   controllers?: ControllerConfig[]

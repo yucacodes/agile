@@ -18,11 +18,13 @@ import {
   VotingClosedEvent,
   VotingStartedEvent,
 } from '@domain'
+import { NODE_ENV } from '@framework'
 import { Server, server } from '@framework/infrastructure'
 import { emit } from '../presentation/emited-events'
 import { listen } from '../presentation/listen-events'
 import { SocketAuthProvider } from '../presentation/socket-auth-provider'
 import { MeetingsDummyRepository } from './repositories-dummy-implementation'
+import { MeetingsRedisRepository } from './repositories-redis-implementation'
 
 @server({
   authProviders: [SocketAuthProvider],
@@ -62,9 +64,8 @@ import { MeetingsDummyRepository } from './repositories-dummy-implementation'
     },
   ],
   implementations: [
-    ...(process.env.NODE_ENV === 'production'
-      ? [MeetingsDummyRepository]
-      : [MeetingsDummyRepository]),
+    NODE_ENV === 'production' && [MeetingsRedisRepository],
+    NODE_ENV === 'development' && [MeetingsDummyRepository],
   ],
 })
 export class AgileServer extends Server {}
