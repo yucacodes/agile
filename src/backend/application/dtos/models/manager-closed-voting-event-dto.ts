@@ -1,6 +1,6 @@
 import { VotingClosedEvent } from '@domain'
 import { type VotingDto, VotingDtoMapper } from './voting-dto'
-import { dtoMapper } from '@framework/application'
+import { dtoMapper } from '@framework'
 
 export interface ManagerClosedVotingEventDto {
   voting: VotingDto

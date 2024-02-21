@@ -1,4 +1,4 @@
-import { socketAuthProvider } from '@framework/presentation'
+import { socketAuthProvider } from '@framework'
 import type { Socket } from 'socket.io'
 import type { AuthInformationDto } from '../application/dtos'
 

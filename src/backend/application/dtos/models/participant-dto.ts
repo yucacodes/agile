@@ -1,5 +1,5 @@
 import { Participant } from '@domain'
-import { dtoMapper } from '@framework/application'
+import { dtoMapper } from '@framework'
 
 export interface ParticipantDto {
   userId: string

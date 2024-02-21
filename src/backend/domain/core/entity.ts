@@ -1,6 +1,6 @@
 import { generate as generateId } from 'short-uuid'
 import { Model } from './model'
-import { type TimeProvider } from '@framework/domain'
+import { type TimeProvider } from '@framework'
 
 export interface EntityProps {
   id: string

@@ -1,4 +1,4 @@
-import { AutoMapper, autoMapper } from '@framework/application'
+import { AutoMapper, autoMapper } from '@framework'
 import {
   ManagerClosedVotingEventDtoMapper,
   ManagerStartedVotingEventDtoMapper,

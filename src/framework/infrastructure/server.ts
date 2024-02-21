@@ -1,4 +1,4 @@
-import { TimeProvider } from '@framework/domain'
+import { TimeProvider } from '@framework'
 import type { Application } from 'express'
 import { default as express } from 'express'
 import { createServer, type Server as HttpServer } from 'http'

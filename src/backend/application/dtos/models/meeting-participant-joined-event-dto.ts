@@ -1,5 +1,5 @@
 import { ParticipantJoinedEvent } from '@domain'
-import { dtoMapper } from '@framework/application'
+import { dtoMapper } from '@framework'
 import { ParticipantDtoMapper, type ParticipantDto } from './participant-dto'
 
 export interface MeetingParticipantJoinedEventDto {

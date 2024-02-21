@@ -1,5 +1,5 @@
 import { ParticipantDisconnectedEvent } from '@domain'
-import { dtoMapper } from '@framework/application'
+import { dtoMapper } from '@framework'
 import {
   MeetingParticipantDtoMapper,
   type MeetingParticipantDto,

@@ -1,5 +1,5 @@
 import { Participant } from '@domain'
-import { dboMapper } from '@framework/infrastructure'
+import { dboMapper } from '@framework'
 
 export interface RedisParticipantDbo {}
 

@@ -1,4 +1,4 @@
-import { type TimeProvider } from '@framework/domain'
+import { type TimeProvider } from '@framework'
 import { Entity, type EntityProps } from '../core/entity'
 
 export interface UserFactoryProps {

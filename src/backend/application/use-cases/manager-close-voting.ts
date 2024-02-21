@@ -1,6 +1,6 @@
 import { MeetingsRepository, VotingClosedEvent } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework/application'
-import { TimeProvider } from '@framework/domain'
+import { Authorization, EventsBus, useCase } from '@framework'
+import { TimeProvider } from '@framework'
 import type { AuthInformationDto } from '../dtos'
 import {
   ManagerCloseVotingRequestDtoValidator,

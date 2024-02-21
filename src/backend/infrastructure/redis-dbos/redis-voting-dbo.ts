@@ -1,5 +1,5 @@
 import { Voting } from '@domain'
-import { dboMapper } from '@framework/infrastructure'
+import { dboMapper } from '@framework'
 import type { RedisEntityDbo } from './redis-entity-dbo'
 
 export interface RedisVotingDbo extends RedisEntityDbo {}

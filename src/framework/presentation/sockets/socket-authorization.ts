@@ -1,5 +1,5 @@
-import { Authorization } from '@framework/application'
-import { Logger } from '@framework/logger'
+import { Authorization } from '@framework'
+import { Logger } from '@framework'
 import type { Socket } from 'socket.io'
 import type { SocketAuthProvider } from './socket-auth-provider'
 

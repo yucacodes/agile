@@ -1,5 +1,5 @@
 import { Voting } from '@domain'
-import { dtoMapper } from '@framework/application'
+import { dtoMapper } from '@framework'
 import { EntityDtoMapper, type EntityDto } from './entity-dto'
 
 export interface VotingDto extends EntityDto {

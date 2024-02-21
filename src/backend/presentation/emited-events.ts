@@ -1,4 +1,4 @@
-import type { SocketEmit } from '@framework/presentation'
+import type { SocketEmit } from '@framework'
 import type {
   ManagerClosedVotingEventDto,
   ManagerStartedVotingEventDto,

@@ -19,7 +19,7 @@ import {
   VotingStartedEvent,
 } from '@domain'
 import { NODE_ENV } from '@framework'
-import { Server, server } from '@framework/infrastructure'
+import { Server, server } from '@framework'
 import { emit } from '../presentation/emited-events'
 import { listen } from '../presentation/listen-events'
 import { SocketAuthProvider } from '../presentation/socket-auth-provider'

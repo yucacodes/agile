@@ -1,4 +1,4 @@
-import { type SocketListener } from '@framework/presentation'
+import { type SocketListener } from '@framework'
 import type {
   ManagerCloseVotingRequestDto,
   ManagerStartVotingRequestDto,
