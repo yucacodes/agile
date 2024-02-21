@@ -7,7 +7,7 @@ import { RedisEntityDboMapperHelper } from './redis-entity-dbo'
 import {
   RedisParticipantDboMapper,
   type RedisParticipantDbo,
-} from './redis-meeting-participant-dbo'
+} from './redis-participant-dbo'
 import { RedisVotingDboMapper, type RedisVotingDbo } from './redis-voting-dbo'
 
 export interface RedisMeetingDbo extends RedisEntityDbo {
