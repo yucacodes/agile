@@ -1,9 +1,9 @@
 import { createClient } from 'redis'
 
-export const repositoriesRedisClient = createClient({
+export const redisRepositoriesClient = createClient({
   url: 'redis://localhost:6379/0',
 })
 
-repositoriesRedisClient.on('error', (err) =>
+redisRepositoriesClient.on('error', (err) =>
   console.log('Redis Client Error', err)
 )
