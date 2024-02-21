@@ -30,7 +30,7 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 export default component$(() => {
   const location = useLocation()
   const { addNotification } = useToast()
-  const { socket, user, idMeeting, secret, isStartedMeeting, votingId } =
+  const { socket, user, idMeeting, secret, isStartedMeeting, votingId, participants } =
     useContext(StateProvider)
 
   const startCounter = useSignal(false)
@@ -55,6 +55,7 @@ export default component$(() => {
     })
 
     socket.value?.on('ManagerStartedVoting', (payload) => {
+      console.log(payload)
       if (payload.votingId) {
         votingId!.value = payload.votingId
         isStartedMeeting!.value = true
@@ -62,6 +63,7 @@ export default component$(() => {
     })
 
     socket.value?.on('ManagerClosedVoting', (payload) => {
+
       console.log(payload)
 
       if (payload.voting) {
@@ -95,9 +97,19 @@ export default component$(() => {
       socket.value?.emit(
         'StartMeeting',
         {
-          name: user.value.name,
+        name: user.value.name,
         },
-        (payload) => {}
+        (payload) => {
+          console.log(payload);
+          
+          if (!payload.success) {
+            return
+          }
+          isStartedMeeting!.value = true
+          participants.value = Object.values(payload.data.meeting.participants)
+
+          
+        }
       )
     }
   })

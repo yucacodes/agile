@@ -22,7 +22,7 @@ export const Points = component$(() => {
   ]
 
   const handleVote = $((point: number) => {
-    socket.value?.emit('UserVoting', {
+    socket.value?.emit('StartVoting', {
     meetingId: idMeeting.value!,
     point,
     votingId: votingId.value!,
