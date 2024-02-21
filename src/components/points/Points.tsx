@@ -37,7 +37,7 @@ export const Points = component$(() => {
       {points.map((point) => (
         <button 
         disabled={!isStartedMeeting.value}
-        onClick$={ () => handleVote(point.value!)} key={point.value} 
+        onClick$={ () => handleVote(point.value!)}
         class={[!isStartedMeeting.value ? style.disabled : '',style.points, ]}>
           {point.display}
         </button>

@@ -2,6 +2,7 @@ import {
   $,
   component$,
   useContext,
+  useSignal,
   useTask$,
   useVisibleTask$,
 } from '@builder.io/qwik'
@@ -19,6 +20,9 @@ import { StateProvider } from '~/context/ProviderContext'
 import style from './play-session-page.module.css'
 import { useToast } from '~/hooks/useToast'
 
+// import { CounterDown } from '@yucacodes/ui-qwik'
+
+
 export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
   const secret = url.searchParams.get('secret')
   const id = url.searchParams.get('id')
@@ -33,21 +37,22 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 export default component$(() => {
   const location = useLocation()
   const { addNotification } = useToast()
-  const { socket, user, idMeeting, secret, isStartedMeeting, votingId } = useContext(StateProvider)
+  const { socket, user, idMeeting, secret, isStartedMeeting, votingId } =
+    useContext(StateProvider)
+
+  const startCounter = useSignal(false)
 
 
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('ParticipantJoined', (payload) => {
       if (payload.meetingParticipantId) {
-
         addNotification({
           message: `Se has unido a la sesión ${payload.meetingParticipantName}`,
           status: 'success',
         })
       }
     })
-
 
     socket.value?.on('ParticipantDisconnected', (payload) => {
       if (payload.meetingParticipant) {
@@ -60,15 +65,14 @@ export default component$(() => {
 
     socket.value?.on('ManagerStartedVoting', (payload) => {
       if (payload.votingId) {
-        votingId!.value = payload.votingId;
+        votingId!.value = payload.votingId
         isStartedMeeting!.value = true
       }
-
     })
 
     socket.value?.on('ManagerClosedVoting', (payload) => {
-      console.log(payload);
-    
+      console.log(payload)
+
       if (payload.voting) {
         isStartedMeeting!.value = false
       }
@@ -79,11 +83,12 @@ export default component$(() => {
     })
   })
 
-  const action = $(() => { })
+  const action = $(() => {})
 
   const shareLink = $(() => {
-    (navigator as any).clipboard.writeText(
-      `${location.url.protocol + '//' + location.url.host
+    ;(navigator as any).clipboard.writeText(
+      `${
+        location.url.protocol + '//' + location.url.host
       }/join-session?secret=${secret.value}&id=${idMeeting.value}`
     )
   })
@@ -95,34 +100,33 @@ export default component$(() => {
         status: 'error',
       })
     } else {
-      socket.value?.emit('ManagerStartedVoting', {
-        meetingId: idMeeting.value,
-      }, (payload) => {
-      
-
-      })
+      socket.value?.emit(
+        'ManagerStartedVoting',
+        {
+          meetingId: idMeeting.value,
+        },
+        (payload) => {}
+      )
     }
-
   })
 
-    const CloseVoting = $(() => {
-      if (!idMeeting.value) {
-        addNotification({
-          message: 'Error al iniciar la votación',
-          status: 'error',
-        })
-      } else {
-        socket.value?.emit('ManagerClosedVoting', {
+  const CloseVoting = $(() => {
+    if (!idMeeting.value) {
+      addNotification({
+        message: 'Error al iniciar la votación',
+        status: 'error',
+      })
+    } else {
+      socket.value?.emit(
+        'ManagerClosedVoting',
+        {
           meetingId: idMeeting.value!,
-          votingId: votingId.value!
-        }, (payload) => {
-        
-  
-        })
-      }
-
+          votingId: votingId.value!,
+        },
+        (payload) => {}
+      )
+    }
   })
-
 
   return (
     <main class={style.container}>
@@ -133,7 +137,10 @@ export default component$(() => {
         <section class={style.content}>
           <section class={style.header}>
             <p class={style.timeText}>Time</p>
-            <p class={style.time}>00:10:00</p>
+            {/* <CounterDown 
+            clock 
+            beerTime={new Date().getTime() + 1000 * 60 * 60 }
+            /> */}
             <p class={style.userName}>{user.value.name}</p>
           </section>
 
@@ -154,26 +161,23 @@ export default component$(() => {
         </section>
       </div>
 
-
-
       <section class={style.buttonsContainer}>
+        {!isStartedMeeting.value && (
+          <HasPermission>
+            <PrimaryButton action={InitVoting} text="START VOTING" />
+          </HasPermission>
+        )}
 
-        {
-          !isStartedMeeting.value && <HasPermission><PrimaryButton action={InitVoting} text="START VOTING" /></HasPermission>
-        }
-
-        {
-          isStartedMeeting?.value && (
-            <>
-              <HasPermission>
-                <PrimaryButton action={CloseVoting} text="Cerrar Votacion" />
-              </HasPermission>
-              <HasPermission>
-                <PrimaryButton action={action} text="SHOW VOTES" />
-              </HasPermission>
-            </>
-          )
-        }
+        {isStartedMeeting?.value && (
+          <>
+            <HasPermission>
+              <PrimaryButton action={CloseVoting} text="Cerrar Votacion" />
+            </HasPermission>
+            <HasPermission>
+              <PrimaryButton action={action} text="SHOW VOTES" />
+            </HasPermission>
+          </>
+        )}
         <HasPermission>
           <SecondaryButton action={shareLink} text="SHARED SESSION" />
         </HasPermission>
@@ -181,8 +185,6 @@ export default component$(() => {
     </main>
   )
 })
-
-
 
 export const head: DocumentHead = {
   title: 'Play Session',

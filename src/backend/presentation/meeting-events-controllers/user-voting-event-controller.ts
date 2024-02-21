@@ -4,6 +4,7 @@ import {
   type UserVotingRequestDto,
   type VotingInformationDto,
 } from '@application'
+import { AuthInformationDto } from '@framework/application'
 import { singleton } from '@framework/injection'
 import {
   SocketEventController,
@@ -24,8 +25,9 @@ export class UserVotingEventController extends SocketEventController<
   }
 
   protected handle(
-    request: UserVotingRequestDto
+    request: UserVotingRequestDto,
+    authData: AuthInformationDto | null
   ): Promise<VotingInformationDto> {
-    return this.userVoting.perform(request)
+    return this.userVoting.perform(request, authData)
   }
 }
