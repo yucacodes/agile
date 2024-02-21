@@ -15,13 +15,20 @@ export {
   verifyPasswordHash
 } from './domain'
 export { implementation } from './implementation'
-export { Server, dboMapper, server } from './infrastructure'
+export {
+  DboCollectionsMapper,
+  Server,
+  dboMapper,
+  server
+} from './infrastructure'
 export { Logger } from './logger'
 export { NODE_ENV } from './node-env'
 export {
-  Environment, eventController,
+  Environment,
+  eventController,
   socketAuthProvider,
   type SocketEmit,
   type SocketListener
 } from './presentation'
 
+export { CollectionsMapper } from './mapper'

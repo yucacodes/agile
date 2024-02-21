@@ -1,15 +1,15 @@
 import {
   ManagerCloseVoting,
-  VotingClosedEventDtoMapper,
   ManagerStartVoting,
-  VotingStartedEventDtoMapper,
+  ParticipantDisconectedFromMeeting,
   ParticipantDisconnectedEventDtoMapper,
   ParticipantJoinedEventDtoMapper,
   ParticipantVotedEventDtoMapper,
-  ParticipantDisconectedFromMeeting,
   ParticipantVotes,
   UserCreateMeeting,
   UserJoinMeeting,
+  VotingClosedEventDtoMapper,
+  VotingStartedEventDtoMapper,
 } from '@application'
 import {
   ParticipantDisconnectedEvent,
@@ -18,13 +18,12 @@ import {
   VotingClosedEvent,
   VotingStartedEvent,
 } from '@domain'
-import { NODE_ENV } from '@framework'
-import { Server, server } from '@framework'
+import { NODE_ENV, Server, server } from '@framework'
 import { emit } from '../presentation/emited-events'
 import { listen } from '../presentation/listen-events'
 import { SocketAuthProvider } from '../presentation/socket-auth-provider'
-import { DummyMeetingsRepository } from './dummy-repositories'
 import { RedisMeetingsRepository } from './redis-repositories'
+import { SqliteMeetingsRepository } from './sqlite-repositories'
 
 @server({
   authProviders: [SocketAuthProvider],
@@ -65,7 +64,7 @@ import { RedisMeetingsRepository } from './redis-repositories'
   ],
   implementations: [
     NODE_ENV === 'production' && [RedisMeetingsRepository],
-    NODE_ENV === 'development' && [DummyMeetingsRepository],
+    NODE_ENV === 'development' && [SqliteMeetingsRepository],
   ],
 })
 export class AgileServer extends Server {}

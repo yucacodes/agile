@@ -11,9 +11,8 @@ export function implementation<T>(config?: implementationConfig<T>) {
     constructor.prototype.__config__ = function __config__() {
       return config ?? {}
     }
-    if (!config?.base) {
-      if (config?.singleton) singleton()(constructor)
-      else injectable()(constructor)
-    }
+
+    if (config?.singleton) singleton()(constructor)
+    else injectable()(constructor)
   }
 }

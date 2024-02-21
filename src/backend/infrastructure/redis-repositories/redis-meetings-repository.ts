@@ -1,6 +1,6 @@
 import { MeetingsRepository, type Meeting } from '@domain'
 import { implementation } from '@framework'
-import { repositoriesRedisClient as client } from '../db-connections/repositories-redis'
+import { redisRepositoriesClient as client } from '../db-connections/redis-repositories'
 import { RedisMeetingDboMapper } from '../redis-dbos'
 
 @implementation({ base: MeetingsRepository, singleton: true })
