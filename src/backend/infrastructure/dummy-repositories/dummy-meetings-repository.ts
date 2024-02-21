@@ -4,8 +4,8 @@ import { DummyRepositoryHelper } from './dummy-repository-helper'
 
 const items: Map<string, Meeting> = new Map()
 
-@implementation({ base: MeetingsRepository })
-export class MeetingsDummyRepository extends MeetingsRepository {
+@implementation({ base: MeetingsRepository, singleton: true })
+export class DummyMeetingsRepository extends MeetingsRepository {
   private helper: DummyRepositoryHelper<MeetingProps, Meeting> =
     new DummyRepositoryHelper(items)
 

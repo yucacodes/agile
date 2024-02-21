@@ -1,13 +1,13 @@
 import { MeetingsRepository, type Meeting } from '@domain'
-import { singleton } from '@framework/injection'
+import { implementation } from '@framework/implementation'
 import { repositoriesRedisClient as client } from '../db-connections/repositories-redis'
-import { MeetingDboMapper } from '../no-sql-dbos'
+import { RedisMeetingDboMapper } from '../redis-dbos'
 
-@singleton()
-export class MeetingsRedisRepository extends MeetingsRepository {
-  constructor(private mapper: MeetingDboMapper) {
+@implementation({ base: MeetingsRepository, singleton: true })
+export class RedisMeetingsRepository extends MeetingsRepository {
+  constructor(private mapper: RedisMeetingDboMapper) {
     super()
-    if(!client.isReady) client.connect()
+    if (!client.isReady) client.connect()
   }
 
   async findById(id: string): Promise<Meeting | null> {

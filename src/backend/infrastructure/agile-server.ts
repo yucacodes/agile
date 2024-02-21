@@ -23,8 +23,8 @@ import { Server, server } from '@framework/infrastructure'
 import { emit } from '../presentation/emited-events'
 import { listen } from '../presentation/listen-events'
 import { SocketAuthProvider } from '../presentation/socket-auth-provider'
-import { MeetingsDummyRepository } from './repositories-dummy-implementation'
-import { MeetingsRedisRepository } from './repositories-redis-implementation'
+import { DummyMeetingsRepository } from './dummy-repositories'
+import { RedisMeetingsRepository } from './redis-repositories'
 
 @server({
   authProviders: [SocketAuthProvider],
@@ -64,8 +64,8 @@ import { MeetingsRedisRepository } from './repositories-redis-implementation'
     },
   ],
   implementations: [
-    NODE_ENV === 'production' && [MeetingsRedisRepository],
-    NODE_ENV === 'development' && [MeetingsDummyRepository],
+    NODE_ENV === 'production' && [RedisMeetingsRepository],
+    NODE_ENV === 'development' && [DummyMeetingsRepository],
   ],
 })
 export class AgileServer extends Server {}

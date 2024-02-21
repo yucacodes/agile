@@ -2,30 +2,30 @@ import { Meeting } from '@domain'
 
 import { TimeProvider } from '@framework/domain'
 import { dboMapper } from '@framework/infrastructure'
-import type { EntityNoSqlDbo } from './entity-no-sql-dbo'
-import { EntityNoSqlDboMapperHelper } from './entity-no-sql-dbo'
+import type { RedisEntityDbo } from './redis-entity-dbo'
+import { RedisEntityDboMapperHelper } from './redis-entity-dbo'
 import {
-  ParticipantNoSqlDboMapper,
-  type ParticipantNoSqlDbo,
-} from './meeting-participant-no-sql-dbo'
-import { VotingNoSqlDboMapper, type VotingNoSqlDbo } from './voting-no-sql-dbo'
+  RedisParticipantDboMapper,
+  type RedisParticipantDbo,
+} from './redis-meeting-participant-dbo'
+import { RedisVotingDboMapper, type RedisVotingDbo } from './redis-voting-dbo'
 
-export interface MeetingNoSqlDbo extends EntityNoSqlDbo {
+export interface RedisMeetingDbo extends RedisEntityDbo {
   secretHash: string
-  participants: { [key: string]: ParticipantNoSqlDbo }
-  votings: { [key: string]: VotingNoSqlDbo }
+  participants: { [key: string]: RedisParticipantDbo }
+  votings: { [key: string]: RedisVotingDbo }
 }
 
 @dboMapper({ model: Meeting })
-export class MeetingDboMapper {
+export class RedisMeetingDboMapper {
   constructor(
     private timeProvider: TimeProvider,
-    private entityMapper: EntityNoSqlDboMapperHelper,
-    private participantMapper: ParticipantNoSqlDboMapper,
-    private votingMapper: VotingNoSqlDboMapper
+    private entityMapper: RedisEntityDboMapperHelper,
+    private participantMapper: RedisParticipantDboMapper,
+    private votingMapper: RedisVotingDboMapper
   ) {}
 
-  map(model: Meeting): MeetingNoSqlDbo {
+  map(model: Meeting): RedisMeetingDbo {
     const props = model['props']
     return {
       ...this.entityMapper.map(model),
@@ -35,7 +35,7 @@ export class MeetingDboMapper {
     }
   }
 
-  revert(dbo: MeetingNoSqlDbo): Meeting {
+  revert(dbo: RedisMeetingDbo): Meeting {
     return new Meeting(
       {
         ...this.entityMapper.revertProps(dbo),
