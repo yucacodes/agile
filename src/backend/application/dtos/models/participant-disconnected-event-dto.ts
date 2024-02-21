@@ -1,24 +1,24 @@
 import { ParticipantDisconnectedEvent } from '@domain'
 import { dtoMapper } from '@framework'
 import {
-  MeetingParticipantDtoMapper,
-  type MeetingParticipantDto,
-} from './meeting-participant-dto'
+  ParticipantDtoMapper,
+  type ParticipantDto,
+} from './participant-dto'
 
-export interface MeetingParticipantDisconnectedEventDto {
-  meetingParticipant: MeetingParticipantDto
+export interface ParticipantDisconnectedEventDto {
+  meetingParticipant: ParticipantDto
   time: string
 }
 
 @dtoMapper({ model: ParticipantDisconnectedEvent })
-export class MeetingParticipantDisconnectedEventDtoMapper {
+export class ParticipantDisconnectedEventDtoMapper {
   constructor(
-    private meetingParticipantDtoMapper: MeetingParticipantDtoMapper
+    private meetingParticipantDtoMapper: ParticipantDtoMapper
   ) {}
 
   map(
     obj: ParticipantDisconnectedEvent
-  ): MeetingParticipantDisconnectedEventDto {
+  ): ParticipantDisconnectedEventDto {
     return {
       meetingParticipant: this.meetingParticipantDtoMapper.map(
         obj.participant()

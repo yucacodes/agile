@@ -2,16 +2,16 @@ import { VotingClosedEvent } from '@domain'
 import { type VotingDto, VotingDtoMapper } from './voting-dto'
 import { dtoMapper } from '@framework'
 
-export interface ManagerClosedVotingEventDto {
+export interface VotingClosedEventDto {
   voting: VotingDto
   time: string
 }
 
 @dtoMapper({ model: VotingClosedEvent })
-export class ManagerClosedVotingEventDtoMapper {
+export class VotingClosedEventDtoMapper {
   constructor(private votingtDtoMapper: VotingDtoMapper) {}
 
-  map(obj: VotingClosedEvent): ManagerClosedVotingEventDto {
+  map(obj: VotingClosedEvent): VotingClosedEventDto {
     return {
       voting: this.votingtDtoMapper.map(obj.voting()),
       time: obj.time.toString(),

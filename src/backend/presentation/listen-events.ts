@@ -1,13 +1,11 @@
 import { type SocketListener } from '@framework'
 import type {
-  ManagerCloseVotingRequestDto,
-  ManagerStartVotingRequestDto,
-  MeetingAndAuthInfoDto,
-  MeetingDto,
-  ParticipantVotesRequestDto,
-  UserCreateMeetingRequestDto,
-  UserJoinMeetingRequestDto,
-} from '../application/dtos'
+  ManagerCloseVoting,
+  ManagerStartVoting,
+  ParticipantVotes,
+  UserCreateMeeting,
+  UserJoinMeeting,
+} from '../application'
 
 /* ------ Events that client emit and server listen ----- */
 export const listen = {
@@ -21,18 +19,9 @@ export const listen = {
 
 // Requests And Responses types
 export type ListenEventsMap = {
-  [listen.StartMeeting]: SocketListener<
-    UserCreateMeetingRequestDto,
-    MeetingAndAuthInfoDto
-  >
-  [listen.JoinMeeting]: SocketListener<UserJoinMeetingRequestDto, MeetingAndAuthInfoDto>
-  [listen.StartVoting]: SocketListener<ParticipantVotesRequestDto, void>
-  [listen.Vote]: SocketListener<
-    ManagerStartVotingRequestDto,
-    MeetingAndAuthInfoDto
-  >
-  [listen.CloseVoting]: SocketListener<
-    ManagerCloseVotingRequestDto,
-    MeetingAndAuthInfoDto
-  >
+  [listen.StartMeeting]: SocketListener<UserCreateMeeting>
+  [listen.JoinMeeting]: SocketListener<UserJoinMeeting>
+  [listen.StartVoting]: SocketListener<ManagerStartVoting>
+  [listen.Vote]: SocketListener<ParticipantVotes>
+  [listen.CloseVoting]: SocketListener<ManagerCloseVoting>
 }

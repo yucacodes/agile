@@ -1,5 +1,5 @@
 import type {
-  MeetingParticipantDto,
+  ParticipantDto,
   UserCreateMeetingRequestDto,
 } from '@application'
 import {
@@ -28,7 +28,7 @@ export interface State {
   secret: Signal<string | undefined>
   idMeeting: Signal<string | undefined>
   createSocket: QRL<() => void>
-  participants: Signal<MeetingParticipantDto[]>
+  participants: Signal<ParticipantDto[]>
 }
 
 export const StateProvider = createContextId<State>('StateProvider')
@@ -43,7 +43,7 @@ export const Provider = component$(() => {
     secret: useSignal<string | undefined>(undefined),
     idMeeting: useSignal<string | undefined>(undefined),
     createSocket,
-    participants: useSignal<MeetingParticipantDto[]>([]),
+    participants: useSignal<ParticipantDto[]>([]),
   })
 
   useContextProvider(StateProvider, state)
