@@ -4,6 +4,7 @@ import { default as express } from 'express'
 import { createServer, type Server as HttpServer } from 'http'
 import { Server as SocketsServer } from 'socket.io'
 import { type Constructor } from '../generics'
+import type { implementationConfig } from '../implementation'
 import { container } from '../injection'
 import { Logger } from '../logger'
 import type {
@@ -21,7 +22,6 @@ import {
   type ControllerConfig,
   type EmitterConfig,
 } from '../presentation'
-import type { implementationConfig } from '../implementation'
 import { ServerTimeProvider } from './server-time-provider'
 
 export interface ServerRunConfig {
@@ -66,7 +66,7 @@ export abstract class Server {
       if (x === false) return
       ;[x].flat().forEach((x) => {
         const config = x.prototype.__config__() as implementationConfig<any>
-        container.register(config.base as any, x)
+        if (config.base) container.register(config.base as any, x)
       })
     })
   }
