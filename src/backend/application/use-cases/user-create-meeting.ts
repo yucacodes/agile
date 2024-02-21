@@ -1,48 +1,60 @@
-import { Meeting, MeetingParticipant, MeetingsRepository } from '@domain'
-import { GenerateAuthInformation, UseCase } from '@framework/application'
-import { User } from '@framework/domain'
-import { singleton } from '@framework/injection'
+import { Meeting, MeetingsRepository, Participant, User } from '@domain'
+import { Authorization, EventsBus, useCase } from '@framework/application'
+import { TimeProvider } from '@framework/domain'
+import type { MeetingAndAuthInfoDto } from '../dtos'
 import {
   MeetingDtoMapper,
-  type MeetingWithAuthInformationDto,
+  UserCreateMeetingRequestDtoValidator,
+  type AuthInformationDto,
   type UserCreateMeetingRequestDto,
 } from '../dtos'
 
-@singleton()
-export class UserCreateMeeting extends UseCase<
-  UserCreateMeetingRequestDto,
-  MeetingWithAuthInformationDto
-> {
+@useCase({
+  disableAuthValidation: true,
+  requestValidator: UserCreateMeetingRequestDtoValidator,
+})
+export class UserCreateMeeting {
   constructor(
+    private authorization: Authorization<AuthInformationDto>,
+    private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
-    private generateMeetingAuthInformation: GenerateAuthInformation,
-    private meetingDtoMapper: MeetingDtoMapper
-  ) {
-    super()
-  }
+    private meetingDtoMapper: MeetingDtoMapper,
+    private eventsBus: EventsBus
+  ) {}
 
   async perform(
     request: UserCreateMeetingRequestDto
-  ): Promise<MeetingWithAuthInformationDto> {
-    const { meeting: newMeeting, secret: meetingSecret } = Meeting.factory()
+  ): Promise<MeetingAndAuthInfoDto> {
+    const { meeting, secret } = Meeting.factory({
+      timeProvider: this.timeProvider,
+    })
 
-    const user = User.factory({ roles: ['MeetingParticipant'] })
+    const user = User.factory({
+      timeProvider: this.timeProvider,
+    })
 
-    const firstParticipant = MeetingParticipant.factory({
-      meeting: newMeeting,
+    const manager = Participant.factory({
       name: request.name,
       isManager: true,
       user,
     })
 
-    newMeeting.addParticipant(firstParticipant, meetingSecret)
+    meeting.addParticipant(manager, secret)
 
-    await this.meetingsRepository.save(newMeeting)
+    await this.meetingsRepository.saveNew(meeting)
+
+    const auth = {
+      userId: user.id(),
+      roles: [`meeting/${meeting.id()}/participant`],
+    }
+    this.authorization.set(auth)
+
+    this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
 
     return {
-      secret: meetingSecret,
-      meeting: this.meetingDtoMapper.makeDto(newMeeting),
-      authInfo: this.generateMeetingAuthInformation.perform(user),
+      meeting: this.meetingDtoMapper.map(meeting),
+      secret,
+      authInfo: auth,
     }
   }
 }

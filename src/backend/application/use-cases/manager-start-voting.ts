@@ -1,41 +1,33 @@
+import { MeetingsRepository, VotingStartedEvent } from '@domain'
+import { Authorization, EventsBus, useCase } from '@framework/application'
+import { TimeProvider } from '@framework/domain'
+import type { AuthInformationDto } from '../dtos'
 import {
-  MeetingEventsBus,
-  VotingStartedEvent,
-  MeetingsRepository,
-  Voting,
-} from '@domain'
-import { type AuthInformationDto, UseCase } from '@framework/application'
-import { singleton } from '@framework/injection'
-import { type ManagerStartedVotingRequestDto } from '../dtos'
+  ManagerStartVotingRequestDtoValidator,
+  type ManagerStartVotingRequestDto,
+} from '../dtos'
 
-@singleton()
-export class ManagerStartVoting extends UseCase<
-  ManagerStartedVotingRequestDto,
-  void
-> {
+@useCase({
+  allowRole: (req) => `meeting/${req.meetingId}/participant`,
+  requestValidator: ManagerStartVotingRequestDtoValidator,
+})
+export class ManagerStartVoting {
   constructor(
-    private meetingsRepository: MeetingsRepository,
-    private meetingEventsBus: MeetingEventsBus
-  ) {
-    super()
-  }
+    private eventsBus: EventsBus,
+    private authorization: Authorization<AuthInformationDto>,
+    private timeProvider: TimeProvider,
+    private meetingsRepository: MeetingsRepository
+  ) {}
 
-  async perform(
-    request: ManagerStartedVotingRequestDto,
-    authInformation: AuthInformationDto | null
-  ): Promise<void> {
-    if (!authInformation) throw new Error('Invalid auth information')
-
+  async perform(request: ManagerStartVotingRequestDto): Promise<void> {
+    const auth = this.authorization.get()
     const { meetingId } = request
-
-    const meeting = await this.meetingsRepository.fetchById(meetingId)
-
+    const meeting = await this.meetingsRepository.findById(meetingId)
     if (!meeting) {
       throw new Error('Invalid meeting')
     }
 
-    const participant = meeting.participantById(authInformation.userId)
-
+    const participant = meeting.participant(auth.userId)
     if (!participant) {
       throw new Error('Participant not found.')
     }
@@ -44,21 +36,16 @@ export class ManagerStartVoting extends UseCase<
       throw new Error('You do not have permission to start the voting.')
     }
 
-    const participants = [...meeting.participants().values()]
-    const voting = Voting.factory({
-      timeLimit: new Date(),
-      participants,
+    const voting = meeting.newVoting()
+
+    const event = VotingStartedEvent.factory({
+      meeting,
+      voting,
+      timeProvider: this.timeProvider,
     })
 
-    meeting.addVoting(voting)
+    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
 
-    this.meetingEventsBus.notify(
-      VotingStartedEvent.factory({
-        meetingParticipant: participant,
-        voting,
-      })
-    )
-
-    this.meetingsRepository.save(meeting)
+    await this.meetingsRepository.saveUpdate(meeting)
   }
 }

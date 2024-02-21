@@ -1,15 +1,8 @@
+import { $, component$, useContext, useSignal, useTask$ } from '@builder.io/qwik'
 import {
-  $,
-  component$,
-  useContext,
-  useSignal,
-  useTask$,
-  useVisibleTask$,
-} from '@builder.io/qwik'
-import {
-  type RequestHandler,
   useLocation,
   type DocumentHead,
+  type RequestHandler,
 } from '@builder.io/qwik-city'
 import { HasPermission } from '~/components/hasPermission/hasPermission'
 import { PlayersTable } from '~/components/players-table/PlayersTable'
@@ -17,8 +10,8 @@ import { Points } from '~/components/points/Points'
 import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
 import { SecondaryButton } from '~/components/secondary-button/SecondaryButton'
 import { StateProvider } from '~/context/ProviderContext'
-import style from './play-session-page.module.css'
 import { useToast } from '~/hooks/useToast'
+import style from './play-session-page.module.css'
 
 // import { CounterDown } from '@yucacodes/ui-qwik'
 
@@ -46,21 +39,19 @@ export default component$(() => {
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('ParticipantJoined', (payload) => {
-      if (payload.meetingParticipantId) {
+      if (payload.participant.userId) {
         addNotification({
-          message: `Se has unido a la sesión ${payload.meetingParticipantName}`,
+          message: `Se has unido a la sesión ${payload.participant.userId}`,
           status: 'success',
         })
       }
     })
 
     socket.value?.on('ParticipantDisconnected', (payload) => {
-      if (payload.meetingParticipant) {
-        addNotification({
-          message: `${payload.meetingParticipant.name} ha dejado la sesión`,
-          status: 'error',
-        })
-      }
+      addNotification({
+        message: `${payload.meetingParticipant.name} ha dejado la sesión`,
+        status: 'error',
+      })
     })
 
     socket.value?.on('ManagerStartedVoting', (payload) => {
@@ -86,6 +77,7 @@ export default component$(() => {
   const action = $(() => {})
 
   const shareLink = $(() => {
+    // eslint-disable-next-line no-extra-semi
     ;(navigator as any).clipboard.writeText(
       `${
         location.url.protocol + '//' + location.url.host
@@ -101,9 +93,9 @@ export default component$(() => {
       })
     } else {
       socket.value?.emit(
-        'ManagerStartedVoting',
+        'StartMeeting',
         {
-          meetingId: idMeeting.value,
+          name: user.value.name,
         },
         (payload) => {}
       )
@@ -118,7 +110,7 @@ export default component$(() => {
       })
     } else {
       socket.value?.emit(
-        'ManagerClosedVoting',
+        'CloseVoting',
         {
           meetingId: idMeeting.value!,
           votingId: votingId.value!,

@@ -1,63 +1,71 @@
 import {
-  MeetingEventsBus,
-  MeetingParticipant,
-  MeetingParticipantJoinedEvent,
   MeetingsRepository,
+  Participant,
+  ParticipantJoinedEvent,
+  User,
 } from '@domain'
-import { GenerateAuthInformation, UseCase } from '@framework/application'
-import { User } from '@framework/domain'
-import { singleton } from '@framework/injection'
+import { Authorization, EventsBus, useCase } from '@framework/application'
+import { TimeProvider } from '@framework/domain'
+import type { MeetingAndAuthInfoDto } from '../dtos'
 import {
   MeetingDtoMapper,
-  type MeetingWithAuthInformationDto,
+  UserJoinMeetingRequestDtoValidator,
+  type AuthInformationDto,
   type UserJoinMeetingRequestDto,
 } from '../dtos'
 
-@singleton()
-export class UserJoinMeeting extends UseCase<
-  UserJoinMeetingRequestDto,
-  MeetingWithAuthInformationDto
-> {
+@useCase({
+  disableAuthValidation: true,
+  requestValidator: UserJoinMeetingRequestDtoValidator,
+})
+export class UserJoinMeeting {
   constructor(
+    private authorization: Authorization<AuthInformationDto>,
+    private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
-    private generateAuthInformation: GenerateAuthInformation,
     private meetingDtoMapper: MeetingDtoMapper,
-    private meetingEventsBus: MeetingEventsBus
-  ) {
-    super()
-  }
+    private eventsBus: EventsBus
+  ) {}
 
   async perform(
     request: UserJoinMeetingRequestDto
-  ): Promise<MeetingWithAuthInformationDto> {
-    const existingMeeting = await this.meetingsRepository.fetchById(
-      request.meetingId
-    )
+  ): Promise<MeetingAndAuthInfoDto> {
+    const meeting = await this.meetingsRepository.findById(request.meetingId)
 
-    if (!existingMeeting) {
+    if (!meeting) {
       throw new Error('Invalid meeting')
     }
 
-    const user = User.factory({ roles: ['MeetingParticipant'] })
-
-    const newParticipant = MeetingParticipant.factory({
-      meeting: existingMeeting,
-      name: request.name,
-      user,
+    const user = User.factory({
+      timeProvider: this.timeProvider,
     })
 
-    existingMeeting.addParticipant(newParticipant, request.secret)
+    const participant = Participant.factory({
+      user,
+      name: request.name,
+    })
 
-    this.meetingEventsBus.notify(
-      MeetingParticipantJoinedEvent.factory({
-        meetingParticipant: newParticipant,
-      })
-    )
+    meeting.addParticipant(participant, request.secret)
+
+    const event = ParticipantJoinedEvent.factory({
+      participant,
+      meeting,
+      timeProvider: this.timeProvider,
+    })
+
+    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
+    this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
+
+    const auth = {
+      userId: user.id(),
+      roles: [`meeting/${meeting.id()}/participant`],
+    }
+    this.authorization.set(auth)
 
     return {
-      meeting: this.meetingDtoMapper.makeDto(existingMeeting),
-      authInfo: this.generateAuthInformation.perform(user),
       secret: request.secret,
+      meeting: this.meetingDtoMapper.map(meeting),
+      authInfo: auth,
     }
   }
 }

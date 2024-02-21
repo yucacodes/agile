@@ -1,13 +1,15 @@
-import type { MeetingParticipant, Voting } from '../models'
+import { type TimeProvider } from '@framework/domain'
+import type { Meeting, Voting } from '../models'
 import { MeetingEvent } from './meeting-event'
 
 export type VotingStartedEventFactoryProps = {
-  meetingParticipant: MeetingParticipant
+  meeting: Meeting
   voting: Voting
+  timeProvider: TimeProvider
 }
 
 export interface VotingStartedEventProps {
-  meetingParticipant: MeetingParticipant
+  meeting: Meeting
   voting: Voting
   time: Date
 }
@@ -15,9 +17,9 @@ export interface VotingStartedEventProps {
 export class VotingStartedEvent extends MeetingEvent {
   static factory(props: VotingStartedEventFactoryProps): VotingStartedEvent {
     return new VotingStartedEvent({
-      meetingParticipant: props.meetingParticipant,
+      meeting: props.meeting,
       voting: props.voting,
-      time: new Date(),
+      time: props.timeProvider.now(),
     })
   }
 
@@ -26,10 +28,10 @@ export class VotingStartedEvent extends MeetingEvent {
   }
 
   meetingId(): string {
-    return this.props.meetingParticipant.meetingId()
+    return this.props.meeting.id()
   }
 
-  voting(): string {
+  votingId(): string {
     return this.props.voting.id()
   }
 

@@ -1,63 +1,56 @@
+import { MeetingsRepository, VotingClosedEvent } from '@domain'
+import { Authorization, EventsBus, useCase } from '@framework/application'
+import { TimeProvider } from '@framework/domain'
+import type { AuthInformationDto } from '../dtos'
 import {
-  MeetingEventsBus,
-  VotingClosedEvent,
-  MeetingsRepository,
-} from '@domain'
-import { type AuthInformationDto, UseCase } from '@framework/application'
-import { singleton } from '@framework/injection'
-import { type ManagerClosedVotingRequestDto } from '../dtos'
+  ManagerCloseVotingRequestDtoValidator,
+  type ManagerCloseVotingRequestDto,
+} from '../dtos'
 
-@singleton()
-export class ManagerCloseVoting extends UseCase<
-  ManagerClosedVotingRequestDto,
-  void
-> {
+@useCase({
+  allowRole: (req) => `meeting/${req.meetingId}/participant`,
+  requestValidator: ManagerCloseVotingRequestDtoValidator,
+})
+export class ManagerCloseVoting {
   constructor(
+    private authorization: Authorization<AuthInformationDto>,
+    private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
-    private meetingEventsBus: MeetingEventsBus
-  ) {
-    super()
-  }
+    private eventsBus: EventsBus
+  ) {}
 
-  async perform(
-    request: ManagerClosedVotingRequestDto,
-    authInformation: AuthInformationDto | null
-  ): Promise<void> {
-    if (!authInformation) throw new Error('Invalid auth information')
-
+  async perform(request: ManagerCloseVotingRequestDto): Promise<void> {
+    const authInfo = this.authorization.get()
     const { meetingId, votingId } = request
-
-    const meeting = await this.meetingsRepository.fetchById(meetingId)
-
+    const meeting = await this.meetingsRepository.findById(meetingId)
     if (!meeting) {
       throw new Error('Invalid meeting')
     }
 
-    const participant = meeting.participantById(authInformation.userId)
-
+    const participant = meeting.participant(authInfo.userId)
     if (!participant) {
       throw new Error('Participant not found.')
     }
 
     if (!participant.isManager()) {
-      throw new Error('You do not have permission to start the voting.')
+      throw new Error('You do not have permission to close the voting.')
     }
 
-    const voting = meeting.votingById(votingId)
-
+    const voting = meeting.voting(votingId)
     if (!voting) {
       throw new Error('Voting not found.')
     }
 
-    voting.manualCloseVoting()
+    voting.manualClose()
 
-    this.meetingEventsBus.notify(
-      VotingClosedEvent.factory({
-        meetingParticipant: participant,
-        voting,
-      })
-    )
+    const event = VotingClosedEvent.factory({
+      meeting,
+      voting,
+      timeProvider: this.timeProvider,
+    })
 
-    this.meetingsRepository.save(meeting)
+    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
+
+    await this.meetingsRepository.saveUpdate(meeting)
   }
 }

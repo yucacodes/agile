@@ -1,4 +1,7 @@
-import type { UserCreateMeetingRequestDto, MeetingParticipantDto } from '@application'
+import type {
+  MeetingParticipantDto,
+  UserCreateMeetingRequestDto,
+} from '@application'
 import {
   Slot,
   component$,
@@ -7,11 +10,10 @@ import {
   useSignal,
   useStore,
   type NoSerialize,
-  type Signal,
   type QRL,
+  type Signal,
 } from '@builder.io/qwik'
-import { MeetingParticipant } from '@domain'
-import type { MeetingClientSocket } from '@presentation'
+import type { ClientSocket } from '@presentation'
 import { useSocket } from '~/hooks/useSocket'
 
 interface AuthInformation extends UserCreateMeetingRequestDto {
@@ -19,15 +21,13 @@ interface AuthInformation extends UserCreateMeetingRequestDto {
   isManager: boolean
 }
 
-
-
 export interface State {
   user: Signal<AuthInformation>
-  socket: Signal<NoSerialize<MeetingClientSocket>>
+  socket: Signal<NoSerialize<ClientSocket>>
   isOnline: Signal<boolean | undefined>
   secret: Signal<string | undefined>
   idMeeting: Signal<string | undefined>
-  createSocket:  QRL<() => void> 
+  createSocket: QRL<() => void>
   participants: Signal<MeetingParticipantDto[]>
   isStartedMeeting: Signal<boolean>
   votingId: Signal<string | undefined>

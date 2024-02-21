@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { singleton } from '@framework/injection'
 
 @singleton()
 export class Environment {
-  getEnvironmentVariable(name: string, defaultValue?: string): string {
+  getString(name: string, defaultValue?: string): string {
     const value = process.env[name] ?? defaultValue
     if (value == null) {
       throw new Error(
@@ -13,8 +12,8 @@ export class Environment {
     return value
   }
 
-  getEnvironmentVariableAsNumber(name: string, defaultValue?: number): number {
-    const stringValue = this.getEnvironmentVariable(
+  getNumber(name: string, defaultValue?: number): number {
+    const stringValue = this.getString(
       name,
       defaultValue === undefined ? undefined : defaultValue.toString()
     )
