@@ -13,7 +13,7 @@ import { StateProvider } from '~/context/ProviderContext'
 import { useToast } from '~/hooks/useToast'
 import style from './play-session-page.module.css'
 
-// import { CounterDown } from '@yucacodes/ui-qwik'
+ import { CounterDown } from '@yucacodes/ui-qwik'
 
 
 export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
@@ -39,30 +39,37 @@ export default component$(() => {
   useTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('ParticipantJoined', (payload) => {
-      if (payload.participant.userId) {
+      console.log(payload)
+      if (payload.participant) {
+
+        participants.value = [...participants.value, payload.participant]
         addNotification({
-          message: `Se has unido a la sesión ${payload.participant.userId}`,
+          message: `Se has unido a la sesión ${payload.participant.name}`,
           status: 'success',
         })
       }
     })
 
     socket.value?.on('ParticipantDisconnected', (payload) => {
+      console.log(payload)
+
       addNotification({
         message: `${payload.meetingParticipant.name} ha dejado la sesión`,
         status: 'error',
       })
     })
 
-    socket.value?.on('ManagerStartedVoting', (payload) => {
+    socket.value?.on('VotingStarted', (payload) => {
       console.log(payload)
-      if (payload.votingId) {
+      console.log('VotingStarted',payload)
+      if (payload) {
         votingId!.value = payload.votingId
+        startCounter.value = true
         isStartedMeeting!.value = true
       }
     })
 
-    socket.value?.on('ManagerClosedVoting', (payload) => {
+    socket.value?.on('VotingClosed', (payload) => {
 
       console.log(payload)
 
@@ -95,19 +102,12 @@ export default component$(() => {
       })
     } else {
       socket.value?.emit(
-        'StartMeeting',
+        'StartVoting',
         {
-        name: user.value.name,
+        meetingId: idMeeting.value!,
         },
         (payload) => {
-          console.log(payload);
-          
-          if (!payload.success) {
-            return
-          }
-          isStartedMeeting!.value = true
-          participants.value = Object.values(payload.data.meeting.participants)
-
+          console.log(payload)
           
         }
       )
@@ -127,7 +127,9 @@ export default component$(() => {
           meetingId: idMeeting.value!,
           votingId: votingId.value!,
         },
-        (payload) => {}
+        (payload) => {
+          console.log(payload)
+        }
       )
     }
   })
@@ -141,10 +143,12 @@ export default component$(() => {
         <section class={style.content}>
           <section class={style.header}>
             <p class={style.timeText}>Time</p>
-            {/* <CounterDown 
+            <CounterDown 
+            class={style.time}
             clock 
+            started={startCounter.value}
             beerTime={new Date().getTime() + 1000 * 60 * 60 }
-            /> */}
+            />
             <p class={style.userName}>{user.value.name}</p>
           </section>
 
