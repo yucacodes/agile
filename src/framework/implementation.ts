@@ -1,4 +1,4 @@
-import type { AbstractConstructor, Constructor } from '../generics'
+import type { AbstractConstructor, Constructor } from './generics'
 
 export interface implementationConfig<T> {
   base: Constructor<T> | AbstractConstructor<T>

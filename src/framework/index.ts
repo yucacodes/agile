@@ -1,1 +1,2 @@
-export * from './node-env'
+export { NODE_ENV } from './node-env'
+export { implementation } from './implementation'

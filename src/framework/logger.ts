@@ -7,6 +7,7 @@ export class Logger {
   constructor(baseName: string | Function) {
     baseName = typeof baseName === 'string' ? baseName : baseName.name
     this.logger = pino({
+      timestamp: false,
       formatters: {
         bindings: (x) => ({ ...x, pid: baseName }),
       },

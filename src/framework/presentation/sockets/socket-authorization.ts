@@ -5,13 +5,16 @@ import type { SocketAuthProvider } from './socket-auth-provider'
 
 export class SocketAuthorization<Auth> extends Authorization<Auth> {
   private auth: Auth | null = null
-  private logger = new Logger('Authorization')
+  private logger: Logger
 
   constructor(
     private authProvider: SocketAuthProvider<Auth> | null,
-    private socket: Socket
+    private socket: Socket,
+    private controlledEvent: string,
+    private eventCount: number
   ) {
     super()
+    this.logger = new Logger(`${controlledEvent}:Authorization`)
   }
 
   get() {
@@ -19,13 +22,13 @@ export class SocketAuthorization<Auth> extends Authorization<Auth> {
     if (!auth) {
       throw new Error('Request has no authorization')
     }
-    this.logger.info(`get ${JSON.stringify(auth)}`)
+    this.logger.info(`(${this.eventCount}) get ${JSON.stringify(auth)}`)
     return auth
   }
 
   set(auth: Auth): void {
     this.provider().setAuth(this.socket, auth)
-    this.logger.info(`set ${JSON.stringify(auth)}`)
+    this.logger.info(`(${this.eventCount}) set ${JSON.stringify(auth)}`)
   }
 
   roles(): string[] {

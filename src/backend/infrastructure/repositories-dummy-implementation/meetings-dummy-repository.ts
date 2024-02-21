@@ -1,5 +1,5 @@
 import { MeetingsRepository, type Meeting, type MeetingProps } from '@domain'
-import { implementation } from '@framework/infrastructure'
+import { implementation } from '@framework'
 import { DummyRepositoryHelper } from './dummy-repository-helper'
 
 const items: Map<string, Meeting> = new Map()

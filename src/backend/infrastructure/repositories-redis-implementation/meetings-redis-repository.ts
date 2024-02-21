@@ -7,9 +7,8 @@ import { MeetingDboMapper } from '../no-sql-dbos'
 export class MeetingsRedisRepository extends MeetingsRepository {
   constructor(private mapper: MeetingDboMapper) {
     super()
+    if(!client.isReady) client.connect()
   }
-
-  // await repositoriesRedisClient.connect()
 
   async findById(id: string): Promise<Meeting | null> {
     const dbo = (await client.json.get(this.redisKey(id))) as any

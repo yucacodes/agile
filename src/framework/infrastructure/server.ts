@@ -21,7 +21,7 @@ import {
   type ControllerConfig,
   type EmitterConfig,
 } from '../presentation'
-import type { implementationConfig } from './implementation'
+import type { implementationConfig } from '../implementation'
 import { ServerTimeProvider } from './server-time-provider'
 
 export interface ServerRunConfig {
