@@ -35,13 +35,20 @@ export abstract class SocketEventController {
         this.logger.info(`(${eventId}) received`)
         const requestContainer = container.createChildContainer()
         requestContainer.register(Authorization as any, {
-          useValue: new SocketAuthorization(this.authProvider, socket),
+          useValue: new SocketAuthorization(
+            this.authProvider,
+            socket,
+            this.controledEvent,
+            eventId
+          ),
         })
         requestContainer.register(EventsBus as any, {
           useValue: new SocketEventsBus(
             this.eventsEmiters,
             this.socketsServer,
-            socket
+            socket,
+            this.controledEvent,
+            eventId
           ),
         })
         const data = await this.handleRequest(requestContainer, input)

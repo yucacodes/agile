@@ -3,7 +3,7 @@ import {
   generateSecureRandomSecretString,
   verifyPasswordHash,
   type TimeProvider,
-} from '@framework/domain'
+} from '@framework'
 import { Entity, type EntityProps } from '../core'
 import type { Participant } from './participant'
 import { Voting } from './voting'

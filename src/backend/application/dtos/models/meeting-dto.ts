@@ -1,21 +1,21 @@
 import { Meeting } from '@domain'
 
 import {
-  MeetingParticipantDtoMapper,
-  type MeetingParticipantDto,
-} from './meeting-participant-dto'
+  ParticipantDtoMapper,
+  type ParticipantDto,
+} from './participant-dto'
 import { EntityDtoMapper, type EntityDto } from './entity-dto'
-import { dtoMapper } from '@framework/application'
+import { dtoMapper } from '@framework'
 
 export interface MeetingDto extends EntityDto {
-  participants: { [key: string]: MeetingParticipantDto }
+  participants: { [key: string]: ParticipantDto }
 }
 
 @dtoMapper({ model: Meeting })
 export class MeetingDtoMapper {
   constructor(
     private entityMapper: EntityDtoMapper,
-    private meetingParticipantDtoMapper: MeetingParticipantDtoMapper
+    private meetingParticipantDtoMapper: ParticipantDtoMapper
   ) {}
 
   map(obj: Meeting): MeetingDto {

@@ -1,7 +1,7 @@
 import { ParticipantVotedEvent } from '@domain'
-import { dtoMapper } from '@framework/application'
+import { dtoMapper } from '@framework'
 
-export interface MeetingParticipantVotedEventDto {
+export interface ParticipantVotedEventDto {
   meetingId: string
   votingId: string
   participantUserId: string
@@ -9,8 +9,8 @@ export interface MeetingParticipantVotedEventDto {
 }
 
 @dtoMapper({ model: ParticipantVotedEvent })
-export class MeetingParticipantVotedEventDtoMapper {
-  map(obj: ParticipantVotedEvent): MeetingParticipantVotedEventDto {
+export class ParticipantVotedEventDtoMapper {
+  map(obj: ParticipantVotedEvent): ParticipantVotedEventDto {
     return {
       meetingId: obj.meetingId(),
       votingId: obj.votingId(),

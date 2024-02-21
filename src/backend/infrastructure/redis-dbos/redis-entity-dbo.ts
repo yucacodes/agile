@@ -1,16 +1,16 @@
 import type { Entity, EntityProps } from '@domain'
-import { singleton } from '@framework/injection'
+import { implementation } from '@framework'
 
-export interface EntityNoSqlDbo {
+export interface RedisEntityDbo {
   id: string
   createdAt: number
   updatedAt: number
   discardedAt?: number
 }
 
-@singleton()
-export class EntityNoSqlDboMapperHelper {
-  map<P extends EntityProps>(entity: Entity<P>): EntityNoSqlDbo {
+@implementation({ singleton: true })
+export class RedisEntityDboMapperHelper {
+  map<P extends EntityProps>(entity: Entity<P>): RedisEntityDbo {
     const props = entity['props']
     return {
       id: props.id,
@@ -20,7 +20,7 @@ export class EntityNoSqlDboMapperHelper {
     }
   }
 
-  revertProps(dbo: EntityNoSqlDbo): EntityProps {
+  revertProps(dbo: RedisEntityDbo): EntityProps {
     return {
       id: dbo.id,
       createdAt: new Date(dbo.createdAt),

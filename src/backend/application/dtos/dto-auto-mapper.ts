@@ -1,11 +1,11 @@
-import { AutoMapper, autoMapper } from '@framework/application'
+import { AutoMapper, autoMapper } from '@framework'
 import {
-  ManagerClosedVotingEventDtoMapper,
-  ManagerStartedVotingEventDtoMapper,
+  VotingClosedEventDtoMapper,
+  VotingStartedEventDtoMapper,
 } from './models'
 
 @autoMapper([
-  ManagerClosedVotingEventDtoMapper,
-  ManagerStartedVotingEventDtoMapper,
+  VotingClosedEventDtoMapper,
+  VotingStartedEventDtoMapper,
 ])
 export class DtoAutoMapper extends AutoMapper {}

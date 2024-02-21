@@ -1,26 +1,26 @@
 import { Participant } from '@domain'
-import { dboMapper } from '@framework/infrastructure'
+import { dboMapper } from '@framework'
 
-export interface ParticipantNoSqlDbo {}
+export interface RedisParticipantDbo {}
 
 @dboMapper({ model: Participant })
-export class ParticipantNoSqlDboMapper {
-  map(obj: Participant): ParticipantNoSqlDbo {
+export class RedisParticipantDboMapper {
+  map(obj: Participant): RedisParticipantDbo {
     throw new Error('Method not implemented.')
   }
 
   mapMap(map: Map<string, Participant>): {
-    [key: string]: ParticipantNoSqlDbo
+    [key: string]: RedisParticipantDbo
   } {
     throw new Error('Method not implemented.')
   }
 
-  revert(dbo: ParticipantNoSqlDbo): Participant {
+  revert(dbo: RedisParticipantDbo): Participant {
     throw new Error('Method not implemented.')
   }
 
   revertMap(dbo: {
-    [key: string]: ParticipantNoSqlDbo
+    [key: string]: RedisParticipantDbo
   }): Map<string, Participant> {
     throw new Error('Method not implemented.')
   }

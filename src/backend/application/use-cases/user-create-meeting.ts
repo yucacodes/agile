@@ -1,6 +1,6 @@
 import { Meeting, MeetingsRepository, Participant, User } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework/application'
-import { TimeProvider } from '@framework/domain'
+import { Authorization, EventsBus, useCase } from '@framework'
+import { TimeProvider } from '@framework'
 import type { MeetingAndAuthInfoDto } from '../dtos'
 import {
   MeetingDtoMapper,

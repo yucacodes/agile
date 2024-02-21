@@ -1,4 +1,4 @@
-import { singleton } from '@framework/injection'
+import { singleton } from '../injection'
 
 @singleton()
 export class Environment {

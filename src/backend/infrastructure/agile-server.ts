@@ -1,11 +1,11 @@
 import {
   ManagerCloseVoting,
-  ManagerClosedVotingEventDtoMapper,
+  VotingClosedEventDtoMapper,
   ManagerStartVoting,
-  ManagerStartedVotingEventDtoMapper,
-  MeetingParticipantDisconnectedEventDtoMapper,
-  MeetingParticipantJoinedEventDtoMapper,
-  MeetingParticipantVotedEventDtoMapper,
+  VotingStartedEventDtoMapper,
+  ParticipantDisconnectedEventDtoMapper,
+  ParticipantJoinedEventDtoMapper,
+  ParticipantVotedEventDtoMapper,
   ParticipantDisconectedFromMeeting,
   ParticipantVotes,
   UserCreateMeeting,
@@ -18,11 +18,13 @@ import {
   VotingClosedEvent,
   VotingStartedEvent,
 } from '@domain'
-import { Server, server } from '@framework/infrastructure'
+import { NODE_ENV } from '@framework'
+import { Server, server } from '@framework'
 import { emit } from '../presentation/emited-events'
 import { listen } from '../presentation/listen-events'
 import { SocketAuthProvider } from '../presentation/socket-auth-provider'
-import { MeetingsDummyRepository } from './repositories-dummy-implementation'
+import { DummyMeetingsRepository } from './dummy-repositories'
+import { RedisMeetingsRepository } from './redis-repositories'
 
 @server({
   authProviders: [SocketAuthProvider],
@@ -38,33 +40,32 @@ import { MeetingsDummyRepository } from './repositories-dummy-implementation'
     {
       model: ParticipantJoinedEvent,
       event: emit.ParticipantJoined,
-      mapper: MeetingParticipantJoinedEventDtoMapper,
+      mapper: ParticipantJoinedEventDtoMapper,
     },
     {
       model: ParticipantVotedEvent,
       event: emit.ParticipantVoted,
-      mapper: MeetingParticipantVotedEventDtoMapper,
+      mapper: ParticipantVotedEventDtoMapper,
     },
     {
       model: VotingClosedEvent,
       event: emit.VotingClosed,
-      mapper: ManagerClosedVotingEventDtoMapper,
+      mapper: VotingClosedEventDtoMapper,
     },
     {
       model: VotingStartedEvent,
       event: emit.VotingClosed,
-      mapper: ManagerStartedVotingEventDtoMapper,
+      mapper: VotingStartedEventDtoMapper,
     },
     {
       model: ParticipantDisconnectedEvent,
       event: emit.ParticipantDisconnected,
-      mapper: MeetingParticipantDisconnectedEventDtoMapper,
+      mapper: ParticipantDisconnectedEventDtoMapper,
     },
   ],
   implementations: [
-    ...(process.env.NODE_ENV === 'production'
-      ? [MeetingsDummyRepository]
-      : [MeetingsDummyRepository]),
+    NODE_ENV === 'production' && [RedisMeetingsRepository],
+    NODE_ENV === 'development' && [DummyMeetingsRepository],
   ],
 })
 export class AgileServer extends Server {}

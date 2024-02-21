@@ -6,7 +6,7 @@ import { Logger } from '../logger'
 import { Authorization } from './authorization'
 
 export type UseCase<Req, Res> = {
-  perform(request: Req): Res
+  perform(request: Req): Promise<Res>
 }
 
 export type useCaseConfigWithRequestValidator<Req> = {
@@ -55,7 +55,12 @@ export function useCase<Req>(config: useCaseConfig<Req>) {
       req: Req
     ): Promise<Res> {
       const __request__ = await performRequestValidation(req, config, logger)
-      performAuthValidation(__request__, config, logger, this.__container__)
+      await performAuthValidation(
+        __request__,
+        config,
+        logger,
+        this.__container__
+      )
       return __perform__.apply(this, [__request__])
     }
 
@@ -113,7 +118,9 @@ async function performAuthValidation(
     throw new Error(`Invalid UseCase config`)
   }
 
-  const authorization = container.resolve(Authorization as any) as Authorization<any>
+  const authorization = container.resolve(
+    Authorization as any
+  ) as Authorization<any>
   const roles = authorization.roles()
   if (allowAnyRole && roles.length > 0) return
   for (const allowedRole of __allowRoles__) {

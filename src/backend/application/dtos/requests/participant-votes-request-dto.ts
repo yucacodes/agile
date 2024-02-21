@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString, Max, Min } from '@framework'
 
 export interface ParticipantVotesRequestDto {
   meetingId: string

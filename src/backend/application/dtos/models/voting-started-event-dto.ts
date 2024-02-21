@@ -1,16 +1,16 @@
 import { VotingStartedEvent } from '@domain'
-import { dtoMapper } from '@framework/application'
+import { dtoMapper } from '@framework'
 
-export interface ManagerStartedVotingEventDto {
+export interface VotingStartedEventDto {
   votingId: string
   time: string
 }
 
 @dtoMapper({ model: VotingStartedEvent })
-export class ManagerStartedVotingEventDtoMapper {
+export class VotingStartedEventDtoMapper {
   constructor() {}
 
-  map(obj: VotingStartedEvent): ManagerStartedVotingEventDto {
+  map(obj: VotingStartedEvent): VotingStartedEventDto {
     return {
       votingId: obj.votingId(),
       time: obj.time.toString(),

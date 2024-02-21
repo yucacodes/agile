@@ -1,10 +1,10 @@
-import type { SocketEmit } from '@framework/presentation'
+import type { SocketEmit } from '@framework'
 import type {
-  ManagerClosedVotingEventDto,
-  ManagerStartedVotingEventDto,
-  MeetingParticipantDisconnectedEventDto,
-  MeetingParticipantJoinedEventDto,
-  MeetingParticipantVotedEventDto,
+  VotingClosedEventDto,
+  VotingStartedEventDto,
+  ParticipantDisconnectedEventDto,
+  ParticipantJoinedEventDto,
+  ParticipantVotedEventDto,
 } from '../application/dtos'
 
 /* ----- Events that server emit, and client listen ----- */
@@ -18,9 +18,9 @@ export const emit = {
 
 // types
 export type EmmitedEventsMap = {
-  ParticipantJoined: SocketEmit<MeetingParticipantJoinedEventDto>
-  ParticipantDisconnected: SocketEmit<MeetingParticipantDisconnectedEventDto>
-  ParticipantVoted: SocketEmit<MeetingParticipantVotedEventDto>
-  ManagerStartedVoting: SocketEmit<ManagerStartedVotingEventDto>
-  ManagerClosedVoting: SocketEmit<ManagerClosedVotingEventDto>
+  [emit.ParticipantJoined]: SocketEmit<ParticipantJoinedEventDto>
+  [emit.ParticipantDisconnected]: SocketEmit<ParticipantDisconnectedEventDto>
+  [emit.ParticipantVoted]: SocketEmit<ParticipantVotedEventDto>
+  [emit.VotingStarted]: SocketEmit<VotingStartedEventDto>
+  [emit.VotingClosed]: SocketEmit<VotingClosedEventDto>
 }

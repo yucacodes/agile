@@ -1,4 +1,4 @@
-import { type TimeProvider } from '@framework/domain'
+import { type TimeProvider } from '@framework'
 import type { Meeting, Participant } from '../models'
 import { MeetingEvent } from './meeting-event'
 
