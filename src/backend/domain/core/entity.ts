@@ -1,4 +1,4 @@
-import { generate as generateId } from 'short-uuid'
+import shortUUID from 'short-uuid'
 import { Model } from './model'
 import { type TimeProvider } from '@framework'
 
@@ -12,7 +12,7 @@ export interface EntityProps {
 export abstract class Entity<P extends EntityProps> extends Model<P> {
   protected static factoryEntityProps(timeProvider: TimeProvider): EntityProps {
     return {
-      id: generateId(),
+      id: shortUUID.generate(),
       createdAt: timeProvider.now(),
       updatedAt: timeProvider.now(),
     }
