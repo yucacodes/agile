@@ -21,6 +21,11 @@ interface AuthInformation extends UserCreateMeetingRequestDto {
   isManager: boolean
 }
 
+
+interface ParticipantWithPoints extends ParticipantDto {
+  points: number
+}
+
 export interface State {
   user: Signal<AuthInformation>
   socket: Signal<NoSerialize<ClientSocket>>
@@ -30,7 +35,7 @@ export interface State {
   createSocket: QRL<() => void>
   isStartedMeeting: Signal<boolean>
   votingId: Signal<string | undefined>
-  participants: Signal<ParticipantDto[]>
+  participants: Signal<ParticipantWithPoints[]>
 }
 
 export const StateProvider = createContextId<State>('StateProvider')
@@ -45,7 +50,7 @@ export const Provider = component$(() => {
     secret: useSignal<string | undefined>(undefined),
     idMeeting: useSignal<string | undefined>(undefined),
     createSocket,
-    participants :  useSignal<ParticipantDto[]>([]),
+    participants :  useSignal<ParticipantWithPoints[]>([]),
     isStartedMeeting: useSignal<boolean>(false),
     votingId: useSignal<string | undefined>(undefined),
   })

@@ -20,12 +20,17 @@ export const PlayersTable = component$(() => {
             <td class={style.playerColumn}>
               {player.isManager && (
                 <span class={`material-icons-outlined ${style.check}`}>
+                  manager
+                </span>
+              )}
+              {player.points > 0 && (
+                <span class={`material-icons-outlined ${style.check}`}>
                   done
                 </span>
               )}
               {player.name}
             </td>
-            <td class={style.pointsColumn}>{player.name || '**'} </td>
+            <td class={style.pointsColumn}>{player.points || '**'} </td>
           </tr>
         ))}
       </tbody>

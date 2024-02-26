@@ -1,7 +1,7 @@
 import { MeetingsRepository, VotingStartedEvent } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework'
 import { TimeProvider } from '@framework'
-import type { AuthInformationDto } from '../dtos'
+import  { type AuthInformationDto, type VotingDto, VotingDtoMapper } from '../dtos'
 import {
   ManagerStartVotingRequestDtoValidator,
   type ManagerStartVotingRequestDto,
@@ -16,10 +16,11 @@ export class ManagerStartVoting {
     private eventsBus: EventsBus,
     private authorization: Authorization<AuthInformationDto>,
     private timeProvider: TimeProvider,
-    private meetingsRepository: MeetingsRepository
+    private meetingsRepository: MeetingsRepository,
+    private votingDtoMapper: VotingDtoMapper
   ) {}
 
-  async perform(request: ManagerStartVotingRequestDto): Promise<void> {
+  async perform(request: ManagerStartVotingRequestDto): Promise<VotingDto> {
     const auth = this.authorization.get()
     const { meetingId } = request
     const meeting = await this.meetingsRepository.findById(meetingId)
@@ -35,17 +36,20 @@ export class ManagerStartVoting {
     if (!participant.isManager()) {
       throw new Error('You do not have permission to start the voting.')
     }
-
+    
     const voting = meeting.newVoting()
-
+    
     const event = VotingStartedEvent.factory({
       meeting,
       voting,
       timeProvider: this.timeProvider,
     })
-
+    
+    await this.meetingsRepository.saveUpdate(meeting)
+    
     this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
 
-    await this.meetingsRepository.saveUpdate(meeting)
+
+    return this.votingDtoMapper.map(voting) 
   }
 }

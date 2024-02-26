@@ -8,15 +8,16 @@ export default component$(() => {
   return (
     <>
       {notifications.value.length !== 0 &&
-        notifications.value.map((notification) => (
+        notifications.value.map((notification, index) => (
           <div
+               
             class={{
               [style.toast]: true,
               [style.success]: notification.status === 'success',
               [style.error]: notification.status === 'error',
               [style.warning]: notification.status === 'warning',
             }}
-            key={notification.message}
+            key={index}
           >
             <Icons status={notification.status} />
             <p> {notification.message}</p>

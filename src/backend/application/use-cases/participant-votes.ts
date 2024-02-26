@@ -5,6 +5,8 @@ import {
   ParticipantVotesRequestDtoValidator,
   type AuthInformationDto,
   type ParticipantVotesRequestDto,
+  type VotingDto,
+  VotingDtoMapper,
 } from '../dtos'
 
 @useCase({
@@ -16,10 +18,11 @@ export class ParticipantVotes {
     private authorization: Authorization<AuthInformationDto>,
     private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
-    private eventsBus: EventsBus
+    private eventsBus: EventsBus,
+    private votingDtoMapper: VotingDtoMapper
   ) {}
 
-  async perform(request: ParticipantVotesRequestDto): Promise<void> {
+  async perform(request: ParticipantVotesRequestDto): Promise<VotingDto> {
     const auth = this.authorization.get()
     const { meetingId, votingId, point } = request
     const meeting = await this.meetingsRepository.findById(meetingId)
@@ -38,6 +41,9 @@ export class ParticipantVotes {
 
     const participant = meeting.participant(auth.userId)
 
+    console.log('participant', participant);
+    
+
     if (!participant) {
       throw new Error('Participant not found.')
     }
@@ -52,5 +58,7 @@ export class ParticipantVotes {
     })
 
     this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
+
+    return this.votingDtoMapper.map(voting) 
   }
 }

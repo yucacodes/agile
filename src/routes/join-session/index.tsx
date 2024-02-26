@@ -45,6 +45,8 @@ export default component$(() => {
           meetingId: QueryParams.value.id,
         },
         (response) => {
+          console.log(response);
+          
           if (!response.success) {
             return
           }
@@ -80,6 +82,7 @@ export default component$(() => {
         name: name.value,
       },
       (response) => {
+        console.log(response);
         if (!response.success) {
           return
         }

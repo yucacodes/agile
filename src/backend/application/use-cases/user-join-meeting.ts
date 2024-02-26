@@ -52,6 +52,8 @@ export class UserJoinMeeting {
       meeting,
       timeProvider: this.timeProvider,
     })
+    
+    await this.meetingsRepository.saveUpdate(meeting)
 
     this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
     this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
@@ -61,6 +63,7 @@ export class UserJoinMeeting {
       roles: [`meeting/${meeting.id()}/participant`],
     }
     this.authorization.set(auth)
+
 
     return {
       secret: request.secret,
