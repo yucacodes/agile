@@ -4,11 +4,17 @@ import path from 'node:path'
 import ts from 'typescript'
 
 const paths = {
-  '@framework': [`${process.cwd()}/src/framework/index.ts`],
-  '@domain': [`${process.cwd()}/src/backend/domain/index.ts`],
-  '@application': [`${process.cwd()}/src/backend/application/index.ts`],
-  '@presentation': [`${process.cwd()}/src/backend/presentation/index.ts`],
-  '@infrastructure': [`${process.cwd()}/src/backend/infrastructure/index.ts`],
+  '@framework': [path.join(process.cwd(), 'src/framework/index.ts')],
+  '@domain': [path.join(process.cwd(), 'src/backend/domain/index.ts')],
+  '@application': [
+    path.join(process.cwd(), 'src/backend/application/index.ts'),
+  ],
+  '@presentation': [
+    path.join(process.cwd(), 'src/backend/presentation/index.ts'),
+  ],
+  '@infrastructure': [
+    path.join(process.cwd(), 'src/backend/infrastructure/index.ts'),
+  ],
 }
 
 async function resolveTs(specifier, context) {
