@@ -12,7 +12,6 @@ const autoMapperConfigsStack: DtoAutoMapperConfig[] = [
   { modelMappers: commonModelMappers },
 ]
 
-@singleton()
 export class AutoMapper {
   private __config__(): DtoAutoMapperConfig {
     throw new Error(
