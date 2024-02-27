@@ -19,8 +19,7 @@
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],
       "cwd": "${workspaceFolder}",
-      "args": ["--import", "./custom-imports.mjs", "--watch", "${workspaceFolder}/src/backend/run-backend.ts"],
-      "sourceMaps": true
+      "args": ["--import", "./custom-imports.mjs", "--watch", "${workspaceFolder}/src/backend/run-backend.ts"]
     }
   ]
 }

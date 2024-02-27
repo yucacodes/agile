@@ -22,13 +22,13 @@ export class SocketAuthorization<Auth> extends Authorization<Auth> {
     if (!auth) {
       throw new Error('Request has no authorization')
     }
-    this.logger.info(`(${this.eventCount}) get ${JSON.stringify(auth)}`)
+    this.logger.info(`(${this.eventCount}) get  \n${JSON.stringify(auth, null, 2)}`)
     return auth
   }
 
   set(auth: Auth): void {
     this.provider().setAuth(this.socket, auth)
-    this.logger.info(`(${this.eventCount}) set ${JSON.stringify(auth)}`)
+    this.logger.info(`(${this.eventCount}) set \n${JSON.stringify(auth, null, 2)}`)
   }
 
   roles(): string[] {
