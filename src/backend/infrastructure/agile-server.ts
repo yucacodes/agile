@@ -53,7 +53,7 @@ import { SqliteMeetingsRepository } from './sqlite-repositories'
     },
     {
       model: VotingStartedEvent,
-      event: emit.VotingClosed,
+      event: emit.VotingStarted,
       mapper: VotingStartedEventDtoMapper,
     },
     {
