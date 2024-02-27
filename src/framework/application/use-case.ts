@@ -1,9 +1,10 @@
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { type Constructor } from '../generics'
-import { singleton, type DependencyContainer } from '../injection'
+import { injectable, type DependencyContainer } from '../injection'
 import { Logger } from '../logger'
 import { Authorization } from './authorization'
+
 
 export type UseCase<Req, Res> = {
   perform(request: Req): Promise<Res>
@@ -64,7 +65,7 @@ export function useCase<Req>(config: useCaseConfig<Req>) {
       return __perform__.apply(this, [__request__])
     }
 
-    singleton()(constructor)
+    injectable()(constructor)
   }
 }
 
