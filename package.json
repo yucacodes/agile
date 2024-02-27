@@ -10,7 +10,7 @@
     "sharp"
   ],
   "scripts": {
-    "backend": "tsc  -p ./tsconfig.server.json && tsc-alias -p ./tsconfig.server.json -f && node dist/backend/run-backend.js | pino-pretty",
+    "dev:backend": "node --import ./custom-imports.mjs --watch src/backend/run-backend.ts | pino-pretty",
     "build": "qwik build",
     "build.client": "vite build",
     "build.preview": "vite build --ssr src/entry.preview.tsx",
