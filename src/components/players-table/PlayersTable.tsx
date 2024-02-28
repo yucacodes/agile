@@ -15,7 +15,7 @@ export const PlayersTable = component$(() => {
         </tr>
       </thead>
       <tbody>
-        {participants.value?.map((player) => (
+        {participants.value.map((player) => (
           <tr key={player.userId} class={style.tableBody}>
             <td class={style.playerColumn}>
               {player.isManager && (
@@ -30,7 +30,7 @@ export const PlayersTable = component$(() => {
               )}
               {player.name}
             </td>
-            <td class={style.pointsColumn}>{player.points || '**'} </td>
+            <td class={style.pointsColumn}>{player.points ?? '**'} </td>
           </tr>
         ))}
       </tbody>

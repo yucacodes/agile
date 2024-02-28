@@ -130,6 +130,15 @@ export default component$(() => {
 
       if (payload.voting) {
         isStartedMeeting!.value = false
+        startCounter.value = false
+
+        Object.keys(payload.voting.participantVotes).forEach((key) => {
+          const participant = participants.value.find((p) => p.userId === key)
+          if (participant) {
+            participant.points = payload.voting.participantVotes[key]
+          }
+        })
+      
       }
     })
 
@@ -190,6 +199,9 @@ export default component$(() => {
         },
         (payload) => {
           console.log(payload)
+          startCounter.value = false
+          isStartedMeeting.value = false
+
         }
       )
     }
@@ -241,9 +253,6 @@ export default component$(() => {
           <>
             <HasPermission>
               <PrimaryButton action={CloseVoting} text="Cerrar Votacion" />
-            </HasPermission>
-            <HasPermission>
-              <PrimaryButton action={action} text="SHOW VOTES" />
             </HasPermission>
           </>
         )}

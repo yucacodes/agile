@@ -50,13 +50,16 @@ export class ParticipantVotes {
 
     voting.setParticipantVote(participant, point)
 
+    
     const event = ParticipantVotedEvent.factory({
       meeting,
       participant,
       voting: voting,
       timeProvider: this.timeProvider,
     })
-
+    
+    await this.meetingsRepository.saveUpdate(meeting)
+    
     this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
 
     return this.votingDtoMapper.map(voting) 

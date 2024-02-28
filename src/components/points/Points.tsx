@@ -27,14 +27,16 @@ export const Points = component$(() => {
     point,
     votingId: votingId.value!,
     }, (payload) => {
-      console.log(payload);
+  
       if(payload.success){
-        console.log( 'participants', participants.value);
-        const idx =  participants.value.findIndex( participant => participant.userId ===  Object.keys(payload.data.participantVotes)[0] )
 
-        console.log( 'idx', idx);
+        const participant =  Object.keys(payload.data.participantVotes)[0]
 
-        participants.value[idx].points = payload.data.participantVotes[Object.values(payload.data.participantVotes)[0]]
+        const idx =  participants.value.findIndex( p => p.userId ===  participant )
+
+        participants.value[idx].points = Object.values(payload.data.participantVotes)[0]
+
+        
       }
 
       
