@@ -23,7 +23,7 @@ export const PlayersTable = component$(() => {
                   manager
                 </span>
               )}
-              {player.points > 0 && (
+              { player?.points && player.points > 0 && (
                 <span class={`material-icons-outlined ${style.check}`}>
                   done
                 </span>

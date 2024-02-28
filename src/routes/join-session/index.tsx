@@ -51,7 +51,12 @@ export default component$(() => {
             return
           }
 
-          participants.value = Object.values(response.data.meeting.participants)
+          participants.value = Object.values(response.data.meeting.participants).map((p) => {
+            return {
+              ...p,
+              points: undefined,
+            } 
+          })
 
           idMeeting.value = response.data.meeting.id
           const isManager =
@@ -86,7 +91,12 @@ export default component$(() => {
         if (!response.success) {
           return
         }
-        participants.value = Object.values(response.data.meeting.participants)
+        participants.value = Object.values(response.data.meeting.participants).map((p) => {
+          return {
+            ...p,
+            points: undefined,
+          } 
+        })
         secret.value = response.data.secret
         idMeeting.value = response.data.meeting.id
         const isManager =

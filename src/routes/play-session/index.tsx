@@ -52,10 +52,12 @@ export default component$(() => {
     socket.value?.on('ParticipantJoined', (payload) => {
       console.log(payload)
       if (payload.participant) {
-        participants.value = [...participants.value, {
-          ...payload.participant,
-          points: 0
-        }]
+        participants.value = [
+          ...participants.value,
+          {
+            ...payload.participant,
+          },
+        ]
         addNotification({
           message: `Se has unido a la sesión ${payload.participant.name}`,
           status: 'success',
@@ -73,21 +75,21 @@ export default component$(() => {
     socket.value?.on('ParticipantVoted', (payload) => {
       console.log(payload)
       if (payload.votingId) {
-
-        const participant = participants.value.find((p) => p.userId === payload.participantUserId)
+        const participant = participants.value.find(
+          (p) => p.userId === payload.participantUserId
+        )
 
         if (!participant) {
           addNotification({
             message: `No se encontro el usuario ${payload.participantUserId}`,
             status: 'error',
           })
-        }else{
+        } else {
           addNotification({
             message: `Se has unido a la sesión ${participant.name}`,
             status: 'success',
           })
         }
-       
       }
     })
 
@@ -100,6 +102,10 @@ export default component$(() => {
     track(() => socket.value)
     socket.value?.on('ParticipantDisconnected', (payload) => {
       console.log(payload)
+
+      participants.value = participants.value.filter(
+        (p) => p.userId !== payload.meetingParticipant.userId
+      )
 
       addNotification({
         message: `${payload.meetingParticipant.name} ha dejado la sesión`,
@@ -133,12 +139,12 @@ export default component$(() => {
         startCounter.value = false
 
         Object.keys(payload.voting.participantVotes).forEach((key) => {
-          const participant = participants.value.find((p) => p.userId === key)
-          if (participant) {
-            participant.points = payload.voting.participantVotes[key]
+          const idx = participants.value.findIndex((p) => p.userId === key)
+          if (idx) {
+            participants.value[idx].points =
+              payload.voting.participantVotes[key]
           }
         })
-      
       }
     })
 
@@ -201,7 +207,6 @@ export default component$(() => {
           console.log(payload)
           startCounter.value = false
           isStartedMeeting.value = false
-
         }
       )
     }

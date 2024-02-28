@@ -23,7 +23,7 @@ interface AuthInformation extends UserCreateMeetingRequestDto {
 
 
 interface ParticipantWithPoints extends ParticipantDto {
-  points: number
+  points?: number
 }
 
 export interface State {

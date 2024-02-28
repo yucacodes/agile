@@ -3,7 +3,6 @@ import type { RequestHandler } from '@builder.io/qwik-city'
 
 import { Background } from '~/components/background/Background'
 import { Navbar } from '~/components/navbar'
-import { Provider } from '~/context/ProviderContext'
 import { ToastProvider } from '~/context/ToastContext'
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
