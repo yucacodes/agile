@@ -1,20 +1,17 @@
+import { createDOM } from '@builder.io/qwik/testing'
+import { expect, test } from 'vitest'
 
-import { createDOM } from '@builder.io/qwik/testing';
-import { test, expect } from "vitest";
-
-import { Navbar } from "./navbar";
-import { QwikCityMockProvider } from '@builder.io/qwik-city';
-
+import { QwikCityMockProvider } from '@builder.io/qwik-city'
+import { Navbar } from './navbar'
 
 test(`should render link planning ⭐`, async () => {
-  const { screen, render } = await createDOM();
+  const { screen, render } = await createDOM()
   await render(
     <QwikCityMockProvider>
-    <Navbar />
+      <Navbar />
     </QwikCityMockProvider>
-    
-  );
-  const div =  screen.querySelector('[role="planning"]');
-  expect(div.outerHTML).toContain("Planning");
-});
-
+  )
+  const div = screen.querySelector('[role="planning"]')
+  expect(div).not.toBeFalsy()
+  expect(div!.outerHTML).toContain('Planning')
+})
