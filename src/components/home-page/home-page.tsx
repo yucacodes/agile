@@ -1,23 +1,18 @@
-import { $, component$, useContext } from '@builder.io/qwik'
+import { $, component$ } from '@builder.io/qwik'
 import { Subtitle } from '~/components/subtitle/Subtitle'
 import { Title } from '~/components/title/Title'
 
 import { useNavigate } from '@builder.io/qwik-city'
 import { Footer } from '~/components/footer/Footer'
 
-import style from './home.module.css'
 import { Button } from '@yucacodes/ui-qwik'
-
-import { StateProvider } from '~/context/ProviderContext'
+import style from './home.module.css'
 
 export const HomePage = component$(() => {
-  const { createSocket } = useContext(StateProvider)
   const nav = useNavigate()
 
-  const action = $(() => {
-    createSocket();
-    nav('/join-session')
-  })
+  const goToJoinSessionPage = $(() => nav('/join-session'))
+
   return (
     <>
       <main class={style.container}>
@@ -32,7 +27,7 @@ export const HomePage = component$(() => {
               communicate point stories from agile teams
             </p>
           </div>
-          <Button onClick$={action} contained primary size="1.2rem">
+          <Button onClick$={goToJoinSessionPage} contained primary size="1.2rem">
             START A SESSION
           </Button>
         </div>
