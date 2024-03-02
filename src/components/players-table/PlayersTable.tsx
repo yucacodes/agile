@@ -4,6 +4,8 @@ import style from './players-table.module.css'
 
 export const PlayersTable = component$(() => {
   const {  participants } = useContext(StateProvider)
+
+  console.log(participants.value);
   
 
   return (
@@ -19,7 +21,7 @@ export const PlayersTable = component$(() => {
           <tr key={player.userId} class={style.tableBody}>
             <td class={style.playerColumn}>
               {player.isManager && (
-                <span class={`material-icons-outlined ${style.check}`}>
+                <span class={`material-icons-outlined ${style.manager}`}>
                   manager
                 </span>
               )}

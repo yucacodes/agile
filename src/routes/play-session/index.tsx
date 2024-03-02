@@ -3,7 +3,7 @@ import {
   component$,
   useContext,
   useSignal,
-  useTask$,
+  useVisibleTask$,
 } from '@builder.io/qwik'
 import {
   useLocation,
@@ -47,7 +47,7 @@ export default component$(() => {
 
   const startCounter = useSignal(false)
 
-  useTask$(({ track, cleanup }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('ParticipantJoined', (payload) => {
       console.log(payload)
@@ -70,7 +70,7 @@ export default component$(() => {
     })
   })
 
-  useTask$(({ track, cleanup }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('ParticipantVoted', (payload) => {
       console.log(payload)
@@ -98,7 +98,7 @@ export default component$(() => {
     })
   })
 
-  useTask$(({ track, cleanup }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     track(() => socket.value)
     socket.value?.on('ParticipantDisconnected', (payload) => {
       console.log(payload)
@@ -118,7 +118,7 @@ export default component$(() => {
     })
   })
 
-  useTask$(({ track, cleanup }) => {
+  useVisibleTask$(({ track, cleanup }) => {
     track(() => socket.value)
 
     socket.value?.on('VotingStarted', (payload) => {
@@ -138,13 +138,24 @@ export default component$(() => {
         isStartedMeeting!.value = false
         startCounter.value = false
 
+        const newParticipants: any[] = []
         Object.keys(payload.voting.participantVotes).forEach((key) => {
-          const idx = participants.value.findIndex((p) => p.userId === key)
-          if (idx) {
-            participants.value[idx].points =
-              payload.voting.participantVotes[key]
+         
+
+          const p = participants.value.find((p) => p.userId === key)
+          if (p) {
+            newParticipants.push({
+              ...p,
+              points: payload.voting.participantVotes[key],
+            })
           }
+
+
         })
+
+        console.log('newParticipants', newParticipants)
+
+        participants.value = newParticipants
       }
     })
 

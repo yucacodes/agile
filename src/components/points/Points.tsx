@@ -1,4 +1,4 @@
-import { $, component$, useContext } from '@builder.io/qwik'
+import { $, component$, useContext, useSignal } from '@builder.io/qwik'
 import style from './points.module.css'
 import { StateProvider } from '~/context/ProviderContext'
 
@@ -30,15 +30,24 @@ export const Points = component$(() => {
   
       if(payload.success){
 
+        const newParticipants: any[] = []
         Object.keys(payload.data.participantVotes).forEach((key) => {
-          const idx = participants.value.findIndex((p) => p.userId === key)
-          if (idx) {
-            participants.value[idx].points = payload.data.participantVotes[key]
+         
+
+          const p = participants.value.find((p) => p.userId === key)
+          if (p) {
+            newParticipants.push({
+              ...p,
+              points: payload.data.participantVotes[key],
+            })
           }
+
         })
         
+        console.log('newParticipants', newParticipants)
+        
+        participants.value = newParticipants
       }
-
       
     })
   })

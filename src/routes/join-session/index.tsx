@@ -32,11 +32,12 @@ export default component$(() => {
   const nav = useNavigate()
 
   const action = $(async () => {
-    if (QueryParams.value.id && QueryParams.value.secret) {
-      createSocket()
 
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+    createSocket()
 
+    if (QueryParams?.value?.id && QueryParams?.value?.secret) {
+
+      await new Promise((resolve) => setTimeout(resolve, 100))
       socket.value?.emit(
         'JoinMeeting',
         {
@@ -45,17 +46,19 @@ export default component$(() => {
           meetingId: QueryParams.value.id,
         },
         (response) => {
-          console.log(response);
-          
+          console.log(response)
+
           if (!response.success) {
             return
           }
 
-          participants.value = Object.values(response.data.meeting.participants).map((p) => {
+          participants.value = Object.values(
+            response.data.meeting.participants
+          ).map((p) => {
             return {
               ...p,
               points: undefined,
-            } 
+            }
           })
 
           idMeeting.value = response.data.meeting.id
@@ -77,41 +80,46 @@ export default component$(() => {
           nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
         }
       )
+    } else {
 
-      return
-    }
+      socket.value?.emit(
+        'StartMeeting',
+        {
+          name: name.value,
+        },
+        (response) => {
+          console.log(response)
+          if (!response.success) {
+            return
+          }
+          participants.value = Object.values(
+            response.data.meeting.participants
+          ).map((p) => {
+            return {
+              ...p,
+              points: undefined,
+            }
+          })
+          secret.value = response.data.secret
+          idMeeting.value = response.data.meeting.id
+          const isManager =
+            response.data.meeting.participants[response.data.authInfo.userId]
+              .isManager
 
-    socket.value?.emit(
-      'StartMeeting',
-      {
-        name: name.value,
-      },
-      (response) => {
-        console.log(response);
-        if (!response.success) {
-          return
+          user.value = {
+            ...response.data.authInfo,
+            name: name.value,
+            isManager,
+          }
+          addNotification({
+            message: 'Has creado una sesión exitosamente',
+            status: 'success',
+          })
+
+          nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
         }
-        participants.value = Object.values(response.data.meeting.participants).map((p) => {
-          return {
-            ...p,
-            points: undefined,
-          } 
-        })
-        secret.value = response.data.secret
-        idMeeting.value = response.data.meeting.id
-        const isManager =
-          response.data.meeting.participants[response.data.authInfo.userId]
-            .isManager
-
-        user.value = { ...response.data.authInfo, name: name.value, isManager }
-        addNotification({
-          message: 'Has creado una sesión exitosamente',
-          status: 'success',
-        })
-
-        nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
-      }
-    )
+      )
+    }
   })
   return (
     <>

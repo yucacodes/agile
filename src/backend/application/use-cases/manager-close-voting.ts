@@ -49,8 +49,9 @@ export class ManagerCloseVoting {
       timeProvider: this.timeProvider,
     })
 
-    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
+    this.eventsBus.notifyToOrigin({ event, channel: `meeting/${meeting.id()}` })
 
     await this.meetingsRepository.saveUpdate(meeting)
+
   }
 }

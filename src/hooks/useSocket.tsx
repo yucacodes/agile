@@ -2,8 +2,8 @@ import {
   $,
   noSerialize,
   useSignal,
-  useTask$,
-  type NoSerialize
+  type NoSerialize,
+  useVisibleTask$
 } from '@builder.io/qwik'
 import type { ClientSocket } from '@presentation'
 import { io } from 'socket.io-client'
@@ -19,6 +19,9 @@ export const useSocket = (serverPath: string) => {
    * @return {void} No return value.
    */
   const createSocket = $(() => {
+
+    console.log('createSocket');
+
     const wsClient: ClientSocket = io(serverPath, {
       transports: ['websocket'],
       protocols: ['websocket'],
@@ -26,25 +29,6 @@ export const useSocket = (serverPath: string) => {
 
     socket.value = noSerialize(wsClient)
 
-  })
-
-
-  useTask$(({ track }) => {
-    track(() => socket.value)
-    socket.value?.on('connect', () => {
-      isOnline.value = socket.value?.connected
-    })
-  })
-
-  useTask$(({ track, cleanup }) => {
-    track(() => socket.value)
-    socket.value?.on('disconnect', () => {
-      isOnline.value = socket.value?.disconnected
-    })
-
-    cleanup(() => {
-      socket.value?.close()
-    })
   })
 
   return {
