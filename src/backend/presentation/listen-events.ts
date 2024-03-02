@@ -2,9 +2,11 @@ import { type SocketListener } from '@framework'
 import type {
   ManagerCloseVoting,
   ManagerStartVoting,
+  ParticipantGetMeeting,
   ParticipantVotes,
   UserCreateMeeting,
   UserJoinMeeting,
+  UserRefreshSession,
 } from '../application'
 
 /* ------ Events that client emit and server listen ----- */
@@ -26,4 +28,6 @@ export type ListenEventsMap = {
   [listen.StartVoting]: SocketListener<ManagerStartVoting>
   [listen.Vote]: SocketListener<ParticipantVotes>
   [listen.CloseVoting]: SocketListener<ManagerCloseVoting>
+  [listen.RefreshSession]: SocketListener<UserRefreshSession>
+  [listen.GetMeeting]: SocketListener<ParticipantGetMeeting>
 }
