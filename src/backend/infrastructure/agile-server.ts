@@ -3,6 +3,7 @@ import {
   ManagerStartVoting,
   ParticipantDisconectedFromMeeting,
   ParticipantDisconnectedEventDtoMapper,
+  ParticipantGetMeeting,
   ParticipantJoinedEventDtoMapper,
   ParticipantVotedEventDtoMapper,
   ParticipantVotes,
@@ -40,6 +41,7 @@ import {
     { event: listen.CloseVoting, useCase: ManagerCloseVoting },
     { event: listen.Disconnect, useCase: ParticipantDisconectedFromMeeting },
     { event: listen.RefreshSession, useCase: UserRefreshSession },
+    { event: listen.GetMeeting, useCase: ParticipantGetMeeting },
   ],
   emitters: [
     {

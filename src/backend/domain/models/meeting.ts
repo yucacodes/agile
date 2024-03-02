@@ -72,6 +72,10 @@ export class Meeting extends Entity<MeetingProps> {
     return this.props.votings.get(votingId)
   }
 
+  allVotings(): Map<string, Voting> {
+    return new Map(this.props.votings)
+  }
+
   // Private methods
 
   private isValidSecret(secret: string): boolean {
