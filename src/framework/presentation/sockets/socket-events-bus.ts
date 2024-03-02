@@ -23,6 +23,21 @@ export class SocketEventsBus extends EventsBus {
     this.logger = new Logger(`${controlledEvent}:EventsBus`)
   }
 
+  notifyToOrigin<E extends Object>(notification: Notification<E>): void {
+    const handler = this.handlers.get(notification.event.constructor)
+    if (!handler)
+      throw new Error(
+        `Not found Emmiter for ${notification.event.constructor.name}`
+      )
+    const out = handler.mapper.map(notification.event)
+
+    this.socketsServer.in(notification.channel).emit(handler.event, out)
+
+    this.logger.info(
+      `(${this.eventCount}) emmited '${handler.event}' to channel '${notification.channel}'`
+    )
+  }
+
   notify<E extends Object>(notification: Notification<E>): void {
     const handler = this.handlers.get(notification.event.constructor)
     if (!handler)

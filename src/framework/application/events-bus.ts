@@ -9,6 +9,7 @@ export interface Subscription {
 
 export abstract class EventsBus {
   abstract notify<E extends Object>(event: Notification<E>): void
+  abstract notifyToOrigin<E extends Object>(event: Notification<E>): void
   abstract subscribe(subscription: Subscription): void
   abstract unsubscribe(subscription: Subscription): void
 }
