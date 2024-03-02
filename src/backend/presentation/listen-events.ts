@@ -15,6 +15,7 @@ export const listen = {
   Vote: 'Vote',
   CloseVoting: 'CloseVoting',
   Disconnect: 'disconnect',
+  RefreshSession: 'RefreshSession',
 } as const
 
 // Requests And Responses types

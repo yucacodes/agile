@@ -4,4 +4,4 @@ export * from './participant-disconnected-from-meeting'
 export * from './participant-votes'
 export * from './user-create-meeting'
 export * from './user-join-meeting'
-
+export * from './user-refresh-session'
