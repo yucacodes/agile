@@ -15,7 +15,7 @@ export const PlayersTable = component$(() => {
         </tr>
       </thead>
       <tbody>
-        {participants.value?.map((player) => (
+        {participants.value.map((player) => (
           <tr key={player.userId} class={style.tableBody}>
             <td class={style.playerColumn}>
               {player.isManager && (
@@ -23,7 +23,7 @@ export const PlayersTable = component$(() => {
                   manager
                 </span>
               )}
-              {player.points > 0 && (
+              {player.points && (
                 <span class={`material-icons-outlined ${style.check}`}>
                   done
                 </span>
