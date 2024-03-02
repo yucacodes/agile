@@ -1,7 +1,13 @@
-import { Meeting, MeetingsRepository, Participant, User } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework'
-import { TimeProvider } from '@framework'
-import type { MeetingAndAuthInfoDto } from '../dtos'
+import {
+  Meeting,
+  MeetingsRepository,
+  Participant,
+  RefreshToken,
+  RefreshTokensRepository,
+  User,
+} from '@domain'
+import { Authorization, EventsBus, TimeProvider, useCase } from '@framework'
+import type { MeetingAndSessionDataDto } from '../dtos'
 import {
   MeetingDtoMapper,
   UserCreateMeetingRequestDtoValidator,
@@ -19,12 +25,13 @@ export class UserCreateMeeting {
     private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
     private meetingDtoMapper: MeetingDtoMapper,
-    private eventsBus: EventsBus
+    private eventsBus: EventsBus,
+    private refreshTokensRepository: RefreshTokensRepository
   ) {}
 
   async perform(
     request: UserCreateMeetingRequestDto
-  ): Promise<MeetingAndAuthInfoDto> {
+  ): Promise<MeetingAndSessionDataDto> {
     const { meeting, secret } = Meeting.factory({
       timeProvider: this.timeProvider,
     })
@@ -41,20 +48,31 @@ export class UserCreateMeeting {
 
     meeting.addParticipant(manager, secret)
 
-    await this.meetingsRepository.saveNew(meeting)
-
     const auth = {
       userId: user.id(),
       roles: [`meeting/${meeting.id()}/participant`],
     }
-    this.authorization.set(auth)
+
+    const { refreshToken, secret: tokenSecret } = RefreshToken.factory({
+      timeProvider: this.timeProvider,
+      userId: auth.userId,
+      roles: auth.roles,
+    })
 
     this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
+    await this.meetingsRepository.saveNew(meeting)
+    await this.refreshTokensRepository.saveNew(refreshToken)
+    this.authorization.set(auth)
 
     return {
       meeting: this.meetingDtoMapper.map(meeting),
       secret,
-      authInfo: auth,
+      sessionData: {
+        refreshTokenId: refreshToken.id(),
+        refreshTokenSecret: tokenSecret,
+        roles: auth.roles,
+        userId: auth.userId,
+      },
     }
   }
 }

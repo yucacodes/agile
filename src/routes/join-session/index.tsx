@@ -55,11 +55,11 @@ export default component$(() => {
 
           idMeeting.value = response.data.meeting.id
           const isManager =
-            response.data.meeting.participants[response.data.authInfo.userId]
+            response.data.meeting.participants[response.data.sessionData.userId]
               .isManager
 
           user.value = {
-            ...response.data.authInfo,
+            ...response.data.sessionData,
             name: name.value,
             isManager,
           }
@@ -90,10 +90,10 @@ export default component$(() => {
         secret.value = response.data.secret
         idMeeting.value = response.data.meeting.id
         const isManager =
-          response.data.meeting.participants[response.data.authInfo.userId]
+          response.data.meeting.participants[response.data.sessionData.userId]
             .isManager
 
-        user.value = { ...response.data.authInfo, name: name.value, isManager }
+        user.value = { ...response.data.sessionData, name: name.value, isManager }
         addNotification({
           message: 'Has creado una sesión exitosamente',
           status: 'success',
