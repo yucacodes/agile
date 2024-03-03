@@ -3,14 +3,13 @@ import {
   noSerialize,
   useSignal,
   type NoSerialize,
-  useVisibleTask$
 } from '@builder.io/qwik'
 import type { ClientSocket } from '@presentation'
 import { io } from 'socket.io-client'
 
 export const useSocket = (serverPath: string) => {
-  const socket = useSignal<NoSerialize<ClientSocket>>(undefined)
-  const isOnline = useSignal<boolean | undefined>(false)
+  let socket: NoSerialize<ClientSocket> = undefined;
+  const isOnline : boolean | undefined = false
 
 
   /**
@@ -27,7 +26,7 @@ export const useSocket = (serverPath: string) => {
       protocols: ['websocket'],
     })
 
-    socket.value = noSerialize(wsClient)
+    socket = noSerialize(wsClient)
 
   })
 

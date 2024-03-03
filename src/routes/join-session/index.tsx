@@ -22,8 +22,7 @@ export const useJoinPokerSession = routeLoader$(async ({ url }) => {
 
 export default component$(() => {
   const { addNotification } = useToast()
-  const { socket, user, idMeeting, secret, participants, createSocket } =
-    useContext(StateProvider)
+  const state = useContext(StateProvider)
 
   const QueryParams = useJoinPokerSession()
 
@@ -33,12 +32,11 @@ export default component$(() => {
 
   const action = $(async () => {
 
-    createSocket()
+    state.socket!.createSocket()
 
     if (QueryParams?.value?.id && QueryParams?.value?.secret) {
-
       await new Promise((resolve) => setTimeout(resolve, 100))
-      socket.value?.emit(
+      state.socket?.emit(
         'JoinMeeting',
         {
           name: name.value,
@@ -52,21 +50,14 @@ export default component$(() => {
             return
           }
 
-          participants.value = Object.values(
-            response.data.meeting.participants
-          ).map((p) => {
-            return {
-              ...p,
-              points: undefined,
-            }
-          })
-
-          idMeeting.value = response.data.meeting.id
+          state.participants = response.data.meeting.participants
+          state.secret = response.data.secret
+          state.idMeeting = response.data.meeting.id
           const isManager =
             response.data.meeting.participants[response.data.authInfo.userId]
               .isManager
 
-          user.value = {
+          state.user = {
             ...response.data.authInfo,
             name: name.value,
             isManager,
@@ -77,12 +68,13 @@ export default component$(() => {
             status: 'success',
           })
 
-          nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
+          nav(`/play-session?secret=${QueryParams?.value?.secret}&id=${state.idMeeting}`)
         }
       )
     } else {
 
-      socket.value?.emit(
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      state.socket?.emit(
         'StartMeeting',
         {
           name: name.value,
@@ -92,21 +84,18 @@ export default component$(() => {
           if (!response.success) {
             return
           }
-          participants.value = Object.values(
-            response.data.meeting.participants
-          ).map((p) => {
-            return {
-              ...p,
-              points: undefined,
-            }
-          })
-          secret.value = response.data.secret
-          idMeeting.value = response.data.meeting.id
+
+          
+
+          state.participants = response.data.meeting.participants
+
+          state.secret = response.data.secret
+          state.idMeeting = response.data.meeting.id
           const isManager =
             response.data.meeting.participants[response.data.authInfo.userId]
               .isManager
 
-          user.value = {
+          state.user = {
             ...response.data.authInfo,
             name: name.value,
             isManager,
@@ -116,7 +105,7 @@ export default component$(() => {
             status: 'success',
           })
 
-          nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
+          nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
         }
       )
     }
