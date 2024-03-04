@@ -7,6 +7,22 @@ export const Points = component$(() => {
 
   const state = useContext(StateProvider)
   
+
+  
+  const handleVote = $(async ( point: number) =>  {
+    const res = await state.emitEvent('Vote', {
+      meetingId: state.idMeeting!,
+      point,
+      votingId: state.votingId!,
+    })
+    if (res.success) {
+      console.log(res)
+
+      state.votes = res.data.participantVotes
+    }
+  })
+
+
   const points = [
     { value: 0, display: '0 POINTS' },
     { value: 0.5, display: '1/2 POINT' },
@@ -29,7 +45,7 @@ export const Points = component$(() => {
         <button 
         key={point.value}
         disabled={!state.isStartedMeeting}
-        onClick$={ () => state.handleVote(point.value!)}
+        onClick$={ () => handleVote(point.value!)}
         class={[!state.isStartedMeeting? style.disabled : '',style.points, ]}>
           {point.display}
         </button>

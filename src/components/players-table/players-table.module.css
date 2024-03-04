@@ -1,35 +1,33 @@
-.table {
+.players {
   display: flex;
-  flex-direction: column;
+  flex-flow: column nowrap;
   margin: 0 4rem;
   gap: 2.5rem;
 }
 
-.tableHeader {
+.headers {
   display: flex;
   font-weight: 700;
   font-size: 1.5rem;
 }
 
-.tableBody {
+
+.playersContainer {
   display: flex;
-  margin-bottom: 0.9rem;
-  font-size: 1.25rem;
+  gap: 1rem;
+  flex-flow: column wrap;
+
+
 }
 
-th,
-td {
-  flex-basis: 50%;
+.player{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
-.playerColumn {
-  text-align: left;
-  position: relative;
-}
 
-.pointsColumn {
-  text-align: right;
-}
 
 .check {
   color: #0b7e01;

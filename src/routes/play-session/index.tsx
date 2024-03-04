@@ -35,7 +35,122 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 export default component$(() => {
   const state = useContext(StateProvider)
 
+  const location = useLocation()
+
+  const hanlderParticipantJoind = $((payload: any) => {
+    if (payload.participant) {
+      state.participants = {
+        ...state.participants,
+        [payload.participant.userId]: payload.participant,
+      }
+      // addNotification({
+      //   message: `Se has unido a la sesión ${payload.participant.name}`,
+      //   status: 'success',
+      // })
+    }
+  })
+
+  const handlerParticipantVoted = $((payload: any) => {
+    if (payload.participant) {
+      // addNotification({
+      //   message: `ha votado ${payload.participant.name}`,
+      //   status: 'success',
+      // })
+    }
+  })
+
+  const handlerParticipantDisconnected = $((payload: any) => {
+    if (payload.participant) {
+      // addNotification({
+      //   message: `${payload.participant.name} ha dejado la sesión`,
+      //   status: 'error',
+      // })
+    }
+  })
+
+  const hanlderVotingStarted = $((payload: any) => {
+    if (payload) {
+      state.votingId = payload.votingId
+      state.isStartedMeeting = true
+      state.startCounter = true
+      state.showVotes = false
+      // addNotification({
+      //   message: `La votación ha comenzado`,
+      //   status: 'success',
+      // })
+    }
+  })
+
+  const hanlderVotingClosed = $((payload: any) => {
+    if (payload) {
+      state.votingId = ''
+      state.isStartedMeeting = false
+      state.startCounter = false
+      state.showVotes = true
+      state.votes = payload.voting.participantVotes
+
+      // addNotification({
+      //   message: `La votación ha finalizado`,
+      //   status: 'success',
+      // })
+    }
+  })
+
+  useVisibleTask$(({ track, cleanup }) => {
+    track(() => state.socket)
+
+    state.socket!.on('ParticipantJoined', hanlderParticipantJoind)
+    state.socket!.on('ParticipantVoted', handlerParticipantVoted)
+    state.socket!.on('ParticipantDisconnected', handlerParticipantDisconnected)
+    state.socket!.on('VotingStarted', hanlderVotingStarted)
+    state.socket!.on('VotingClosed', hanlderVotingClosed)
+
+    cleanup(() => {
+      state.socket!.off('ParticipantJoined')
+      state.socket!.off('ParticipantVoted')
+      state.socket!.off('ParticipantDisconnected')
+      state.socket!.off('VotingStarted')
+      state.socket!.off('VotingClosed')
+    })
+  })
+
   const action = $(() => {})
+
+  const shareLink = $(() => {
+    // eslint-disable-next-line
+    ;(navigator as any).clipboard.writeText(
+      `${
+        location.url.protocol + '//' + location.url.host
+      }/join-session?secret=${state.secret}&id=${state.idMeeting}`
+    )
+  })
+
+  const initVoting = $(async () => {
+    const res = await state.emitEvent('StartVoting', {
+      meetingId: state.idMeeting!,
+    })
+
+    console.log(res)
+
+    if (res!.success) {
+      state.votingId = res.data.id
+      state.startCounter = true
+      state.isStartedMeeting = true
+    }
+  })
+
+  const closeVoting = $(async () => {
+    const res = await  state.emitEvent('CloseVoting', {
+      meetingId: state.idMeeting!,
+      votingId: state.votingId!,
+    })
+
+    if (res.success) {
+      console.log(res)
+      state.startCounter = false
+      state.isStartedMeeting = false
+    }
+  })
 
   return (
     <main class={style.container}>
@@ -75,7 +190,7 @@ export default component$(() => {
       <section class={style.buttonsContainer}>
         {!state.isStartedMeeting && (
           <HasPermission>
-            <PrimaryButton action={state.initVoting} text="START VOTING" />
+            <PrimaryButton action={initVoting} text="START VOTING" />
           </HasPermission>
         )}
 
@@ -83,14 +198,14 @@ export default component$(() => {
           <>
             <HasPermission>
               <PrimaryButton
-                action={state.closeVoting}
+                action={closeVoting}
                 text="Cerrar Votacion"
               />
             </HasPermission>
           </>
         )}
         <HasPermission>
-          <SecondaryButton action={state.shareLink} text="SHARED SESSION" />
+          <SecondaryButton action={shareLink} text="SHARED SESSION" />
         </HasPermission>
       </section>
     </main>
