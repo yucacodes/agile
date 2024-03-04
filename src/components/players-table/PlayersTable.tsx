@@ -40,7 +40,7 @@ export const PlayersTable = component$(() => {
         {participantsArr.value.map((participant, index) => (
           <div class={style.player} key={index}>
             {participant.isManager && (
-              <span class={`material-icons-outlined ${style.check}`}>
+              <span class={`material-icons-outlined ${style.manager}`}>
                 manager
               </span>
             )}

@@ -11,30 +11,26 @@
   font-size: 1.5rem;
 }
 
-
 .playersContainer {
   display: flex;
   gap: 1rem;
   flex-flow: column wrap;
-
-
+  position: relative;
 }
 
-.player{
+.player {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
 }
 
-
-
 .check {
   color: #0b7e01;
   position: absolute;
   left: -2rem;
 }
-.manager{
+.manager {
   color: #0b7e01;
   position: absolute;
   left: -4rem;

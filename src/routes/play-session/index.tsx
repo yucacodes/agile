@@ -74,6 +74,8 @@ export default component$(() => {
       state.isStartedMeeting = true
       state.startCounter = true
       state.showVotes = false
+
+      state.votes = {}
       // addNotification({
       //   message: `La votación ha comenzado`,
       //   status: 'success',
