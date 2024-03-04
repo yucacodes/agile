@@ -2,11 +2,13 @@ import {
   MeetingsRepository,
   Participant,
   ParticipantJoinedEvent,
+  RefreshToken,
+  RefreshTokensRepository,
   User,
 } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework'
 import { TimeProvider } from '@framework'
-import type { MeetingAndAuthInfoDto } from '../dtos'
+import type { MeetingAndSessionDataDto } from '../dtos'
 import {
   MeetingDtoMapper,
   UserJoinMeetingRequestDtoValidator,
@@ -24,12 +26,13 @@ export class UserJoinMeeting {
     private timeProvider: TimeProvider,
     private meetingsRepository: MeetingsRepository,
     private meetingDtoMapper: MeetingDtoMapper,
-    private eventsBus: EventsBus
+    private eventsBus: EventsBus,
+    private refreshTokensRepository: RefreshTokensRepository
   ) {}
 
   async perform(
     request: UserJoinMeetingRequestDto
-  ): Promise<MeetingAndAuthInfoDto> {
+  ): Promise<MeetingAndSessionDataDto> {
     const meeting = await this.meetingsRepository.findById(request.meetingId)
 
     if (!meeting) {
@@ -52,23 +55,33 @@ export class UserJoinMeeting {
       meeting,
       timeProvider: this.timeProvider,
     })
-    
-    await this.meetingsRepository.saveUpdate(meeting)
-
-    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
-    this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
 
     const auth = {
       userId: user.id(),
       roles: [`meeting/${meeting.id()}/participant`],
     }
-    this.authorization.set(auth)
 
+    const { refreshToken, secret: tokenSecret } = RefreshToken.factory({
+      timeProvider: this.timeProvider,
+      userId: auth.userId,
+      roles: auth.roles,
+    })
+
+    this.eventsBus.subscribe({ channel: `meeting/${meeting.id()}` })
+    await this.meetingsRepository.saveUpdate(meeting)
+    await this.refreshTokensRepository.saveNew(refreshToken)
+    this.authorization.set(auth)
+    this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
 
     return {
       secret: request.secret,
       meeting: this.meetingDtoMapper.map(meeting),
-      authInfo: auth,
+      sessionData: {
+        userId: auth.userId,
+        roles: auth.roles,
+        refreshTokenId: refreshToken.id(),
+        refreshTokenSecret: tokenSecret,
+      },
     }
   }
 }

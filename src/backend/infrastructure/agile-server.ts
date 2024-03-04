@@ -3,11 +3,13 @@ import {
   ManagerStartVoting,
   ParticipantDisconectedFromMeeting,
   ParticipantDisconnectedEventDtoMapper,
+  ParticipantGetMeeting,
   ParticipantJoinedEventDtoMapper,
   ParticipantVotedEventDtoMapper,
   ParticipantVotes,
   UserCreateMeeting,
   UserJoinMeeting,
+  UserRefreshSession,
   VotingClosedEventDtoMapper,
   VotingStartedEventDtoMapper,
 } from '@application'
@@ -19,11 +21,15 @@ import {
   VotingStartedEvent,
 } from '@domain'
 import { NODE_ENV, Server, server } from '@framework'
-import { emit } from '../presentation/emited-events'
-import { listen } from '../presentation/listen-events'
-import { SocketAuthProvider } from '../presentation/socket-auth-provider'
-import { RedisMeetingsRepository } from './redis-repositories'
-import { SqliteMeetingsRepository } from './sqlite-repositories'
+import { SocketAuthProvider, emit, listen } from '@presentation'
+import {
+  RedisMeetingsRepository,
+  RedisRefreshTokensRepository,
+} from './redis-repositories'
+import {
+  SqliteMeetingsRepository,
+  SqliteRefreshTokensRepository,
+} from './sqlite-repositories'
 
 @server({
   authProviders: [SocketAuthProvider],
@@ -34,6 +40,8 @@ import { SqliteMeetingsRepository } from './sqlite-repositories'
     { event: listen.StartVoting, useCase: ManagerStartVoting },
     { event: listen.CloseVoting, useCase: ManagerCloseVoting },
     { event: listen.Disconnect, useCase: ParticipantDisconectedFromMeeting },
+    { event: listen.RefreshSession, useCase: UserRefreshSession },
+    { event: listen.GetMeeting, useCase: ParticipantGetMeeting },
   ],
   emitters: [
     {
@@ -63,8 +71,14 @@ import { SqliteMeetingsRepository } from './sqlite-repositories'
     },
   ],
   implementations: [
-    NODE_ENV === 'production' && [RedisMeetingsRepository],
-    NODE_ENV === 'development' && [SqliteMeetingsRepository],
+    NODE_ENV === 'production' && [
+      RedisMeetingsRepository,
+      RedisRefreshTokensRepository,
+    ],
+    NODE_ENV === 'development' && [
+      SqliteMeetingsRepository,
+      SqliteRefreshTokensRepository,
+    ],
   ],
 })
 export class AgileServer extends Server {}

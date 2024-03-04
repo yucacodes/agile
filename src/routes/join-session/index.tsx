@@ -75,7 +75,6 @@ export default component$(() => {
           secret: secret,
           meetingId: idMeeting,
         })
-
         if (payload!.success) {
           state.participants = payload.data.meeting.participants
           state.participants = payload.data.meeting.participants
@@ -87,16 +86,8 @@ export default component$(() => {
             name,
             isManager: false,
           }
-
-          // addNotification({
-          //   message: 'Te has unido a la sesión',
-          //   status: 'success',
-          // })
-
-          console.log(state.secret, state.idMeeting)
           nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
-        }
-      
+      }
     }
   )
 

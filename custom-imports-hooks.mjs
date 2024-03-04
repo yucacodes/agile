@@ -2,63 +2,49 @@ import fs from 'fs'
 import fsp from 'fs/promises'
 import path from 'node:path'
 import ts from 'typescript'
+import { fileURLToPath, pathToFileURL } from 'url'
 
 const paths = {
-  '@framework': [path.join(process.cwd(), 'src/framework/index.ts')],
-  '@domain': [path.join(process.cwd(), 'src/backend/domain/index.ts')],
-  '@application': [
-    path.join(process.cwd(), 'src/backend/application/index.ts'),
-  ],
-  '@presentation': [
-    path.join(process.cwd(), 'src/backend/presentation/index.ts'),
-  ],
-  '@infrastructure': [
-    path.join(process.cwd(), 'src/backend/infrastructure/index.ts'),
-  ],
+  '@framework': path.join(process.cwd(), 'src/framework/index.ts'),
+  '@domain': path.join(process.cwd(), 'src/backend/domain/index.ts'),
+  '@application': path.join(process.cwd(), 'src/backend/application/index.ts'),
+  '@presentation': path.join(
+    process.cwd(),
+    'src/backend/presentation/index.ts'
+  ),
+  '@infrastructure': path.join(
+    process.cwd(),
+    'src/backend/infrastructure/index.ts'
+  ),
 }
 
 async function resolveTs(specifier, context) {
-  if (paths[specifier]) return `file://${paths[specifier]}`
-  const { parentURL } = context
-  if (
-    !specifier.startsWith('.') &&
-    !specifier.startsWith('/') &&
-    !specifier.startsWith('file://')
-  ) {
+  if (paths[specifier]) return pathToFileURL(paths[specifier]).toString()
+  if (specifier.startsWith('file://')) return null
+  if (!specifier.startsWith('.') && !specifier.startsWith('/')) {
     return null
   }
-  const url = new URL(parentURL ?? specifier)
-  let specifierPath = parentURL
-    ? path.join(path.dirname(url.pathname), specifier)
-    : url.pathname
+  const parentPath = fileURLToPath(context.parentURL)
+  let specifierPath = path.join(path.dirname(parentPath), specifier)
+
   const isDirectory =
     fs.existsSync(specifierPath) && fs.statSync(specifierPath).isDirectory()
   const extension = path.basename(specifier).split('.').at(-1)
   if (['js', 'cjs', 'mjs'].includes(extension) && !isDirectory) {
     return null
   }
-
   if (fs.existsSync(specifierPath + '.ts')) {
-    return `file://${specifierPath + '.ts'}`
+    return pathToFileURL(specifierPath + '.ts').toString()
   } else if (isDirectory) {
     const indexPath = path.join(specifierPath, 'index.ts')
     if (fs.existsSync(indexPath)) {
-      return `file://${indexPath}`
+      return pathToFileURL(indexPath).toString()
     }
   }
   return null
 }
 
-// export async function initialize() {
-//   // Receives data from `register`.
-// }
-
 export async function resolve(specifier, context, nextResolve) {
-  // if(specifier == "class-validator") return {
-  //   shortCircuit: true,
-  //   url: 'file:///home/jorge/agile/node_modules/class-validator/esm2015/index.js',
-
-  // }
   const tsFileUrl = await resolveTs(specifier, context)
   if (tsFileUrl) {
     return {
@@ -70,10 +56,10 @@ export async function resolve(specifier, context, nextResolve) {
 }
 
 export async function load(url, context, nextLoad) {
-  const urlObj = new URL(url)
-  if (urlObj.protocol === 'file:' && urlObj.pathname.endsWith('.ts')) {
-    const filename = path.basename(urlObj.pathname)
-    const tsSource = await fsp.readFile(urlObj.pathname, { encoding: 'utf-8' })
+  if (url.startsWith('file://') && url.endsWith('.ts')) {
+    const urlPath = fileURLToPath(url)
+    const filename = path.basename(urlPath)
+    const tsSource = await fsp.readFile(urlPath, { encoding: 'utf-8' })
     const transpileResult = ts.transpileModule(tsSource, {
       compilerOptions: {
         module: ts.ModuleKind.ESNext,

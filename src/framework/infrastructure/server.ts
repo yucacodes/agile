@@ -145,7 +145,7 @@ export abstract class Server {
 export type ImplementationConfig =
   | Constructor<Object>
   | false
-  | [Constructor<Object>]
+  | Constructor<Object>[]
 
 export interface serverConfig {
   controllers?: ControllerConfig[]
