@@ -21,93 +21,107 @@ export const useJoinPokerSession = routeLoader$(async ({ url }) => {
 })
 
 export default component$(() => {
-  const { addNotification } = useToast()
   const state = useContext(StateProvider)
-
   const QueryParams = useJoinPokerSession()
-
   const name = useSignal('')
-
   const nav = useNavigate()
 
+  const startSession = $(async (name: string) => {
+    await state.socket!.createSocket()
+
+    const payload = await state.socket?.emitEvent(
+      'StartMeeting',
+      {
+        name: name,
+      },
+      
+    )
+
+    if (payload.success) {
+      state.participants = payload.data.meeting.participants
+
+      state.secret = payload.data.secret
+      state.idMeeting = payload.data.meeting.id
+      const isManager =
+        payload.data.meeting.participants[payload.data.authInfo.userId]
+          .isManager
+
+      state.user = {
+        ...payload.data.authInfo,
+        name: name,
+        isManager,
+      }
+      // addNotification({
+      //   message: 'Has creado una sesión exitosamente',
+      //   status: 'success',
+      // })
+
+      nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
+    }
+  })
+
+  const joinToSession = $(
+    async ({
+      name,
+      secret,
+      idMeeting,
+    }: {
+      name: string
+      secret: string
+      idMeeting: string
+    }) => {
+      if (!state.secret || !state.idMeeting) {
+        // addNotification({
+        //   message: 'Error al unirse a la sesión',
+        //   status: 'error',
+        // })
+      } else {
+        await state.socket!.createSocket()
+
+        const payload = await state.socket?.emitEvent('JoinMeeting', {
+          name,
+          secret: secret,
+          meetingId: idMeeting,
+        })
+
+     
+          if (payload!.success) {
+            state.participants = payload.data.meeting.participants
+            state.participants = payload.data.meeting.participants
+            state.secret = payload.data.secret
+            state.idMeeting = payload.data.meeting.id
+            const isManager =
+              payload.data.meeting.participants[payload.data.authInfo.userId]
+                .isManager
+  
+            state.user = {
+              ...payload.data.authInfo,
+              name,
+              isManager,
+            }
+  
+            // addNotification({
+            //   message: 'Te has unido a la sesión',
+            //   status: 'success',
+            // })
+  
+            nav(`/play-session?secret=${secret}&id=${idMeeting}`)
+          }
+        
+      
+      }
+    }
+  )
+
   const action = $(async () => {
-
-    state.socket!.createSocket()
-
     if (QueryParams?.value?.id && QueryParams?.value?.secret) {
-      await new Promise((resolve) => setTimeout(resolve, 100))
-      state.socket?.emit(
-        'JoinMeeting',
-        {
-          name: name.value,
-          secret: QueryParams.value.secret,
-          meetingId: QueryParams.value.id,
-        },
-        (response) => {
-          console.log(response)
-
-          if (!response.success) {
-            return
-          }
-
-          state.participants = response.data.meeting.participants
-          state.secret = response.data.secret
-          state.idMeeting = response.data.meeting.id
-          const isManager =
-            response.data.meeting.participants[response.data.authInfo.userId]
-              .isManager
-
-          state.user = {
-            ...response.data.authInfo,
-            name: name.value,
-            isManager,
-          }
-
-          addNotification({
-            message: 'Te has unido a la sesión',
-            status: 'success',
-          })
-
-          nav(`/play-session?secret=${QueryParams?.value?.secret}&id=${state.idMeeting}`)
-        }
-      )
+      joinToSession({
+        name: name.value,
+        secret: QueryParams.value.secret,
+        idMeeting: QueryParams.value.id,
+      })
     } else {
-
-      await new Promise((resolve) => setTimeout(resolve, 100))
-      state.socket?.emit(
-        'StartMeeting',
-        {
-          name: name.value,
-        },
-        (response) => {
-          console.log(response)
-          if (!response.success) {
-            return
-          }
-
-          
-
-          state.participants = response.data.meeting.participants
-
-          state.secret = response.data.secret
-          state.idMeeting = response.data.meeting.id
-          const isManager =
-            response.data.meeting.participants[response.data.authInfo.userId]
-              .isManager
-
-          state.user = {
-            ...response.data.authInfo,
-            name: name.value,
-            isManager,
-          }
-          addNotification({
-            message: 'Has creado una sesión exitosamente',
-            status: 'success',
-          })
-
-          nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
-        }
-      )
+      startSession(name.value)
     }
   })
   return (

@@ -5,7 +5,7 @@ import { StateProvider } from '~/context/ProviderContext'
 
 export const Points = component$(() => {
 
-  const { socket, user, idMeeting, participants, isStartedMeeting, votingId } = useContext(StateProvider)
+  const state = useContext(StateProvider)
   
   const points = [
     { value: 0, display: '0 POINTS' },
@@ -21,45 +21,16 @@ export const Points = component$(() => {
     { value: null, display: '??' },
   ]
 
-  const handleVote = $((point: number) => {
-    socket.value?.emit('Vote', {
-    meetingId: idMeeting.value!,
-    point,
-    votingId: votingId.value!,
-    }, (payload) => {
-  
-      if(payload.success){
 
-        const newParticipants: any[] = []
-        Object.keys(payload.data.participantVotes).forEach((key) => {
-         
-
-          const p = participants.value.find((p) => p.userId === key)
-          if (p) {
-            newParticipants.push({
-              ...p,
-              points: payload.data.participantVotes[key],
-            })
-          }
-
-        })
-        
-        console.log('newParticipants', newParticipants)
-        
-        participants.value = newParticipants
-      }
-      
-    })
-  })
 
   return (
     <section class={style.pointsContainer}>
       {points.map((point) => (
         <button 
         key={point.value}
-        disabled={!isStartedMeeting.value}
-        onClick$={ () => handleVote(point.value!)}
-        class={[!isStartedMeeting.value ? style.disabled : '',style.points, ]}>
+        disabled={!state.isStartedMeeting}
+        onClick$={ () => state.handleVote(point.value!)}
+        class={[!state.isStartedMeeting? style.disabled : '',style.points, ]}>
           {point.display}
         </button>
       ))}

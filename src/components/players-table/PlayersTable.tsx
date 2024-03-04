@@ -3,9 +3,9 @@ import { StateProvider } from '~/context/ProviderContext'
 import style from './players-table.module.css'
 
 export const PlayersTable = component$(() => {
-  const {  participants } = useContext(StateProvider)
+  const state = useContext(StateProvider)
 
-  console.log(participants);
+  console.log(state.participants);
   
 
   return (

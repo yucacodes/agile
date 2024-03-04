@@ -1,14 +1,11 @@
 //create a class to manager the socket, add ,ethod to create socket and emit events and close
 
-import { NoSerialize, noSerialize } from '@builder.io/qwik'
-import { ClientSocket, EmmitedEventsMap, ListenEventsMap, emit } from '@presentation'
-import { io, type Socket } from 'socket.io-client'
-
-type emit = "StartMeeting" | "JoinMeeting" | "StartVoting" | "Vote" | "CloseVoting"
+import { ClientSocket } from '@presentation'
+import { io } from 'socket.io-client'
 
 export class SocketManager {
-  socket:  NoSerialize<ClientSocket> = undefined;
-  constructor() {  }
+  socket?: ClientSocket
+  constructor() {}
 
   emitEvent(event: any, data: any): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -22,25 +19,31 @@ export class SocketManager {
     })
   }
 
-
   close() {
     this.socket!.close()
   }
 
-  createSocket() {
-    const wsClient   = io('http://localhost:3000', {
-      transports: ['websocket'],
-      protocols: ['websocket'],
+  async createSocket(): Promise<void> {
+    return new Promise((resolve, _) => {
+      this.socket = io('http://localhost:3000', {
+        transports: ['websocket'],
+        protocols: ['websocket'],
+      })
+      this.socket.on('connect', () => resolve())
     })
-    this.socket = noSerialize(wsClient)
   }
+
 
   getSocket() {
     return this.socket
   }
 
-  onEvent(event: any, callback: (data: any) => void) {
-    this.socket!.on(event, callback)
+  onEvent(event: any, callback: (data: any) => void): void {
+    if (this.socket) {
+      this.socket!.on(event, callback)
+    } else {
+      throw new Error('Socket is undefined')
+    }
   }
 
   offEvent(event: any) {

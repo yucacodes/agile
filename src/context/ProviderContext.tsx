@@ -10,10 +10,14 @@ import {
   type NoSerialize,
   type QRL,
   noSerialize,
+  useSignal,
+  Signal,
 } from '@builder.io/qwik'
-import { useLocation } from '@builder.io/qwik-city'
-import type { ClientSocket } from '@presentation'
+import { useLocation, useNavigate } from '@builder.io/qwik-city'
+import { ClientSocket } from '@presentation'
+import { io } from 'socket.io-client'
 import { useSocket } from '~/hooks/useSocket'
+
 import { useToast } from '~/hooks/useToast'
 import { SocketManager } from '~/utils/SocketManager'
 
@@ -31,69 +35,27 @@ export interface State {
   initVoting: QRL<() => void>
   closeVoting: QRL<() => void>
   shareLink: QRL<() => void>
+  handleVote: QRL<(point: number) => void>
   isStartedMeeting: boolean
   votingId: string
   participants: { [key: string]: ParticipantDto }
-  votes: Map<string, number>
+  votes: { [key: string]: number }
   startCounter: boolean
 }
 
 export const StateProvider = createContextId<State>('StateProvider')
 
 export const Provider = component$(() => {
+  const socketManager = noSerialize(new SocketManager())
+
   const location = useLocation()
+  const nav = useNavigate()
 
-  const socket = noSerialize( new SocketManager())
+  // const socket = useSignal<NoSerialize<ClientSocket>>(undefined)
 
-  const { addNotification } = useToast()
+  const user = {} as AuthInformation
 
-  const shareLink = $(() => {
-    // eslint-disable-next-line no-extra-semi
-    ;(navigator as any).clipboard.writeText(
-      `${
-        location.url.protocol + '//' + location.url.host
-      }/join-session?secret=${state.secret}&id=${state.idMeeting}`
-    )
-  })
-
-  const initVoting = $(async () => {
-    if (!state.idMeeting) {
-      addNotification({
-        message: 'Error al iniciar la votación',
-        status: 'error',
-      })
-    } else {
-      const response = await state.socket?.emitEvent('StartVoting', {
-        meetingId: state.idMeeting!,
-      })
-
-      if (response!.success) {
-        state.votingId = response.data.id
-        state.startCounter = true
-        state.isStartedMeeting = true
-      }
-    }
-  })
-
-  const closeVoting = $(async () => {
-    if (!state.idMeeting) {
-      addNotification({
-        message: 'Error al iniciar la votación',
-        status: 'error',
-      })
-    } else {
-      const response = await state.socket?.emitEvent('CloseVoting', {
-        meetingId: state.idMeeting!,
-        votingId: state.votingId!,
-      })
-
-      if (response) {
-        console.log(response)
-        state.startCounter = false
-        state.isStartedMeeting = false
-      }
-    }
-  })
+  // const { addNotification } = useToast()
 
   const hanlderParticipantJoind = $((payload: any) => {
     if (payload.participant) {
@@ -101,28 +63,28 @@ export const Provider = component$(() => {
         ...state.participants,
         [payload.participant.userId]: payload.participant,
       }
-      addNotification({
-        message: `Se has unido a la sesión ${payload.participant.name}`,
-        status: 'success',
-      })
+      // addNotification({
+      //   message: `Se has unido a la sesión ${payload.participant.name}`,
+      //   status: 'success',
+      // })
     }
   })
 
   const handlerParticipantVoted = $((payload: any) => {
     if (payload.participant) {
-      addNotification({
-        message: `ha votado ${payload.participant.name}`,
-        status: 'success',
-      })
+      // addNotification({
+      //   message: `ha votado ${payload.participant.name}`,
+      //   status: 'success',
+      // })
     }
   })
 
   const handlerParticipantDisconnected = $((payload: any) => {
     if (payload.participant) {
-      addNotification({
-        message: `${payload.participant.name} ha dejado la sesión`,
-        status: 'error',
-      })
+      // addNotification({
+      //   message: `${payload.participant.name} ha dejado la sesión`,
+      //   status: 'error',
+      // })
     }
   })
 
@@ -132,10 +94,10 @@ export const Provider = component$(() => {
       state.isStartedMeeting = true
       state.startCounter = true
 
-      addNotification({
-        message: `La votación ha comenzado`,
-        status: 'success',
-      })
+      // addNotification({
+      //   message: `La votación ha comenzado`,
+      //   status: 'success',
+      // })
     }
   })
 
@@ -147,61 +109,89 @@ export const Provider = component$(() => {
 
       state.votes = payload.voting.participantVotes
 
-      addNotification({
-        message: `La votación ha finalizado`,
-        status: 'success',
-      })
+      // addNotification({
+      //   message: `La votación ha finalizado`,
+      //   status: 'success',
+      // })
     }
   })
 
-
-  const handlerConnect = () => {
-    state.isOnline = true
-  }
-
   useVisibleTask$(({ track, cleanup }) => {
-    track(() => state.socket)
+    track(() => socketManager)
 
-    state.socket!.onEvent('connect', handlerConnect)
-
-    state.socket!.onEvent('ParticipantJoined', hanlderParticipantJoind)
-
-    state.socket!.onEvent('ParticipantVoted', handlerParticipantVoted)
-
-    state.socket!.onEvent('ParticipantDisconnected', handlerParticipantDisconnected)
-
-    state.socket!.onEvent('VotingStarted', hanlderVotingStarted)
-
-    state.socket!.onEvent('VotingClosed', hanlderVotingClosed)
+    socketManager!.onEvent('ParticipantJoined', hanlderParticipantJoind)
+    socketManager!.onEvent('ParticipantVoted', handlerParticipantVoted)
+    socketManager!.onEvent('ParticipantDisconnected', handlerParticipantDisconnected)
+    socketManager!.onEvent('VotingStarted', hanlderVotingStarted)
+    socketManager!.onEvent('VotingClosed', hanlderVotingClosed)
 
     cleanup(() => {
-      state.socket!.offEvent('ParticipantJoined')
-
-      state.socket!.offEvent('ParticipantVoted')
-
-      state.socket!.offEvent('ParticipantDisconnected')
-
-      state.socket!.offEvent('VotingStarted')
-
-      state.socket!.offEvent('VotingClosed')
+      socketManager!.offEvent('ParticipantJoined')
+      socketManager!.offEvent('ParticipantVoted')
+      socketManager!.offEvent('ParticipantDisconnected')
+      socketManager!.offEvent('VotingStarted')
+      socketManager!.offEvent('VotingClosed')
     })
   })
 
-  const user = {} as AuthInformation
   const state = useStore<State>({
     user,
-    socket,
+    socket: socketManager,
     isOnline: false,
     secret: '',
     idMeeting: '',
     participants: {},
     isStartedMeeting: false,
     votingId: '',
-    votes: new Map<string, number>(),
+    votes: {},
     startCounter: false,
-    initVoting,
-    closeVoting,
-    shareLink,
+
+    initVoting: $(async function (this: State) {
+      const res = await socketManager?.emitEvent('StartVoting', {
+        meetingId: this.idMeeting!,
+      })
+
+      if (res!.success) {
+        this.votingId = res.data.id
+        this.startCounter = true
+        this.isStartedMeeting = true
+      }
+    }),
+
+    closeVoting: $(async function (this: State) {
+      const res = await socketManager?.emitEvent('CloseVoting', {
+        meetingId: this.idMeeting!,
+        votingId: this.votingId!,
+      })
+
+      if (res.success) {
+        console.log(res)
+        this.startCounter = false
+        this.isStartedMeeting = false
+      }
+    }),
+
+    shareLink: $(function (this: State) {
+      // eslint-disable-next-line no-extra-semi
+      ;(navigator as any).clipboard.writeText(
+        `${
+          location.url.protocol + '//' + location.url.host
+        }/join-session?secret=${this.secret}&id=${this.idMeeting}`
+      )
+    }),
+
+    handleVote: $(async function (this: State, point: number) {
+      const res = await socketManager?.emitEvent('Vote', {
+        meetingId: this.idMeeting!,
+        point,
+        votingId: this.votingId!,
+      })
+      if (res.success) {
+        console.log(res)
+
+        this.votes = res.data.participantVotes
+      }
+    }),
   })
 
   useContextProvider(StateProvider, state)
