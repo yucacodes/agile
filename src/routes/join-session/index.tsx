@@ -6,11 +6,9 @@ import {
 } from '@builder.io/qwik-city'
 import style from './join-session-page.module.css'
 
-import { LinkButton } from '~/components/link-button/LinkButton'
+import { Button } from '@yucacodes/ui-qwik'
 import { Title } from '~/components/title/Title'
 import { StateProvider } from '~/context/ProviderContext'
-import { useToast } from '~/hooks/useToast'
-import { Button } from '@yucacodes/ui-qwik'
 
 export const useJoinPokerSession = routeLoader$(async ({ url }) => {
   const secret = url.searchParams.get('secret')

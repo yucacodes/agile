@@ -4,22 +4,14 @@ import {
   Slot,
   component$,
   createContextId,
+  noSerialize,
   useContextProvider,
   useStore,
-  useVisibleTask$,
   type NoSerialize,
   type QRL,
-  noSerialize,
-  useSignal,
-  Signal,
 } from '@builder.io/qwik'
-import { useLocation, useNavigate } from '@builder.io/qwik-city'
 import { ClientSocket } from '@presentation'
 import { io } from 'socket.io-client'
-import { useSocket } from '~/hooks/useSocket'
-
-import { useToast } from '~/hooks/useToast'
-import { SocketManager } from '~/utils/SocketManager'
 
 interface AuthInformation extends UserCreateMeetingRequestDto {
   name: string
@@ -49,10 +41,6 @@ export interface State {
 export const StateProvider = createContextId<State>('StateProvider')
 
 export const Provider = component$(() => {
-  // const socketManager = noSerialize(new SocketManager())
-
-  const nav = useNavigate()
-
   let socket: NoSerialize<ClientSocket> = undefined
 
   const user = {} as AuthInformation
