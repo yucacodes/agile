@@ -10,7 +10,7 @@
     "sharp"
   ],
   "scripts": {
-    "dev:backend": "node --import ./custom-imports.mjs --watch src/backend/run-backend.ts | pino-pretty",
+    "dev:backend": "yts --watch src/backend/run-backend.ts | pino-pretty",
     "build": "qwik build",
     "build.client": "vite build",
     "build.preview": "vite build --ssr src/entry.preview.tsx",
@@ -50,6 +50,7 @@
     "vitest": "^0.34.6"
   },
   "dependencies": {
+    "@yucacodes/ts": "^0.0.1",
     "@yucacodes/ui-qwik": "^0.0.15",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
