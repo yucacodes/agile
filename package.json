@@ -10,6 +10,8 @@
     "sharp"
   ],
   "scripts": {
+    "build:backend": "tsc -p ./tsconfig.server.json && tsc-alias -f -p ./tsconfig.server.json",
+    "start:backend": "node ./dist/backend/run-backend.js",
     "dev:backend": "yts src/backend/run-backend.ts | pino-pretty",
     "watch:backend": "yts --watch src/backend/run-backend.ts | pino-pretty",
     "build": "qwik build",
