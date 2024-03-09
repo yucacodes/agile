@@ -10,7 +10,8 @@
     "sharp"
   ],
   "scripts": {
-    "dev:backend": "yts --watch src/backend/run-backend.ts | pino-pretty",
+    "dev:backend": "yts src/backend/run-backend.ts | pino-pretty",
+    "watch:backend": "yts --watch src/backend/run-backend.ts | pino-pretty",
     "build": "qwik build",
     "build.client": "vite build",
     "build.preview": "vite build --ssr src/entry.preview.tsx",
