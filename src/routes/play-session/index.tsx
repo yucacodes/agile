@@ -52,6 +52,11 @@ export default component$(() => {
 
   const handlerParticipantVoted = $((payload: any) => {
     if (payload.participant) {
+
+      state.votes = {
+        ...state.votes,
+        [payload.participant.userId]:null,
+      }
       // addNotification({
       //   message: `ha votado ${payload.participant.name}`,
       //   status: 'success',
@@ -70,11 +75,12 @@ export default component$(() => {
 
   const hanlderVotingStarted = $((payload: any) => {
     if (payload) {
+      console.log(payload)
       state.votingId = payload.votingId
       state.isStartedMeeting = true
       state.startCounter = true
       state.showVotes = false
-
+      state.beerTime = payload.voting.time
       state.votes = {}
       // addNotification({
       //   message: `La votación ha comenzado`,
@@ -85,11 +91,13 @@ export default component$(() => {
 
   const hanlderVotingClosed = $((payload: any) => {
     if (payload) {
+      console.log(payload)
       state.votingId = ''
       state.isStartedMeeting = false
       state.startCounter = false
       state.showVotes = true
       state.votes = payload.voting.participantVotes
+      
 
       // addNotification({
       //   message: `La votación ha finalizado`,
@@ -128,16 +136,21 @@ export default component$(() => {
   })
 
   const initVoting = $(async () => {
-    const res = await state.emitEvent('StartVoting', {
-      meetingId: state.idMeeting!,
-    })
-
-    console.log(res)
-
-    if (res!.success) {
-      state.votingId = res.data.id
-      state.startCounter = true
-      state.isStartedMeeting = true
+    try {
+      const res = await state.emitEvent('StartVoting', {
+        meetingId: state.idMeeting!,
+      })
+  
+      console.log(res);
+      
+      if (res!.success) {
+        state.votingId = res.data.id
+        state.startCounter = true
+        state.isStartedMeeting = true
+        state.beerTime = res.data.time
+      }
+    } catch (error) {
+      console.log(error);
     }
   })
 
@@ -146,9 +159,7 @@ export default component$(() => {
       meetingId: state.idMeeting!,
       votingId: state.votingId!,
     })
-
     if (res.success) {
-      console.log(res)
       state.startCounter = false
       state.isStartedMeeting = false
     }
@@ -167,7 +178,7 @@ export default component$(() => {
               class={style.time}
               clock
               started={state.startCounter}
-              beerTime={new Date().getTime() + 1000 * 60 * 60}
+              beerTime={state.beerTime}
             />
             <p class={style.userName}>{state.user.name}</p>
           </section>

@@ -26,6 +26,7 @@ export interface State {
   idMeeting: string
   isStartedMeeting: boolean
   votingId: string
+  beerTime: number  
   participants: { [key: string]: ParticipantDto }
   votes: { [key: string]: number }
   startCounter: boolean
@@ -84,6 +85,7 @@ export const Provider = component$(() => {
     participants: {},
     isStartedMeeting: false,
     votingId: '',
+    beerTime: new Date().getTime(),
     votes: {},
     startCounter: false,
     connect,

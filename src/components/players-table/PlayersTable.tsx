@@ -5,7 +5,7 @@ import style from './players-table.module.css'
 import type { ParticipantDto } from '@application'
 
 interface Participant extends ParticipantDto {
-  points: number | null
+  points: number | null | undefined
 }
 
 export const PlayersTable = component$(() => {
@@ -44,7 +44,7 @@ export const PlayersTable = component$(() => {
                 manager
               </span>
             )}
-            {participant.points! > 0 && (
+            {participant.points! === null && (
               <span class={`material-icons-outlined ${style.check}`}>done</span>
             )}
             <p>{participant.name}</p>

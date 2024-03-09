@@ -10,6 +10,7 @@ import { Button } from '@yucacodes/ui-qwik'
 import { Title } from '~/components/title/Title'
 import { StateProvider } from '~/context/ProviderContext'
 
+
 export const useJoinPokerSession = routeLoader$(async ({ url }) => {
   const secret = url.searchParams.get('secret')
   const id = url.searchParams.get('id')
@@ -28,9 +29,11 @@ export default component$(() => {
   const startSession = $(async (name: string) => {
     void (await state.connect())
 
-    const payload = await state.emitEvent('StartMeeting', {
+    const payload  = await state.emitEvent('StartMeeting', {
       name: name,
     })
+
+    console.log(payload)
 
     if (payload.success) {
       state.participants = payload.data.meeting.participants
@@ -38,11 +41,11 @@ export default component$(() => {
       state.secret = payload.data.secret
       state.idMeeting = payload.data.meeting.id
       const isManager =
-        payload.data.meeting.participants[payload.data.authInfo.userId]
+        payload.data.meeting.participants[payload.data.sessionData?.userId]
           .isManager
 
       state.user = {
-        ...payload.data.authInfo,
+        ...payload.data.sessionData,
         name: name,
         isManager,
       }
