@@ -48,7 +48,7 @@
     "vite": "^4.5.1",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^0.34.6",
-    "@yucacodes/ts": "0.0.3"
+    "@yucacodes/ts": "0.0.4"
   },
   "dependencies": {
     "@yucacodes/ui-qwik": "^0.0.15",
