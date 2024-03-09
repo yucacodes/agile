@@ -14,12 +14,10 @@
       "args": ["--mode", "ssr", "--force"]
     },
     {
-      "type": "node",
+      "type": "node-terminal",
       "name": "Backend",
       "request": "launch",
-      "skipFiles": ["<node_internals>/**"],
-      "cwd": "${workspaceFolder}",
-      "args": ["--import", "./custom-imports.mjs", "--watch", "${workspaceFolder}/src/backend/run-backend.ts"]
+      "command": "yts src/backend/run-backend.ts",
     }
   ]
 }
