@@ -3,7 +3,7 @@ import {
   component$,
   useContext,
   useSignal,
-  useTask$,
+  useVisibleTask$,
 } from '@builder.io/qwik'
 import {
   useLocation,
@@ -33,172 +33,142 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 }
 
 export default component$(() => {
+  const state = useContext(StateProvider)
+
   const location = useLocation()
-  const { addNotification } = useToast()
-  const {
-    socket,
-    user,
-    idMeeting,
-    secret,
-    isStartedMeeting,
-    votingId,
-    participants,
-  } = useContext(StateProvider)
 
-  const startCounter = useSignal(false)
-
-  useTask$(({ track, cleanup }) => {
-    track(() => socket.value)
-    socket.value?.on('ParticipantJoined', (payload) => {
-      console.log(payload)
-      if (payload.participant) {
-        participants.value = [...participants.value, {
-          ...payload.participant,
-          points: 0
-        }]
-        addNotification({
-          message: `Se has unido a la sesión ${payload.participant.name}`,
-          status: 'success',
-        })
+  const hanlderParticipantJoind = $((payload: any) => {
+    if (payload.participant) {
+      state.participants = {
+        ...state.participants,
+        [payload.participant.userId]: payload.participant,
       }
-    })
-
-    cleanup(() => {
-      socket.value?.removeListener('ParticipantJoined')
-    })
+      // addNotification({
+      //   message: `Se has unido a la sesión ${payload.participant.name}`,
+      //   status: 'success',
+      // })
+    }
   })
 
-  useTask$(({ track, cleanup }) => {
-    track(() => socket.value)
-    socket.value?.on('ParticipantVoted', (payload) => {
-      console.log(payload)
-      if (payload.votingId) {
+  const handlerParticipantVoted = $((payload: any) => {
+    if (payload.participant) {
 
-        const participant = participants.value.find((p) => p.userId === payload.participantUserId)
-
-        if (!participant) {
-          addNotification({
-            message: `No se encontro el usuario ${payload.participantUserId}`,
-            status: 'error',
-          })
-        }else{
-          addNotification({
-            message: `Se has unido a la sesión ${participant.name}`,
-            status: 'success',
-          })
-        }
-       
+      state.votes = {
+        ...state.votes,
+        [payload.participant.userId]:null,
       }
-    })
-
-    cleanup(() => {
-      socket.value?.removeListener('ParticipantJoined')
-    })
+      // addNotification({
+      //   message: `ha votado ${payload.participant.name}`,
+      //   status: 'success',
+      // })
+    }
   })
 
-  useTask$(({ track, cleanup }) => {
-    track(() => socket.value)
-    socket.value?.on('ParticipantDisconnected', (payload) => {
-      console.log(payload)
-
-      addNotification({
-        message: `${payload.meetingParticipant.name} ha dejado la sesión`,
-        status: 'error',
-      })
-    })
-
-    cleanup(() => {
-      socket.value?.removeListener('ParticipantDisconnected')
-    })
+  const handlerParticipantDisconnected = $((payload: any) => {
+    if (payload.participant) {
+      // addNotification({
+      //   message: `${payload.participant.name} ha dejado la sesión`,
+      //   status: 'error',
+      // })
+    }
   })
 
-  useTask$(({ track, cleanup }) => {
-    track(() => socket.value)
-
-    socket.value?.on('VotingStarted', (payload) => {
+  const hanlderVotingStarted = $((payload: any) => {
+    if (payload) {
       console.log(payload)
-      console.log('VotingStarted', payload)
-      if (payload) {
-        votingId!.value = payload.votingId
-        startCounter.value = true
-        isStartedMeeting!.value = true
-      }
-    })
+      state.votingId = payload.votingId
+      state.isStartedMeeting = true
+      state.startCounter = true
+      state.showVotes = false
+      state.beerTime = payload.voting.time
+      state.votes = {}
+      // addNotification({
+      //   message: `La votación ha comenzado`,
+      //   status: 'success',
+      // })
+    }
+  })
 
-    socket.value?.on('VotingClosed', (payload) => {
+  const hanlderVotingClosed = $((payload: any) => {
+    if (payload) {
       console.log(payload)
+      state.votingId = ''
+      state.isStartedMeeting = false
+      state.startCounter = false
+      state.showVotes = true
+      state.votes = payload.voting.participantVotes
+      
 
-      if (payload.voting) {
-        isStartedMeeting!.value = false
-      }
-    })
+      // addNotification({
+      //   message: `La votación ha finalizado`,
+      //   status: 'success',
+      // })
+    }
+  })
+
+  useVisibleTask$(({ track, cleanup }) => {
+    track(() => state.socket)
+
+    state.socket!.on('ParticipantJoined', hanlderParticipantJoind)
+    state.socket!.on('ParticipantVoted', handlerParticipantVoted)
+    state.socket!.on('ParticipantDisconnected', handlerParticipantDisconnected)
+    state.socket!.on('VotingStarted', hanlderVotingStarted)
+    state.socket!.on('VotingClosed', hanlderVotingClosed)
 
     cleanup(() => {
-      socket.value?.removeListener('VotingStarted')
-      socket.value?.removeListener('VotingClosed')
+      state.socket!.off('ParticipantJoined')
+      state.socket!.off('ParticipantVoted')
+      state.socket!.off('ParticipantDisconnected')
+      state.socket!.off('VotingStarted')
+      state.socket!.off('VotingClosed')
     })
   })
 
   const action = $(() => {})
 
   const shareLink = $(() => {
-    // eslint-disable-next-line no-extra-semi
+    // eslint-disable-next-line
     ;(navigator as any).clipboard.writeText(
       `${
         location.url.protocol + '//' + location.url.host
-      }/join-session?secret=${secret.value}&id=${idMeeting.value}`
+      }/join-session?secret=${state.secret}&id=${state.idMeeting}`
     )
   })
 
-  const InitVoting = $(() => {
-    if (!idMeeting.value) {
-      addNotification({
-        message: 'Error al iniciar la votación',
-        status: 'error',
+  const initVoting = $(async () => {
+    try {
+      const res = await state.emitEvent('StartVoting', {
+        meetingId: state.idMeeting!,
       })
-    } else {
-      socket.value?.emit(
-        'StartVoting',
-        {
-          meetingId: idMeeting.value!,
-        },
-        (payload) => {
-          console.log(payload)
-
-          if (payload.success) {
-            votingId.value = payload.data.id
-            startCounter.value = true
-            isStartedMeeting.value = true
-          }
-        }
-      )
+  
+      console.log(res);
+      
+      if (res!.success) {
+        state.votingId = res.data.id
+        state.startCounter = true
+        state.isStartedMeeting = true
+        state.beerTime = res.data.time
+      }
+    } catch (error) {
+      console.log(error);
     }
   })
 
-  const CloseVoting = $(() => {
-    if (!idMeeting.value) {
-      addNotification({
-        message: 'Error al iniciar la votación',
-        status: 'error',
-      })
-    } else {
-      socket.value?.emit(
-        'CloseVoting',
-        {
-          meetingId: idMeeting.value!,
-          votingId: votingId.value!,
-        },
-        (payload) => {
-          console.log(payload)
-        }
-      )
+  const closeVoting = $(async () => {
+    const res = await  state.emitEvent('CloseVoting', {
+      meetingId: state.idMeeting!,
+      votingId: state.votingId!,
+    })
+    if (res.success) {
+      state.startCounter = false
+      state.isStartedMeeting = false
     }
   })
 
   return (
     <main class={style.container}>
       <p class={style.sessionId}>
-        Sesion Id: <span class={style.span}> {idMeeting.value} </span>
+        Sesion Id: <span class={style.span}> {state.idMeeting} </span>
       </p>
       <div class={style.desktopView}>
         <section class={style.content}>
@@ -207,10 +177,10 @@ export default component$(() => {
             <CounterDown
               class={style.time}
               clock
-              started={startCounter.value}
-              beerTime={new Date().getTime() + 1000 * 60 * 60}
+              started={state.startCounter}
+              beerTime={state.beerTime}
             />
-            <p class={style.userName}>{user.value.name}</p>
+            <p class={style.userName}>{state.user.name}</p>
           </section>
 
           <input
@@ -231,19 +201,19 @@ export default component$(() => {
       </div>
 
       <section class={style.buttonsContainer}>
-        {!isStartedMeeting.value && (
+        {!state.isStartedMeeting && (
           <HasPermission>
-            <PrimaryButton action={InitVoting} text="START VOTING" />
+            <PrimaryButton action={initVoting} text="START VOTING" />
           </HasPermission>
         )}
 
-        {isStartedMeeting?.value && (
+        {state.isStartedMeeting && (
           <>
             <HasPermission>
-              <PrimaryButton action={CloseVoting} text="Cerrar Votacion" />
-            </HasPermission>
-            <HasPermission>
-              <PrimaryButton action={action} text="SHOW VOTES" />
+              <PrimaryButton
+                action={closeVoting}
+                text="Cerrar Votacion"
+              />
             </HasPermission>
           </>
         )}

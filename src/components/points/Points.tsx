@@ -1,12 +1,28 @@
-import { $, component$, useContext } from '@builder.io/qwik'
+import { $, component$, useContext, useSignal } from '@builder.io/qwik'
 import style from './points.module.css'
 import { StateProvider } from '~/context/ProviderContext'
 
 
 export const Points = component$(() => {
 
-  const { socket, user, idMeeting, participants, isStartedMeeting, votingId } = useContext(StateProvider)
+  const state = useContext(StateProvider)
   
+
+  
+  const handleVote = $(async ( point: number) =>  {
+    const res = await state.emitEvent('Vote', {
+      meetingId: state.idMeeting!,
+      point,
+      votingId: state.votingId!,
+    })
+    if (res.success) {
+      console.log(res)
+
+      state.votes = res.data.participantVotes
+    }
+  })
+
+
   const points = [
     { value: 0, display: '0 POINTS' },
     { value: 0.5, display: '1/2 POINT' },
@@ -21,34 +37,16 @@ export const Points = component$(() => {
     { value: null, display: '??' },
   ]
 
-  const handleVote = $((point: number) => {
-    socket.value?.emit('Vote', {
-    meetingId: idMeeting.value!,
-    point,
-    votingId: votingId.value!,
-    }, (payload) => {
-      console.log(payload);
-      if(payload.success){
-        console.log( 'participants', participants.value);
-        const idx =  participants.value.findIndex( participant => participant.userId ===  Object.keys(payload.data.participantVotes)[0] )
 
-        console.log( 'idx', idx);
-
-        participants.value[idx].points = payload.data.participantVotes[Object.values(payload.data.participantVotes)[0]]
-      }
-
-      
-    })
-  })
 
   return (
     <section class={style.pointsContainer}>
       {points.map((point) => (
         <button 
         key={point.value}
-        disabled={!isStartedMeeting.value}
+        disabled={!state.isStartedMeeting}
         onClick$={ () => handleVote(point.value!)}
-        class={[!isStartedMeeting.value ? style.disabled : '',style.points, ]}>
+        class={[!state.isStartedMeeting? style.disabled : '',style.points, ]}>
           {point.display}
         </button>
       ))}

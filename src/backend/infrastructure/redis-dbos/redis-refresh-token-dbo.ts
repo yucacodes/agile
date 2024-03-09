@@ -1,5 +1,5 @@
 import { RefreshToken } from '@domain'
-import { DboCollectionsMapper, dboMapper, type TimeProvider } from '@framework'
+import { DboCollectionsMapper, dboMapper, TimeProvider } from '@framework'
 import type { RedisEntityDbo } from './redis-entity-dbo'
 import { RedisEntityDboMapperHelper } from './redis-entity-dbo'
 

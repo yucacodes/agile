@@ -1,39 +1,57 @@
-import { component$, useContext } from '@builder.io/qwik'
+import { component$, useContext, useSignal, useTask$ } from '@builder.io/qwik'
 import { StateProvider } from '~/context/ProviderContext'
 import style from './players-table.module.css'
 
+import type { ParticipantDto } from '@application'
+
+interface Participant extends ParticipantDto {
+  points: number | null | undefined
+}
+
 export const PlayersTable = component$(() => {
-  const {  participants } = useContext(StateProvider)
-  
+  const state = useContext(StateProvider)
+
+
+  const participantsArr = useSignal<Participant[]>([])
+
+  useTask$(({ track }) => {
+    track(() => state.participants)
+    track(() => state.votes)
+
+    participantsArr.value = Object.values(state.participants).map(
+      (participant) => {
+        return {
+          ...participant,
+          points: state.votes[participant.userId] || null,
+        }
+      }
+    )
+  })
 
   return (
-    <table class={style.table}>
-      <thead>
-        <tr class={style.tableHeader}>
-          <th class={style.playerColumn}>Players</th>
-          <th class={style.pointsColumn}>Points</th>
-        </tr>
-      </thead>
-      <tbody>
-        {participants.value.map((player) => (
-          <tr key={player.userId} class={style.tableBody}>
-            <td class={style.playerColumn}>
-              {player.isManager && (
-                <span class={`material-icons-outlined ${style.check}`}>
-                  manager
-                </span>
-              )}
-              {player.points && (
-                <span class={`material-icons-outlined ${style.check}`}>
-                  done
-                </span>
-              )}
-              {player.name}
-            </td>
-            <td class={style.pointsColumn}>{player.points || '**'} </td>
-          </tr>
+    <section class={style.players}>
+      <header class={style.headers}>
+        <h6>Players</h6>
+
+        <h6>Points</h6>
+      </header>
+
+      <div class={style.playersContainer}>
+        {participantsArr.value.map((participant, index) => (
+          <div class={style.player} key={index}>
+            {participant.isManager && (
+              <span class={`material-icons-outlined ${style.manager}`}>
+                manager
+              </span>
+            )}
+            {participant.points! === null && (
+              <span class={`material-icons-outlined ${style.check}`}>done</span>
+            )}
+            <p>{participant.name}</p>
+            <p>{ state.showVotes ? participant.points : '**'}</p>
+          </div>
         ))}
-      </tbody>
-    </table>
+      </div>
+    </section>
   )
 })

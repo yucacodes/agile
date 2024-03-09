@@ -6,10 +6,10 @@ import {
 } from '@builder.io/qwik-city'
 import style from './join-session-page.module.css'
 
-import { LinkButton } from '~/components/link-button/LinkButton'
+import { Button } from '@yucacodes/ui-qwik'
 import { Title } from '~/components/title/Title'
 import { StateProvider } from '~/context/ProviderContext'
-import { useToast } from '~/hooks/useToast'
+
 
 export const useJoinPokerSession = routeLoader$(async ({ url }) => {
   const secret = url.searchParams.get('secret')
@@ -21,87 +21,87 @@ export const useJoinPokerSession = routeLoader$(async ({ url }) => {
 })
 
 export default component$(() => {
-  const { addNotification } = useToast()
-  const { socket, user, idMeeting, secret, participants, createSocket } =
-    useContext(StateProvider)
-
+  const state = useContext(StateProvider)
   const QueryParams = useJoinPokerSession()
-
   const name = useSignal('')
-
   const nav = useNavigate()
 
-  const action = $(async () => {
-    if (QueryParams.value.id && QueryParams.value.secret) {
-      createSocket()
+  const startSession = $(async (name: string) => {
+    void (await state.connect())
 
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+    const payload  = await state.emitEvent('StartMeeting', {
+      name: name,
+    })
 
-      socket.value?.emit(
-        'JoinMeeting',
-        {
-          name: name.value,
-          secret: QueryParams.value.secret,
-          meetingId: QueryParams.value.id,
-        },
-        (response) => {
-          console.log(response);
-          
-          if (!response.success) {
-            return
-          }
+    console.log(payload)
 
-          participants.value = Object.values(response.data.meeting.participants)
+    if (payload.success) {
+      state.participants = payload.data.meeting.participants
 
-          idMeeting.value = response.data.meeting.id
-          const isManager =
-            response.data.meeting.participants[response.data.sessionData.userId]
-              .isManager
+      state.secret = payload.data.secret
+      state.idMeeting = payload.data.meeting.id
+      const isManager =
+        payload.data.meeting.participants[payload.data.sessionData?.userId]
+          .isManager
 
-          user.value = {
-            ...response.data.sessionData,
-            name: name.value,
-            isManager,
-          }
-
-          addNotification({
-            message: 'Te has unido a la sesión',
-            status: 'success',
-          })
-
-          nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
-        }
-      )
-
-      return
-    }
-
-    socket.value?.emit(
-      'StartMeeting',
-      {
-        name: name.value,
-      },
-      (response) => {
-        console.log(response);
-        if (!response.success) {
-          return
-        }
-        participants.value = Object.values(response.data.meeting.participants)
-        secret.value = response.data.secret
-        idMeeting.value = response.data.meeting.id
-        const isManager =
-          response.data.meeting.participants[response.data.sessionData.userId]
-            .isManager
-
-        user.value = { ...response.data.sessionData, name: name.value, isManager }
-        addNotification({
-          message: 'Has creado una sesión exitosamente',
-          status: 'success',
-        })
-
-        nav(`/play-session?secret=${secret.value}&id=${idMeeting.value}`)
+      state.user = {
+        ...payload.data.sessionData,
+        name: name,
+        isManager,
       }
-    )
+      // addNotification({
+      //   message: 'Has creado una sesión exitosamente',
+      //   status: 'success',
+      // })
+
+      nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
+    }
+  })
+
+  const joinToSession = $(
+    async ({
+      name,
+      secret,
+      idMeeting,
+    }: {
+      name: string
+      secret: string
+      idMeeting: string
+    }) => {
+
+        void (await state.connect())
+
+        const payload = await state.emitEvent('JoinMeeting', {
+          name,
+          secret: secret,
+          meetingId: idMeeting,
+        })
+        if (payload!.success) {
+          state.participants = payload.data.meeting.participants
+          state.participants = payload.data.meeting.participants
+          state.secret = payload.data.secret
+          state.idMeeting = payload.data.meeting.id
+
+          state.user = {
+            ...payload.data.authInfo,
+            name,
+            isManager: false,
+          }
+          nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
+      }
+    }
+  )
+
+  const createOrJoinToSession = $(async () => {
+    if (QueryParams?.value?.id && QueryParams?.value?.secret) {
+      joinToSession({
+        name: name.value,
+        secret: QueryParams.value.secret,
+        idMeeting: QueryParams.value.id,
+      })
+    } else {
+      startSession(name.value)
+    }
   })
   return (
     <>
@@ -116,10 +116,10 @@ export default component$(() => {
             class={style.input}
             placeholder="Session name"
           />
-          <LinkButton
-            action={action}
-            text={QueryParams.value.id ? 'Join a session' : 'Create a session'}
-          />
+
+          <Button onClick$={createOrJoinToSession} outlined primary size="1.2rem">
+            {QueryParams.value.id ? 'Join a session' : 'Create a session'}
+          </Button>
         </section>
       </div>
     </>

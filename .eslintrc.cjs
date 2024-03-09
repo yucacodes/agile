@@ -36,7 +36,7 @@ module.exports = {
     'no-case-declarations': 'off',
     'no-console': 'off',
     '@typescript-eslint/no-unused-vars': ['warn'],
-    '@typescript-eslint/consistent-type-imports': 'warn',
+    '@typescript-eslint/consistent-type-imports': 'off',
     '@typescript-eslint/no-unnecessary-condition': 'warn',
     'qwik/use-method-usage': 'off',
   },
