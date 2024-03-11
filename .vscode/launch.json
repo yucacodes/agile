@@ -17,7 +17,7 @@
       "type": "node-terminal",
       "name": "Backend",
       "request": "launch",
-      "command": "yts src/backend/run-backend.ts",
+      "command": "npx yts src/backend/run-backend.ts",
     }
   ]
 }
