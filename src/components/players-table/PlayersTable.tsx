@@ -44,9 +44,9 @@ export const PlayersTable = component$(() => {
                 manager
               </span>
             )}
-            {participant.points! === null && (
+            {/* {participant.points! !== null && (
               <span class={`material-icons-outlined ${style.check}`}>done</span>
-            )}
+            )} */}
             <p>{participant.name}</p>
             <p>{ state.showVotes ? participant.points : '**'}</p>
           </div>
