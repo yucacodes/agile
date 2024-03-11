@@ -80,7 +80,7 @@ export default component$(() => {
       state.isStartedMeeting = true
       state.startCounter = true
       state.showVotes = false
-      state.beerTime = payload.time
+      state.beerTime = new Date(payload.time).getTime()
       state.votes = {}
       // addNotification({
       //   message: `La votación ha comenzado`,
@@ -97,6 +97,7 @@ export default component$(() => {
       state.startCounter = false
       state.showVotes = true
       state.votes = payload.voting.participantVotes
+      state.beerTime = 0
       
 
       // addNotification({

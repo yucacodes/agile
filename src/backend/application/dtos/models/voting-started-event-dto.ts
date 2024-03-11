@@ -13,7 +13,7 @@ export class VotingStartedEventDtoMapper {
   map(obj: VotingStartedEvent): VotingStartedEventDto {
     return {
       votingId: obj.votingId(),
-      time: obj.time.toString(),
+      time: obj.time().toISOString(),
     }
   }
 }
