@@ -1,4 +1,8 @@
-import { MeetingsRepository, ParticipantVotedEvent } from '@domain'
+import {
+  MeetingsRepository,
+  ParticipantVotedEvent,
+  VotingClosedEvent,
+} from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework'
 import { TimeProvider } from '@framework'
 import {
@@ -35,33 +39,41 @@ export class ParticipantVotes {
       throw new Error('Voting not found.')
     }
 
-    if (!voting.isOpen()) {
+    if (voting.isClosed()) {
       throw new Error('Voting is closed.')
     }
 
     const participant = meeting.participant(auth.userId)
 
-    console.log('participant', participant);
-    
+    console.log('participant', participant)
 
     if (!participant) {
       throw new Error('Participant not found.')
     }
 
     voting.setParticipantVote(participant, point)
+    await this.meetingsRepository.saveUpdate(meeting)
 
-    
     const event = ParticipantVotedEvent.factory({
       meeting,
       participant,
       voting: voting,
       timeProvider: this.timeProvider,
     })
-    
-    await this.meetingsRepository.saveUpdate(meeting)
-    
     this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
 
-    return this.votingDtoMapper.map(voting) 
+    if (voting.isClosed()) {
+      const event = VotingClosedEvent.factory({
+        meeting,
+        timeProvider: this.timeProvider,
+        voting,
+      })
+      this.eventsBus.notifyToOrigin({
+        event,
+        channel: `meeting/${meeting.id()}`,
+      })
+    }
+
+    return this.votingDtoMapper.map(voting)
   }
 }

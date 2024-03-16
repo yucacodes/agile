@@ -41,6 +41,10 @@ export class Voting extends Entity<VotingProps> {
     return this.props.timeLimit.getTime() >= this.timeProvider.now().getTime()
   }
 
+  isClosed(): boolean {
+    return !this.isOpen()
+  }
+
   votes(): Map<string, number> {
     return new Map(this.props.participantVotes)
   }
