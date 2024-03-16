@@ -20,6 +20,8 @@ import { useToast } from '~/hooks/useToast'
 import style from './play-session-page.module.css'
 
 import { CounterDown } from '@yucacodes/ui-qwik'
+import { VotingStartedEventDto } from '@application'
+import { SocketResult } from '~/framework/presentation'
 
 export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
   const secret = url.searchParams.get('secret')
@@ -52,10 +54,9 @@ export default component$(() => {
 
   const handlerParticipantVoted = $((payload: any) => {
     if (payload.participant) {
-
       state.votes = {
         ...state.votes,
-        [payload.participant.userId]:null,
+        [payload.participant.userId]: null,
       }
       // addNotification({
       //   message: `ha votado ${payload.participant.name}`,
@@ -73,21 +74,24 @@ export default component$(() => {
     }
   })
 
-  const hanlderVotingStarted = $((payload: any) => {
-    if (payload) {
-      console.log(payload)
-      state.votingId = payload.votingId
-      state.isStartedMeeting = true
-      state.startCounter = true
-      state.showVotes = false
-      state.beerTime = new Date(payload.time).getTime()
-      state.votes = {}
-      // addNotification({
-      //   message: `La votación ha comenzado`,
-      //   status: 'success',
-      // })
+  const hanlderVotingStarted = $(
+    (payload: SocketResult<VotingStartedEventDto>) => {
+      if (payload.success) {
+        const { voting } = payload.data
+        console.log(payload)
+        state.votingId = voting.id
+        state.isStartedMeeting = true
+        state.startCounter = true
+        state.showVotes = false
+        state.beerTime = new Date(voting.timeLimit).getTime()
+        state.votes = {}
+        // addNotification({
+        //   message: `La votación ha comenzado`,
+        //   status: 'success',
+        // })
+      }
     }
-  })
+  )
 
   const hanlderVotingClosed = $((payload: any) => {
     if (payload) {
@@ -98,7 +102,6 @@ export default component$(() => {
       state.showVotes = true
       state.votes = payload.voting.participantVotes
       state.beerTime = 0
-      
 
       // addNotification({
       //   message: `La votación ha finalizado`,
@@ -113,7 +116,7 @@ export default component$(() => {
     state.socket!.on('ParticipantJoined', hanlderParticipantJoind)
     state.socket!.on('ParticipantVoted', handlerParticipantVoted)
     state.socket!.on('ParticipantDisconnected', handlerParticipantDisconnected)
-    state.socket!.on('VotingStarted', hanlderVotingStarted)
+    state.socket!.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
     state.socket!.on('VotingClosed', hanlderVotingClosed)
 
     cleanup(() => {
@@ -141,9 +144,9 @@ export default component$(() => {
       const res = await state.emitEvent('StartVoting', {
         meetingId: state.idMeeting!,
       })
-  
-      console.log(res);
-      
+
+      console.log(res)
+
       if (res!.success) {
         state.votingId = res.data.id
         state.startCounter = true
@@ -153,12 +156,12 @@ export default component$(() => {
         state.votes = {}
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   })
 
   const closeVoting = $(async () => {
-    const res = await  state.emitEvent('CloseVoting', {
+    const res = await state.emitEvent('CloseVoting', {
       meetingId: state.idMeeting!,
       votingId: state.votingId!,
     })
@@ -213,10 +216,7 @@ export default component$(() => {
         {state.isStartedMeeting && (
           <>
             <HasPermission>
-              <PrimaryButton
-                action={closeVoting}
-                text="Cerrar Votacion"
-              />
+              <PrimaryButton action={closeVoting} text="Cerrar Votacion" />
             </HasPermission>
           </>
         )}

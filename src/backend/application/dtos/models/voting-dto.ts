@@ -3,6 +3,7 @@ import { CollectionsMapper, dtoMapper } from '@framework'
 import { EntityDtoMapper, type EntityDto } from './entity-dto'
 
 export interface VotingDto extends EntityDto {
+  timeLimit: string
   participantVotes: { [key: string]: number | null }
 }
 
@@ -20,6 +21,7 @@ export class VotingDtoMapper extends CollectionsMapper {
     return {
       ...this.entityDtoMapper.map(obj),
       participantVotes,
+      timeLimit: obj.timeLimit().toISOString(),
     }
   }
 }
