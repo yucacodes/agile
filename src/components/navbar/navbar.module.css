@@ -1,5 +1,7 @@
 .container {
+  position: relative;
 }
+
 .nav {
   display: none;
 
@@ -33,7 +35,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 2rem;
+    padding: 0 6rem;
     height: 4rem;
   }
 
