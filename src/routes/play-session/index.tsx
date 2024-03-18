@@ -75,10 +75,10 @@ export default component$(() => {
   })
 
   const hanlderVotingStarted = $(
-    (payload: SocketResult<VotingStartedEventDto>) => {
-      if (payload.success) {
-        const { voting } = payload.data
-        console.log(payload)
+    (payload: VotingStartedEventDto) => {
+      console.log(payload)
+      if (payload) {
+        const { voting } = payload
         state.votingId = voting.id
         state.isStartedMeeting = true
         state.startCounter = true
@@ -98,7 +98,6 @@ export default component$(() => {
       console.log(payload)
       state.votingId = ''
       state.isStartedMeeting = false
-      state.startCounter = false
       state.showVotes = true
       state.votes = payload.voting.participantVotes
       state.beerTime = 0
@@ -151,7 +150,7 @@ export default component$(() => {
         state.votingId = res.data.id
         state.startCounter = true
         state.isStartedMeeting = true
-        state.beerTime = new Date().getTime() + 10000
+        state.beerTime = new Date().getTime() + 5* 60 *1000
         state.showVotes = false
         state.votes = {}
       }
