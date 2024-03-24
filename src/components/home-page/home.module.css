@@ -1,31 +1,65 @@
 .container {
   height: inherit;
   display: flex;
-  flex-flow: column;
-  justify-content: center;
+  flex-direction: column;
   padding-inline: 6rem;
 }
 
 .content {
   flex: 1;
   display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 60px;
+  width: 50%;
+  margin: 0 auto;
+  flex-direction: column;
+  gap: 2.5rem;
+  place-content: center;
+  place-items: center;
 }
 
 .textsContainer {
   text-align: center;
+  text-wrap: balance;
   display: grid;
   gap: 2rem;
+
+  section {
+    display: grid;
+    gap: 0.5rem;
+  }
 }
 
 .informativeText {
   align-self: flex-end;
-  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.3rem;
 }
 
 .spacer {
   flex: 1;
+}
+
+/* create a mediaquery responsive mobile */
+
+@media (min-width: 320px) and (max-width: 768px) {
+  .container {
+    padding-inline: 2rem;
+  }
+  .content {
+    gap: 3.5rem;
+  }
+
+  .textsContainer {
+    text-align: center;
+
+    gap: 1rem;
+
+    section {
+      &::after {
+        content: '';
+        margin: 0.5rem auto;
+        width: 80%;
+        border: rgb(228, 228, 228) 0.1px solid;
+      }
+    }
+  }
 }
