@@ -45,6 +45,7 @@
     padding-inline: 2rem;
   }
   .content {
+    width: 100%;
     gap: 3.5rem;
   }
 
