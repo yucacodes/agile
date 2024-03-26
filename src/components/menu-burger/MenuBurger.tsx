@@ -17,9 +17,11 @@ export const MenuBurger = component$(() => {
       >
         menu
       </span>
-      {mobileNavbarVisible.value && (
-        <MobileNavbar showMobileNavbar={mobileNavbarVisible.value} />
-      )}
+      <div
+        class={`${style.mobileNavbar} ${mobileNavbarVisible.value ? style.show : style.hidden}`}
+      >
+        <MobileNavbar />
+      </div>
     </div>
   )
 })

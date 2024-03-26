@@ -1,18 +1,17 @@
 import { component$, useComputed$ } from '@builder.io/qwik'
 import { Link, useLocation } from '@builder.io/qwik-city'
+import { Button } from '@yucacodes/ui-qwik'
 import style from './mobile-navbar.module.css'
 
-export const MobileNavbar = component$(
-  ({ showMobileNavbar }: { showMobileNavbar: boolean }) => {
-    const loc = useLocation()
-    const pathname = useComputed$(() => {
-      return loc.url.pathname
-    })
+export const MobileNavbar = component$(() => {
+  const loc = useLocation()
+  const pathname = useComputed$(() => {
+    return loc.url.pathname
+  })
 
-    return (
-      <div
-        class={`${style.container} ${showMobileNavbar ? style.show : style.hidden}`}
-      >
+  return (
+    <div class={style.root}>
+      <section class={style.container}>
         <Link
           href="/"
           role="planning"
@@ -31,7 +30,10 @@ export const MobileNavbar = component$(
         >
           Meet the team
         </Link>
-      </div>
-    )
-  }
-)
+      </section>
+      <Button text black>
+        Donate
+      </Button>
+    </div>
+  )
+})
