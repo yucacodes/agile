@@ -11,7 +11,7 @@ export const Navbar = component$(() => {
 
   return (
     <div class={style.container}>
-      {/* <MenuBurger /> */}
+      <MenuBurger />
       <nav class={style.nav}>
         <ul class={style.listlink}>
           <Link
