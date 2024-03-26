@@ -1,6 +1,6 @@
 import { $, component$, useSignal } from '@builder.io/qwik'
-import style from './menu-burger.module.css'
 import { MobileNavbar } from '../mobile-navbar/MobileNavbar'
+import style from './menu-burger.module.css'
 
 export const MenuBurger = component$(() => {
   const mobileNavbarVisible = useSignal(false)
@@ -17,9 +17,11 @@ export const MenuBurger = component$(() => {
       >
         menu
       </span>
-      {mobileNavbarVisible.value && (
-        <MobileNavbar showMobileNavbar={mobileNavbarVisible.value} />
-      )}
+      <div
+        class={`${style.mobileNavbar} ${mobileNavbarVisible.value ? style.show : style.hidden}`}
+      >
+        <MobileNavbar />
+      </div>
     </div>
   )
 })

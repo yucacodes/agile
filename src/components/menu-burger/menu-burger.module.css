@@ -3,6 +3,26 @@
   padding: 2rem;
 }
 
+.mobileNavbar {
+  transition: all 0.8s ease;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.mobileNavbar.hidden {
+  opacity: 0;
+  visibility: hidden;
+  right: -10%;
+}
+
+.mobileNavbar.show {
+  opacity: 1;
+  visibility: visible;
+  right: 0;
+}
+
 @media screen and (min-width: 768px) {
   .menu {
     display: none;
