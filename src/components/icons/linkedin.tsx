@@ -6,7 +6,7 @@ export const LinkedinIcon = component$(() => {
       xmlns="http://www.w3.org/2000/svg"
       data-name="Layer 1"
       viewBox="0 0 24 24"
-      style={{ width: '18px', borderRadius: '0.5rem' }}
+      style={{ width: '1.25rem', borderRadius: '0.5rem' }}
       id="linkedin"
     >
       <path
