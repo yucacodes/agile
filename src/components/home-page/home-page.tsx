@@ -5,7 +5,7 @@ import { Title } from '~/components/title/Title'
 import { useNavigate } from '@builder.io/qwik-city'
 import { Footer } from '~/components/footer/Footer'
 
-import { Button } from '@yucacodes/ui-qwik'
+import { Button, Container } from '@yucacodes/ui-qwik'
 import style from './home.module.css'
 
 export const HomePage = component$(() => {
@@ -15,7 +15,7 @@ export const HomePage = component$(() => {
 
   return (
     <>
-      <main class={style.container}>
+      <section class={style.container}>
         <div class={style.content}>
           <div class={style.textsContainer}>
             <section>
@@ -28,11 +28,11 @@ export const HomePage = component$(() => {
             </p>
           </div>
           <Button onClick$={goToJoinSessionPage} contained primary size="1.2rem">
-            START A SESSION
+            Start a session
           </Button>
         </div>
         <Footer />
-      </main>
+      </section>
     </>
   )
 })
