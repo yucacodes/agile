@@ -133,8 +133,12 @@ table {
 }
 
 /* styles */
-html {
+html, body {
   font-family: 'DM Sans', sans-serif;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  position: relative;
 }
 
 .principal {
@@ -142,6 +146,7 @@ html {
   flex-direction: column;
   height: 100vh;
   height: 100dvh;
+  width: 100vw;
 }
 .active {
   text-decoration-line: underline !important;

@@ -19,3 +19,21 @@
     }
   }
 }
+@media (max-width: 768px) {
+
+  .content {
+    gap: 2rem;
+    align-content: center;
+    padding: 1rem;
+
+    .form {
+      gap: 1rem;
+      flex-direction: column;
+      width: 100%;
+      padding: 1rem;
+    }
+
+  }
+
+  
+}
