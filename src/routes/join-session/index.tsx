@@ -114,7 +114,7 @@ export default component$(() => {
             }}
             type="text"
             class={style.input}
-            placeholder="Session name"
+            placeholder="your name..."
           />
 
           <Button onClick$={createOrJoinToSession} outlined primary size="1.2rem">
