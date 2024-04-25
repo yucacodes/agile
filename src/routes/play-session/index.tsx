@@ -22,6 +22,7 @@ import style from './play-session-page.module.css'
 import { CounterDown } from '@yucacodes/ui-qwik'
 import { VotingStartedEventDto } from '@application'
 import { SocketResult } from '~/framework/presentation'
+import { s } from 'vitest/dist/reporters-5f784f42'
 
 export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
   const secret = url.searchParams.get('secret')
@@ -40,6 +41,8 @@ export default component$(() => {
   const location = useLocation()
 
   const hanlderParticipantJoind = $((payload: any) => {
+    console.log(payload);
+
     if (payload.participant) {
       state.participants = {
         ...state.participants,
@@ -53,6 +56,7 @@ export default component$(() => {
   })
 
   const handlerParticipantVoted = $((payload: any) => {
+    console.log(payload);
     if (payload.participant) {
       state.votes = {
         ...state.votes,
@@ -66,6 +70,7 @@ export default component$(() => {
   })
 
   const handlerParticipantDisconnected = $((payload: any) => {
+    console.log(payload);
     if (payload.participant) {
       // addNotification({
       //   message: `${payload.participant.name} ha dejado la sesión`,
@@ -94,6 +99,7 @@ export default component$(() => {
   )
 
   const hanlderVotingClosed = $((payload: any) => {
+    console.log(payload);
     if (payload) {
       console.log(payload)
       state.votingId = ''
@@ -112,18 +118,39 @@ export default component$(() => {
   useVisibleTask$(({ track, cleanup }) => {
     track(() => state.socket)
 
-    state.socket!.on('ParticipantJoined', hanlderParticipantJoind)
-    state.socket!.on('ParticipantVoted', handlerParticipantVoted)
-    state.socket!.on('ParticipantDisconnected', handlerParticipantDisconnected)
-    state.socket!.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
-    state.socket!.on('VotingClosed', hanlderVotingClosed)
+    state.socket?.on('connect', () => {
+      state.isOnline = true
+      console.log('connected');
+
+    })
+
+    state.socket?.on('disconnect', () => {
+      state.isOnline = true
+      console.log('disconnect');
+
+    })
+
+    state.socket?.on('connect_error', () => {
+      state.isOnline = true
+      console.log('disconnect');
+
+    })
+
+    state.socket?.on('ParticipantJoined', hanlderParticipantJoind)
+    state.socket?.on('ParticipantVoted', handlerParticipantVoted)
+    state.socket?.on('ParticipantDisconnected', handlerParticipantDisconnected)
+    state.socket?.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
+    state.socket?.on('VotingClosed', hanlderVotingClosed)
+
+
 
     cleanup(() => {
-      state.socket!.off('ParticipantJoined')
-      state.socket!.off('ParticipantVoted')
-      state.socket!.off('ParticipantDisconnected')
-      state.socket!.off('VotingStarted')
-      state.socket!.off('VotingClosed')
+      state.socket?.off('ParticipantJoined')
+      state.socket?.off('ParticipantVoted')
+      state.socket?.off('ParticipantDisconnected')
+      state.socket?.off('VotingStarted')
+      state.socket?.off('VotingClosed')
+
     })
   })
 

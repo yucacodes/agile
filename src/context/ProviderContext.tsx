@@ -7,11 +7,13 @@ import {
   noSerialize,
   useContextProvider,
   useStore,
+  useVisibleTask$,
   type NoSerialize,
-  type QRL,
+  type QRL
 } from '@builder.io/qwik'
 import { ClientSocket } from '@presentation'
 import { io } from 'socket.io-client'
+import { getSession, removeSession } from '~/utils/Session'
 
 interface AuthInformation extends UserCreateMeetingRequestDto {
   name: string
@@ -33,10 +35,6 @@ export interface State {
   showVotes: boolean
   connect: QRL<() => Promise<void>>
   emitEvent: QRL<(event: any, data: any) => Promise<any>>
-  RegisterEvent: QRL<
-    (event: any, callBack: QRL<(payload: any) => void>) => void
-  >
-  offEvent: QRL<(event: any) => void>
 }
 
 export const StateProvider = createContextId<State>('StateProvider')
@@ -67,9 +65,10 @@ export const Provider = component$(() => {
   const connect = $(async function (this: State): Promise<void> {
     return new Promise((resolve, _) => {
       this.socket = noSerialize(
-        io('http://localhost:3000', {
+        io(import.meta.env.PUBLIC_API_URL, {
           transports: ['websocket'],
           protocols: ['websocket'],
+
         })
       )
       void resolve()
@@ -91,18 +90,53 @@ export const Provider = component$(() => {
     connect,
     emitEvent,
     showVotes: false,
-    RegisterEvent: $(async function (
-      this: State,
-      event: any,
-      callBack: (payload: any) => void
-    ) {
-      this.socket!.on(event, callBack)
-    }),
-    offEvent: $(async function (this: State, event: any) {
-      this.socket!.off(event)
-    }),
+
   })
 
+
+
+  useVisibleTask$(async ({ track, cleanup }) => {
+    track(() => state.socket)
+
+    console.log('state.socket', state.socket);
+
+
+    state.socket?.on('connect', async () => {
+      state.isOnline = true
+      console.log('connected');
+      const session = await getSession('session')
+      if (session) {
+        console.log(session);
+
+        try {
+          const res = await state?.emitEvent('RefreshSession', {
+            secret: session.secret,
+            refreshTokenId: session.sessionData.refreshTokenId,
+          })
+
+          console.log('----', res);
+        } catch (error) {
+          console.log('error', error);
+
+        }
+
+      }
+    })
+
+
+    state.socket?.on('disconnect', async () => {
+      state.isOnline = false
+
+
+    })
+
+
+    cleanup(() => {
+      state.socket?.off('connect')
+      state.socket?.off('disconnect')
+
+    })
+  })
   useContextProvider(StateProvider, state)
 
   return <Slot />

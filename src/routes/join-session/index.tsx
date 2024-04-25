@@ -9,6 +9,7 @@ import style from './join-session-page.module.css'
 import { Button } from '@yucacodes/ui-qwik'
 import { Title } from '~/components/title/Title'
 import { StateProvider } from '~/context/ProviderContext'
+import { setSession } from '~/utils/Session'
 
 
 export const useJoinPokerSession = routeLoader$(async ({ url }) => {
@@ -49,6 +50,18 @@ export default component$(() => {
         name: name,
         isManager,
       }
+
+      setSession({
+        nameItem: 'session',
+        value: {
+          name,
+          isManager,
+          secret: payload.data.secret,
+          idMeeting: payload.data.meeting.id,
+          sessionData: payload.data.sessionData,
+        },
+
+      })
       // addNotification({
       //   message: 'Has creado una sesión exitosamente',
       //   status: 'success',
@@ -76,7 +89,11 @@ export default component$(() => {
           secret: secret,
           meetingId: idMeeting,
         })
-        if (payload!.success) {
+      if (payload!.success) {
+
+        console.log(payload);
+
+
           state.participants = payload.data.meeting.participants
           state.participants = payload.data.meeting.participants
           state.secret = payload.data.secret
@@ -87,6 +104,18 @@ export default component$(() => {
             name,
             isManager: false,
           }
+
+
+        setSession({
+          nameItem: 'session',
+          value: {
+            name,
+            isManager: false,
+            secret: payload.data.secret,
+            idMeeting: payload.data.meeting.id,
+            sessionData: payload.data.sessionData,
+          },
+        })
           nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
       }
     }
