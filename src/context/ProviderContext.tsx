@@ -127,7 +127,7 @@ export const Provider = component$(() => {
     state.socket?.on('disconnect', async () => {
       state.isOnline = false
 
-
+      await removeSession('session')
     })
 
 
