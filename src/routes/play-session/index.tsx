@@ -16,10 +16,9 @@ import { Points } from '~/components/points/Points'
 import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
 import { SecondaryButton } from '~/components/secondary-button/SecondaryButton'
 import { StateProvider } from '~/context/ProviderContext'
-import { useToast } from '~/hooks/useToast'
 import style from './play-session-page.module.css'
 
-import { CounterDown } from '@yucacodes/ui-qwik'
+import { CounterDown, useSnackBar } from '@yucacodes/ui-qwik'
 import { VotingStartedEventDto } from '@application'
 import { SocketResult } from '~/framework/presentation'
 
@@ -36,6 +35,7 @@ export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
 
 export default component$(() => {
   const state = useContext(StateProvider)
+  const { addSnackBar } = useSnackBar()
 
   const location = useLocation()
 
@@ -45,10 +45,10 @@ export default component$(() => {
         ...state.participants,
         [payload.participant.userId]: payload.participant,
       }
-      // addNotification({
-      //   message: `Se has unido a la sesión ${payload.participant.name}`,
-      //   status: 'success',
-      // })
+
+      addSnackBar({
+        message: `Se ha unido a la sesión ${payload.participant.name}`,
+      })
     }
   })
 
@@ -58,40 +58,37 @@ export default component$(() => {
         ...state.votes,
         [payload.participant.userId]: null,
       }
-      // addNotification({
-      //   message: `ha votado ${payload.participant.name}`,
-      //   status: 'success',
-      // })
+
+      addSnackBar({
+        message: `ha votado ${payload.participant.name}`,
+      })
     }
   })
 
   const handlerParticipantDisconnected = $((payload: any) => {
     if (payload.participant) {
-      // addNotification({
-      //   message: `${payload.participant.name} ha dejado la sesión`,
-      //   status: 'error',
-      // })
+      addSnackBar({
+        message: `${payload.participant.name} ha dejado la sesión`,
+      })
     }
   })
 
-  const hanlderVotingStarted = $(
-    (payload: VotingStartedEventDto) => {
-      console.log(payload)
-      if (payload) {
-        const { voting } = payload
-        state.votingId = voting.id
-        state.isStartedMeeting = true
-        state.startCounter = true
-        state.showVotes = false
-        state.beerTime = new Date(voting.timeLimit).getTime()
-        state.votes = {}
-        // addNotification({
-        //   message: `La votación ha comenzado`,
-        //   status: 'success',
-        // })
-      }
+  const hanlderVotingStarted = $((payload: VotingStartedEventDto) => {
+    console.log(payload)
+    if (payload) {
+      const { voting } = payload
+      state.votingId = voting.id
+      state.isStartedMeeting = true
+      state.startCounter = true
+      state.showVotes = false
+      state.beerTime = new Date(voting.timeLimit).getTime()
+      state.votes = {}
+
+      addSnackBar({
+        message: `La votación ha comenzado`,
+      })
     }
-  )
+  })
 
   const hanlderVotingClosed = $((payload: any) => {
     if (payload) {
@@ -102,10 +99,9 @@ export default component$(() => {
       state.votes = payload.voting.participantVotes
       state.beerTime = 0
 
-      // addNotification({
-      //   message: `La votación ha finalizado`,
-      //   status: 'success',
-      // })
+      addSnackBar({
+        message: `La votación ha finalizado`,
+      })
     }
   })
 
@@ -150,7 +146,7 @@ export default component$(() => {
         state.votingId = res.data.id
         state.startCounter = true
         state.isStartedMeeting = true
-        state.beerTime = new Date().getTime() + 5* 60 *1000
+        state.beerTime = new Date().getTime() + 5 * 60 * 1000
         state.showVotes = false
         state.votes = {}
       }

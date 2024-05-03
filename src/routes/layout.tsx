@@ -3,7 +3,7 @@ import type { RequestHandler } from '@builder.io/qwik-city'
 
 import { Background } from '~/components/background/Background'
 import { Navbar } from '~/components/navbar'
-import { ToastProvider } from '~/context/ToastContext'
+import { SnackBarProvider } from '@yucacodes/ui-qwik'
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   // Control caching for this request for best performance and to reduce hosting costs:
@@ -18,13 +18,13 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 
 export default component$(() => {
   return (
-    <ToastProvider>
+    <SnackBarProvider>
       <main class="principal">
         <Background>
           <Navbar />
           <Slot />
         </Background>
       </main>
-    </ToastProvider>
+    </SnackBarProvider>
   )
 })
