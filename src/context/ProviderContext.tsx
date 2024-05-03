@@ -14,6 +14,7 @@ import {
 import { ClientSocket } from '@presentation'
 import { io } from 'socket.io-client'
 import { getSession, removeSession } from '~/utils/Session'
+import { connectSocket } from '~/utils/SocketManager'
 
 interface AuthInformation extends UserCreateMeetingRequestDto {
   name: string
@@ -33,7 +34,6 @@ export interface State {
   votes: { [key: string]: number }
   startCounter: boolean
   showVotes: boolean
-  connect: QRL<() => Promise<void>>
   emitEvent: QRL<(event: any, data: any) => Promise<any>>
 }
 
@@ -62,18 +62,7 @@ export const Provider = component$(() => {
     })
   })
 
-  const connect = $(async function (this: State): Promise<void> {
-    return new Promise((resolve, _) => {
-      this.socket = noSerialize(
-        io(import.meta.env.PUBLIC_API_URL, {
-          transports: ['websocket'],
-          protocols: ['websocket'],
 
-        })
-      )
-      void resolve()
-    })
-  })
 
   const state = useStore<State>({
     user,
@@ -87,7 +76,6 @@ export const Provider = component$(() => {
     beerTime: new Date().getTime(),
     votes: {},
     startCounter: false,
-    connect,
     emitEvent,
     showVotes: false,
 
@@ -102,7 +90,7 @@ export const Provider = component$(() => {
 
 
     state.socket?.on('connect', async () => {
-      state.isOnline = true
+
       console.log('connected');
       const session = await getSession('session')
       if (session) {
@@ -113,7 +101,7 @@ export const Provider = component$(() => {
             secret: session.secret,
             refreshTokenId: session.sessionData.refreshTokenId,
           })
-
+          state.isOnline = true
           console.log('----', res);
         } catch (error) {
           console.log('error', error);

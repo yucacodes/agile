@@ -10,6 +10,7 @@ import { Button } from '@yucacodes/ui-qwik'
 import { Title } from '~/components/title/Title'
 import { StateProvider } from '~/context/ProviderContext'
 import { setSession } from '~/utils/Session'
+import { connectSocket } from '~/utils/SocketManager'
 
 
 export const useJoinPokerSession = routeLoader$(async ({ url }) => {
@@ -28,7 +29,10 @@ export default component$(() => {
   const nav = useNavigate()
 
   const startSession = $(async (name: string) => {
-    void (await state.connect())
+    state.socket = await connectSocket()
+
+
+    console.log('state.socket', state.socket);
 
     const payload  = await state.emitEvent('StartMeeting', {
       name: name,
@@ -82,7 +86,9 @@ export default component$(() => {
       idMeeting: string
     }) => {
 
-        void (await state.connect())
+      state.socket = await connectSocket()
+
+      console.log('state.socket', state.socket);
 
         const payload = await state.emitEvent('JoinMeeting', {
           name,
