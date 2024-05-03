@@ -9,7 +9,7 @@ import {
   useStore,
   useVisibleTask$,
   type NoSerialize,
-  type QRL
+  type QRL,
 } from '@builder.io/qwik'
 import { ClientSocket } from '@presentation'
 import { io } from 'socket.io-client'
@@ -29,7 +29,7 @@ export interface State {
   idMeeting: string
   isStartedMeeting: boolean
   votingId: string
-  beerTime: number  
+  beerTime: number
   participants: { [key: string]: ParticipantDto }
   votes: { [key: string]: number }
   startCounter: boolean
@@ -62,8 +62,6 @@ export const Provider = component$(() => {
     })
   })
 
-
-
   const state = useStore<State>({
     user,
     socket,
@@ -78,23 +76,15 @@ export const Provider = component$(() => {
     startCounter: false,
     emitEvent,
     showVotes: false,
-
   })
-
-
 
   useVisibleTask$(async ({ track, cleanup }) => {
     track(() => state.socket)
-
-    console.log('state.socket', state.socket);
-
-
     state.socket?.on('connect', async () => {
 
-      console.log('connected');
       const session = await getSession('session')
       if (session) {
-        console.log(session);
+        console.log(session)
 
         try {
           const res = await state?.emitEvent('RefreshSession', {
@@ -102,15 +92,12 @@ export const Provider = component$(() => {
             refreshTokenId: session.sessionData.refreshTokenId,
           })
           state.isOnline = true
-          console.log('----', res);
+
         } catch (error) {
-          console.log('error', error);
 
         }
-
       }
     })
-
 
     state.socket?.on('disconnect', async () => {
       state.isOnline = false
@@ -118,11 +105,9 @@ export const Provider = component$(() => {
       await removeSession('session')
     })
 
-
     cleanup(() => {
       state.socket?.off('connect')
       state.socket?.off('disconnect')
-
     })
   })
   useContextProvider(StateProvider, state)
