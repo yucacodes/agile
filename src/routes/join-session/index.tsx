@@ -112,7 +112,7 @@ export default component$(() => {
             }}
             type="text"
             class={style.input}
-            placeholder="Session name"
+            placeholder="your name..."
           />
 
           <Button
