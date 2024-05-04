@@ -6,10 +6,9 @@ import {
 } from '@builder.io/qwik-city'
 import style from './join-session-page.module.css'
 
-import { Button } from '@yucacodes/ui-qwik'
+import { Button, useSnackBar } from '@yucacodes/ui-qwik'
 import { Title } from '~/components/title/Title'
 import { StateProvider } from '~/context/ProviderContext'
-
 
 export const useJoinPokerSession = routeLoader$(async ({ url }) => {
   const secret = url.searchParams.get('secret')
@@ -25,11 +24,12 @@ export default component$(() => {
   const QueryParams = useJoinPokerSession()
   const name = useSignal('')
   const nav = useNavigate()
+  const { addSnackBar } = useSnackBar()
 
   const startSession = $(async (name: string) => {
     void (await state.connect())
 
-    const payload  = await state.emitEvent('StartMeeting', {
+    const payload = await state.emitEvent('StartMeeting', {
       name: name,
     })
 
@@ -49,10 +49,9 @@ export default component$(() => {
         name: name,
         isManager,
       }
-      // addNotification({
-      //   message: 'Has creado una sesión exitosamente',
-      //   status: 'success',
-      // })
+      addSnackBar({
+        message: `Has creado una sesión exitosamente`,
+      })
 
       nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
     }
@@ -68,26 +67,25 @@ export default component$(() => {
       secret: string
       idMeeting: string
     }) => {
+      void (await state.connect())
 
-        void (await state.connect())
+      const payload = await state.emitEvent('JoinMeeting', {
+        name,
+        secret: secret,
+        meetingId: idMeeting,
+      })
+      if (payload!.success) {
+        state.participants = payload.data.meeting.participants
+        state.participants = payload.data.meeting.participants
+        state.secret = payload.data.secret
+        state.idMeeting = payload.data.meeting.id
 
-        const payload = await state.emitEvent('JoinMeeting', {
+        state.user = {
+          ...payload.data.authInfo,
           name,
-          secret: secret,
-          meetingId: idMeeting,
-        })
-        if (payload!.success) {
-          state.participants = payload.data.meeting.participants
-          state.participants = payload.data.meeting.participants
-          state.secret = payload.data.secret
-          state.idMeeting = payload.data.meeting.id
-
-          state.user = {
-            ...payload.data.authInfo,
-            name,
-            isManager: false,
-          }
-          nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
+          isManager: false,
+        }
+        nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
       }
     }
   )
@@ -117,7 +115,12 @@ export default component$(() => {
             placeholder="Session name"
           />
 
-          <Button onClick$={createOrJoinToSession} outlined primary size="1.2rem">
+          <Button
+            onClick$={createOrJoinToSession}
+            outlined
+            primary
+            size="1.2rem"
+          >
             {QueryParams.value.id ? 'Join a session' : 'Create a session'}
           </Button>
         </section>

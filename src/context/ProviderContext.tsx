@@ -26,7 +26,7 @@ export interface State {
   idMeeting: string
   isStartedMeeting: boolean
   votingId: string
-  beerTime: number  
+  beerTime: number
   participants: { [key: string]: ParticipantDto }
   votes: { [key: string]: number }
   startCounter: boolean
@@ -42,11 +42,9 @@ export interface State {
 export const StateProvider = createContextId<State>('StateProvider')
 
 export const Provider = component$(() => {
-  let socket: NoSerialize<ClientSocket> = undefined
+  const socket: NoSerialize<ClientSocket> = undefined
 
   const user = {} as AuthInformation
-
-  // const { addNotification } = useToast()
 
   const emitEvent = $(async function (
     this: State,
