@@ -36,6 +36,14 @@ export class Voting extends Entity<VotingProps> {
     return new Date(this.props.timeLimit)
   }
 
+  closedAt(): Date | null {
+    return this.props.closedAt ?? null
+  }
+
+  participants() {
+    return this.props.participants
+  }
+
   isOpen(): boolean {
     if (this.props.closedAt) return false
     return this.props.timeLimit.getTime() >= this.timeProvider.now().getTime()
