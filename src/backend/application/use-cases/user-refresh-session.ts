@@ -23,7 +23,7 @@ export class UserRefreshSession {
     )
     if (!refreshToken || !refreshToken.isValid(req.secret))
       throw new Error('Invalid token')
-    const userId = refreshToken.id()
+    const userId = refreshToken.userId()
     const roles = refreshToken.roles()
 
     const { refreshToken: newRefreshToken, secret: newSecret } =
