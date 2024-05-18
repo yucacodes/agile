@@ -7,7 +7,7 @@ import {
 } from '../dtos'
 
 @useCase({
-  allowRole: (req) => `meeting/${req.id}/participant`,
+  allowRole: (req) => `meeting/${req.meetingId}/participant`,
   requestValidator: ParticipantGetMeetingRequestDtoValidator,
 })
 export class ParticipantGetMeeting {
@@ -17,7 +17,7 @@ export class ParticipantGetMeeting {
   ) {}
 
   async perform(req: ParticipantGetMeetingRequestDto): Promise<MeetingDto> {
-    const meeting = await this.meetingsRepository.findById(req.id)
+    const meeting = await this.meetingsRepository.findById(req.meetingId)
     if (!meeting) throw new Error('Not found')
     return this.meetingDtoMapper.map(meeting)
   }

@@ -2,6 +2,7 @@ import { IsNotEmpty, IsString } from '@framework'
 
 export interface ParticipantGetMeetingRequestDto {
   id: string
+  meetingId: string
 }
 
 export class ParticipantGetMeetingRequestDtoValidator
@@ -10,4 +11,8 @@ export class ParticipantGetMeetingRequestDtoValidator
   @IsString()
   @IsNotEmpty()
   id: string = ''
+
+  @IsString()
+  @IsNotEmpty()
+  meetingId: string = ''
 }
