@@ -1,10 +1,9 @@
-import type { ParticipantDto, UserCreateMeetingRequestDto } from '@application'
+import type { MeetingDto, ParticipantDto, UserCreateMeetingRequestDto } from '@application'
 import {
   $,
   Slot,
   component$,
   createContextId,
-  noSerialize,
   useContextProvider,
   useStore,
   useVisibleTask$,
@@ -12,6 +11,7 @@ import {
   type QRL,
 } from '@builder.io/qwik'
 import { ClientSocket } from '@presentation'
+import { SocketResult, SocketSuccessResult } from '~/framework/presentation'
 import { getSession, removeSession, setSession } from '~/utils/Session'
 import { connectSocket } from '~/utils/SocketManager'
 
@@ -92,8 +92,9 @@ export const Provider = component$(() => {
         secret: session.sessionData.refreshTokenSecret,
         refreshTokenId: session.sessionData.refreshTokenId,
       })
-      debugger
-      console.log(res);
+
+      console.log(res.data);
+
 
       setSession({
         nameItem: 'session',
@@ -106,32 +107,30 @@ export const Provider = component$(() => {
         },
       })
 
+      const meeting: SocketSuccessResult<MeetingDto> = await state?.emitEvent('GetMeeting', {
+        id: session.sessionData.userId,
+        meetingId: session.idMeeting,
+      })
+
+      console.log(meeting.data);
+      console.log(session.sessionData);
+
+
+      state.participants = meeting.data.participants
+      const user = meeting.data.participants[session.sessionData.userId]
+
+      state.user = user
+
+
+      state.idMeeting = session.idMeeting
+
+      // add voting 
+      for (const [key, value] of Object.entries(meeting.data.votings)) {
+        state.votes[key] = Number(value)
+      }
     }
 
 
-
-    // state.socket?.on('connect', async () => {
-
-    //   const session = await getSession('session')
-    //   if (session) {
-    //     console.log(session)
-
-    //     try {
-    //       const res = await state?.emitEvent('RefreshSession', {
-    //         secret: session.secret,
-    //         refreshTokenId: session.sessionData.refreshTokenId,
-    //       })
-
-    //       console.log(res);
-
-
-    //       state.isOnline = true
-
-    //     } catch (error) {
-
-    //     }
-    //   }
-    // })
 
     state.socket?.on('disconnect', async () => {
       state.isOnline = false
@@ -140,7 +139,6 @@ export const Provider = component$(() => {
     })
 
     cleanup(() => {
-      state.socket?.off('connect')
       state.socket?.off('disconnect')
     })
   })

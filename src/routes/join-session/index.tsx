@@ -53,6 +53,18 @@ export default component$(() => {
         name: name,
         isManager,
       }
+
+      setSession({
+        nameItem: 'session',
+        value: {
+          name,
+          isManager: true,
+          secret: payload.data.secret,
+          idMeeting: payload.data.meeting.id,
+          sessionData: payload.data.sessionData,
+        },
+      })
+
       addSnackBar({
         message: `Has creado una sesión exitosamente`,
       })
