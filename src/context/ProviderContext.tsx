@@ -39,11 +39,9 @@ export interface State {
 export const StateProvider = createContextId<State>('StateProvider')
 
 export const Provider = component$(() => {
-  let socket: NoSerialize<ClientSocket> = undefined
+  const socket: NoSerialize<ClientSocket> = undefined
 
   const user = {} as AuthInformation
-
-  // const { addNotification } = useToast()
 
   const emitEvent = $(async function (
     this: State,

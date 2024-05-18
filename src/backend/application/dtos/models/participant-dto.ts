@@ -1,5 +1,5 @@
 import { Participant } from '@domain'
-import { dtoMapper } from '@framework'
+import { CollectionsMapper, dtoMapper } from '@framework'
 
 export interface ParticipantDto {
   userId: string
@@ -9,7 +9,7 @@ export interface ParticipantDto {
 }
 
 @dtoMapper({ model: Participant })
-export class ParticipantDtoMapper {
+export class ParticipantDtoMapper extends CollectionsMapper {
   map(obj: Participant): ParticipantDto {
     return {
       userId: obj.userId(),
@@ -17,13 +17,5 @@ export class ParticipantDtoMapper {
       isManager: obj.isManager(),
       isConnected: obj.isConnected(),
     }
-  }
-
-  mapMap(map: Map<string, Participant>): {
-    [key: string]: ParticipantDto
-  } {
-    const result: { [key: string]: ParticipantDto } = {}
-    for (const [key, obj] of map.entries()) result[key] = this.map(obj)
-    return result
   }
 }
