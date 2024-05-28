@@ -112,41 +112,21 @@ export default component$(() => {
   })
 
   useVisibleTask$(({ track, cleanup }) => {
-    track(() => state.socket)
+    const socket = track(() => state.socket)
+    if(!socket) return
 
-    state.socket?.on('connect', () => {
-      state.isOnline = true
-      console.log('connected');
-
-    })
-
-    state.socket?.on('disconnect', () => {
-      state.isOnline = true
-      console.log('disconnect');
-
-    })
-
-    state.socket?.on('connect_error', () => {
-      state.isOnline = true
-      console.log('disconnect');
-
-    })
-
-    state.socket?.on('ParticipantJoined', hanlderParticipantJoind)
-    state.socket?.on('ParticipantVoted', handlerParticipantVoted)
-    state.socket?.on('ParticipantDisconnected', handlerParticipantDisconnected)
-    state.socket?.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
-    state.socket?.on('VotingClosed', hanlderVotingClosed)
-
-
+    socket.on('ParticipantJoined', hanlderParticipantJoind)
+    socket.on('ParticipantVoted', handlerParticipantVoted)
+    socket.on('ParticipantDisconnected', handlerParticipantDisconnected)
+    socket.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
+    socket.on('VotingClosed', hanlderVotingClosed)
 
     cleanup(() => {
-      state.socket?.off('ParticipantJoined')
-      state.socket?.off('ParticipantVoted')
-      state.socket?.off('ParticipantDisconnected')
-      state.socket?.off('VotingStarted')
-      state.socket?.off('VotingClosed')
-
+      socket.off('ParticipantJoined')
+      socket.off('ParticipantVoted')
+      socket.off('ParticipantDisconnected')
+      socket.off('VotingStarted')
+      socket.off('VotingClosed')
     })
   })
 
@@ -189,7 +169,7 @@ export default component$(() => {
     })
     if (res.success) {
       state.startCounter = false
-      state.isStartedMeeting = false
+      // state.isStartedMeeting = false
     }
   })
 

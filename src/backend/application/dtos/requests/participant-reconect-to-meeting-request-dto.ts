@@ -1,12 +1,12 @@
 import { IsNotEmpty, IsString } from '@framework'
 
-export interface ParticipantGetMeetingRequestDto {
+export interface ParticipantReconectToMeetingRequestDto {
   id: string
   meetingId: string
 }
 
-export class ParticipantGetMeetingRequestDtoValidator
-  implements ParticipantGetMeetingRequestDto
+export class ParticipantReconectToMeetingRequestDtoValidator
+  implements ParticipantReconectToMeetingRequestDto
 {
   @IsString()
   @IsNotEmpty()
