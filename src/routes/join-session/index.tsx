@@ -31,7 +31,7 @@ export default component$(() => {
   const startSession = $(async (name: string) => {
     state.socket = await connectSocket()
 
-
+    state.isOnline = true
 
     const payload = await state.emitEvent('StartMeeting', {
       name: name,
@@ -87,6 +87,7 @@ export default component$(() => {
 
       state.socket = await connectSocket()
 
+      state.isOnline = true
 
       const payload = await state.emitEvent('JoinMeeting', {
         name,

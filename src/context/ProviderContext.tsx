@@ -132,17 +132,20 @@ export const Provider = component$(() => {
     if (!socket) return
 
     const connectListener = async () => {
-      // TODO: hay que determinar si la conexion fue una normal o una reconeccion
-      // if (session) {
-      //   await reconnect(session)
-      // }
+    if (session && !state.isOnline) {
+      await reconnect(session)
+    }
     }
     socket.on('connect', connectListener)
 
-    console.log(session)
     if (session) {
       await reconnect(session)
     }
+
+    socket.on('disconnect', () => {
+      state.isOnline = false
+    });
+
 
     cleanup(() => {
       socket.removeListener('connect', connectListener)
