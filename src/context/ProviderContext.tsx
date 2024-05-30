@@ -149,6 +149,7 @@ export const Provider = component$(() => {
 
     cleanup(() => {
       socket.removeListener('connect', connectListener)
+      socket.off('disconnect')
     })
   })
   useContextProvider(StateProvider, state)
