@@ -73,8 +73,6 @@ export const Provider = component$(() => {
   })
 
   const reconnect = $(async (session: any) => {
-    state.socket = await connectSocket()
-
     const res = await state.emitEvent('RefreshSession', {
       secret: session.sessionData.refreshTokenSecret,
       refreshTokenId: session.sessionData.refreshTokenId,
@@ -126,32 +124,29 @@ export const Provider = component$(() => {
   })
 
   useVisibleTask$(async ({ track, cleanup }) => {
-    const session = await getSession('session')
-
     const socket = track(() => state.socket)
     if (!socket) return
 
-    const connectListener = async () => {
-    if (session && !state.isOnline) {
-      await reconnect(session)
-    }
-    }
-    socket.on('connect', connectListener)
-
-    if (session) {
+    const reconnectListener = async () => {
+      const session = await getSession('session')
       await reconnect(session)
     }
 
-    socket.on('disconnect', () => {
-      state.isOnline = false
-    });
-
+    socket.io.on('reconnect', reconnectListener)
 
     cleanup(() => {
-      socket.removeListener('connect', connectListener)
-      socket.off('disconnect')
+      socket.io.removeListener('reconnect', reconnectListener)
     })
   })
+
+  useVisibleTask$(async () => {
+    const session = await getSession('session')
+    if (session) {
+      state.socket = await connectSocket()
+      await reconnect(session)
+    }
+  })
+
   useContextProvider(StateProvider, state)
 
   return <Slot />
