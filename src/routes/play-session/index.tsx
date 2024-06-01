@@ -2,7 +2,6 @@ import {
   $,
   component$,
   useContext,
-  useSignal,
   useVisibleTask$,
 } from '@builder.io/qwik'
 import {
@@ -13,15 +12,13 @@ import {
 import { HasPermission } from '~/components/hasPermission/hasPermission'
 import { PlayersTable } from '~/components/players-table/PlayersTable'
 import { Points } from '~/components/points/Points'
-import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
-import { SecondaryButton } from '~/components/secondary-button/SecondaryButton'
 import { StateProvider } from '~/context/ProviderContext'
 import style from './play-session-page.module.css'
 
 import { CounterDown, useSnackBar } from '@yucacodes/ui-qwik'
 import { VotingStartedEventDto } from '@application'
-import { SocketResult } from '~/framework/presentation'
-import { s } from 'vitest/dist/reporters-5f784f42'
+
+import { Button } from '@yucacodes/ui-qwik'
 
 export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
   const secret = url.searchParams.get('secret')
@@ -121,16 +118,22 @@ export default component$(() => {
     socket.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
     socket.on('VotingClosed', hanlderVotingClosed)
 
+    socket.on('disconnect', () => {
+      addSnackBar({
+        message: `Se ha perdido la conexión`,
+      })
+    }
+    )
+
     cleanup(() => {
       socket.off('ParticipantJoined')
       socket.off('ParticipantVoted')
       socket.off('ParticipantDisconnected')
       socket.off('VotingStarted')
       socket.off('VotingClosed')
+      socket.off('disconnect')
     })
   })
-
-  const action = $(() => {})
 
   const shareLink = $(() => {
     // eslint-disable-next-line
@@ -211,19 +214,25 @@ export default component$(() => {
       <section class={style.buttonsContainer}>
         {!state.isStartedMeeting && (
           <HasPermission>
-            <PrimaryButton action={initVoting} text="START VOTING" />
+            <Button onClick$={initVoting} >
+              Iniciar Votacion
+            </Button>
           </HasPermission>
         )}
 
         {state.isStartedMeeting && (
           <>
             <HasPermission>
-              <PrimaryButton action={closeVoting} text="Cerrar Votacion" />
+              <Button onClick$={closeVoting} >
+                Cerrar Votacion
+              </Button>
             </HasPermission>
           </>
         )}
         <HasPermission>
-          <SecondaryButton action={shareLink} text="SHARED SESSION" />
+          <Button secondary onClick$={shareLink} >
+            share link
+          </Button>
         </HasPermission>
       </section>
     </main>

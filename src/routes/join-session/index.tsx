@@ -142,7 +142,7 @@ export default component$(() => {
   return (
     <>
       <div class={style.content}>
-        <Title text="Create Session" />
+        <Title text={QueryParams?.value?.id ? 'Join a session' : 'Create a session'} />
         <section class={style.form}>
           <input
             onChange$={(event) => {

@@ -5,7 +5,7 @@ import { Title } from '~/components/title/Title'
 import { useNavigate } from '@builder.io/qwik-city'
 import { Footer } from '~/components/footer/Footer'
 
-import { Button, Container } from '@yucacodes/ui-qwik'
+import { Button } from '@yucacodes/ui-qwik'
 import style from './home.module.css'
 
 export const HomePage = component$(() => {

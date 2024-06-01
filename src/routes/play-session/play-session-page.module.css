@@ -13,11 +13,13 @@
 .sessionId {
   font-size: 0.9rem;
   text-align: end;
+  display: grid;
 }
 
 .span {
   color: var(--primary-color);
   text-decoration: underline;
+  min-width: 9rem;
 }
 
 .header {
@@ -33,6 +35,7 @@
 .timeText,
 .userName {
   font-size: 1.5rem;
+  min-height: 1.5rem;
 }
 
 .time {

@@ -79,7 +79,6 @@ export const Provider = component$(() => {
     })
 
     console.log(res.data)
-
     setSession({
       nameItem: 'session',
       value: {
@@ -101,12 +100,10 @@ export const Provider = component$(() => {
 
     const meeting = response.data
 
-    console.log(meeting)
-    console.log(session.sessionData)
-
     state.participants = meeting.participants
     state.user = meeting.participants[session.sessionData.userId]
     state.idMeeting = meeting.id
+    state.secret = session.secret
 
     const lastVoting = Object.values(response.data.votings)
       .sort(
@@ -120,6 +117,8 @@ export const Provider = component$(() => {
       state.votingId = lastVoting.id
       state.isStartedMeeting = !lastVoting.isClosed
       state.showVotes = lastVoting.isClosed
+      state.beerTime = !lastVoting.isClosed ? new Date(lastVoting.timeLimit).getTime() : 0
+      state.startCounter = !lastVoting.isClosed
     }
   })
 
