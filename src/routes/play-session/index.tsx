@@ -142,6 +142,10 @@ export default component$(() => {
         location.url.protocol + '//' + location.url.host
       }/join-session?secret=${state.secret}&id=${state.idMeeting}`
     )
+
+    addSnackBar({
+      message: `Link copiado al portapapeles`,
+    })
   })
 
   const initVoting = $(async () => {
@@ -159,6 +163,11 @@ export default component$(() => {
         state.beerTime = new Date().getTime() + 5 * 60 * 1000
         state.showVotes = false
         state.votes = {}
+
+        addSnackBar({
+          message: `Se ha iniciado la votación`,
+        })
+
       }
     } catch (error) {
       console.log(error)
@@ -173,6 +182,8 @@ export default component$(() => {
     if (res.success) {
       state.startCounter = false
       // state.isStartedMeeting = false
+
+
     }
   })
 
@@ -223,15 +234,15 @@ export default component$(() => {
         {state.isStartedMeeting && (
           <>
             <HasPermission>
-              <Button onClick$={closeVoting} >
+              <Button secondary onClick$={closeVoting} >
                 Cerrar Votacion
               </Button>
             </HasPermission>
           </>
         )}
         <HasPermission>
-          <Button secondary onClick$={shareLink} >
-            share link
+          <Button outlined onClick$={shareLink} >
+            Share Session
           </Button>
         </HasPermission>
       </section>
