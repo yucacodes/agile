@@ -76,6 +76,16 @@ export class Meeting extends Entity<MeetingProps> {
     return new Map(this.props.votings)
   }
 
+  assignManagerRole() {
+    const participants = Array.from(this.props.participants.values())
+    if (participants.length < 2) {
+      throw new NotEnoughParticipantsError()
+    }
+    const secondParticipant = participants[1]
+    secondParticipant.assignManagerRole()
+    return secondParticipant
+  }
+
   // Private methods
 
   private isValidSecret(secret: string): boolean {
@@ -87,3 +97,4 @@ export class Meeting extends Entity<MeetingProps> {
 
 export class ParticipantMeetingIdNotMatch extends Error {}
 export class ParticipantProvideInvalidSecretError extends Error {}
+export class NotEnoughParticipantsError extends Error {}

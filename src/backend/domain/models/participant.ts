@@ -1,3 +1,4 @@
+import { Timeout } from '~/framework/domain'
 import { Model } from '../core/model'
 import type { User } from './user'
 
@@ -15,6 +16,8 @@ export interface ParticipantFactoryProps {
 }
 
 export class Participant extends Model<ParticipantProps> {
+  private disconnectTimeout?: Timeout
+
   static factory(props: ParticipantFactoryProps): Participant {
     return new Participant({
       userId: props.user.id(),
@@ -22,7 +25,7 @@ export class Participant extends Model<ParticipantProps> {
       isManager: props.isManager ?? false,
       isConnected: true,
     })
-  }  
+  }
 
   userId(): string {
     return this.props.userId
@@ -46,5 +49,25 @@ export class Participant extends Model<ParticipantProps> {
 
   setAsConnected() {
     this.props.isConnected = true
+  }
+
+  removeManagerRole() {
+    this.props.isManager = false
+  }
+
+  assignManagerRole() {
+    this.props.isManager = true
+  }
+
+  startDisconnectTimeout(callback: () => void, delay: number) {
+    this.disconnectTimeout = new Timeout(callback, delay)
+  }
+
+  // Cancelar el temporizador de desconexión
+  cancelDisconnectTimeout() {
+    if (this.disconnectTimeout) {
+      this.disconnectTimeout.clear()
+      this.disconnectTimeout = undefined
+    }
   }
 }

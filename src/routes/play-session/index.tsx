@@ -111,6 +111,7 @@ export default component$(() => {
     state.socket!.on('ParticipantJoined', hanlderParticipantJoind)
     state.socket!.on('ParticipantVoted', handlerParticipantVoted)
     state.socket!.on('ParticipantDisconnected', handlerParticipantDisconnected)
+    // state.socket!.on('ParticipantDisconnected', handlerParticipantDisconnected)
     state.socket!.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
     state.socket!.on('VotingClosed', hanlderVotingClosed)
 
