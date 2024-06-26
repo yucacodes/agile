@@ -1,0 +1,26 @@
+name: Deploy to Production
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Docker Login
+      uses: docker/login-action@v3.0.0
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build and push Front Docker image
+      uses: docker/build-push-action@v5.1.0
+      with:
+        tags: yucacodes/agile-front:${{ github.sha }}
+        push: true
+        target: front
+        build-args: PUBLIC_API_URL=https://agile-backend.yuca.codes
+    - name: Build and push Backend Docker image
+      uses: docker/build-push-action@v5.1.0
+      with:
+        tags: yucacodes/agile-backend:${{ github.sha }}
+        push: true
+        target: backend
