@@ -1,15 +1,24 @@
 //create a class to manager the socket, add ,ethod to create socket and emit events and close
 
-import { ClientSocket } from '@presentation'
+import { $, NoSerialize, noSerialize, type QRL } from '@builder.io/qwik'
+import { ClientSocket, ListenEventsMap } from '@presentation'
 import { io } from 'socket.io-client'
+import { SocketResult } from '~/framework/presentation'
 
-export class SocketManager {
-  socket?: ClientSocket
-  constructor() {}
-
-  emitEvent(event: any, data: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.socket!.emit(event, data, (payload: any) => {
+export const emitEventWithCallback: QRL<
+  <T, P>(
+    socket: NoSerialize<ClientSocket>,
+    event: keyof ListenEventsMap,
+    data: T
+  ) => Promise<SocketResult<P>>
+> = $(
+  <T, P>(
+    socket: NoSerialize<ClientSocket>,
+    event: keyof ListenEventsMap,
+    data: T
+  ) => {
+    return new Promise<SocketResult<P>>((resolve, reject) => {
+      socket?.emit(event, data, (payload: SocketResult<P>) => {
         if (!payload.success) {
           reject(payload)
         } else {
@@ -18,35 +27,19 @@ export class SocketManager {
       })
     })
   }
+)
 
-  close() {
-    this.socket!.close()
-  }
-
-  async createSocket(): Promise<void> {
+export const connectSocket: QRL<() => Promise<NoSerialize<ClientSocket>>> = $(
+  async function (): Promise<NoSerialize<ClientSocket>> {
     return new Promise((resolve, _) => {
-      this.socket = io('http://localhost:3000', {
-        transports: ['websocket'],
-        protocols: ['websocket'],
-      })
-      this.socket.on('connect', () => resolve())
+      let socket = noSerialize(
+        io(import.meta.env.PUBLIC_API_URL, {
+          transports: ['websocket'],
+          protocols: ['websocket'],
+        })
+      )
+
+      void resolve(socket)
     })
   }
-
-
-  getSocket() {
-    return this.socket
-  }
-
-  onEvent(event: any, callback: (data: any) => void): void {
-    if (this.socket) {
-      this.socket!.on(event, callback)
-    } else {
-      throw new Error('Socket is undefined')
-    }
-  }
-
-  offEvent(event: any) {
-    this.socket!.off(event)
-  }
-}
+)

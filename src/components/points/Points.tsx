@@ -1,4 +1,4 @@
-import { $, component$, useContext, useSignal } from '@builder.io/qwik'
+import { $, component$, useContext } from '@builder.io/qwik'
 import style from './points.module.css'
 import { StateProvider } from '~/context/ProviderContext'
 
@@ -6,9 +6,7 @@ import { StateProvider } from '~/context/ProviderContext'
 export const Points = component$(() => {
 
   const state = useContext(StateProvider)
-  
 
-  
   const handleVote = $(async ( point: number) =>  {
     const res = await state.emitEvent('Vote', {
       meetingId: state.idMeeting!,
@@ -16,9 +14,11 @@ export const Points = component$(() => {
       votingId: state.votingId!,
     })
     if (res.success) {
-      console.log(res)
 
-      state.votes = res.data.participantVotes
+      state.votes = {
+        ...state.votes,
+        [state.user.userId]: point,
+      }
     }
   })
 

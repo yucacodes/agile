@@ -2,7 +2,7 @@ import { type SocketListener } from '@framework'
 import type {
   ManagerCloseVoting,
   ManagerStartVoting,
-  ParticipantGetMeeting,
+  ParticipantReconnectToMeeting,
   ParticipantVotes,
   UserCreateMeeting,
   UserJoinMeeting,
@@ -18,7 +18,7 @@ export const listen = {
   CloseVoting: 'CloseVoting',
   Disconnect: 'disconnect',
   RefreshSession: 'RefreshSession',
-  GetMeeting: 'GetMeeting',
+  ReconectToMeeting: 'ReconectToMeeting',
 } as const
 
 // Requests And Responses types
@@ -29,5 +29,5 @@ export type ListenEventsMap = {
   [listen.Vote]: SocketListener<ParticipantVotes>
   [listen.CloseVoting]: SocketListener<ManagerCloseVoting>
   [listen.RefreshSession]: SocketListener<UserRefreshSession>
-  [listen.GetMeeting]: SocketListener<ParticipantGetMeeting>
+  [listen.ReconectToMeeting]: SocketListener<ParticipantReconnectToMeeting>
 }

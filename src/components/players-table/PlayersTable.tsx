@@ -1,24 +1,12 @@
-import { component$, useContext, useSignal, useTask$ } from '@builder.io/qwik'
+import { component$, useComputed$, useContext } from '@builder.io/qwik'
 import { StateProvider } from '~/context/ProviderContext'
 import style from './players-table.module.css'
 
-import type { ParticipantDto } from '@application'
-
-interface Participant extends ParticipantDto {
-  points: number | null | undefined
-}
-
 export const PlayersTable = component$(() => {
   const state = useContext(StateProvider)
+  const participantsArr = useComputed$(() => {
 
-
-  const participantsArr = useSignal<Participant[]>([])
-
-  useTask$(({ track }) => {
-    track(() => state.participants)
-    track(() => state.votes)
-
-    participantsArr.value = Object.values(state.participants).map(
+    return Object.values(state.participants).map(
       (participant) => {
         return {
           ...participant,
@@ -26,6 +14,8 @@ export const PlayersTable = component$(() => {
         }
       }
     )
+
+
   })
 
   return (
@@ -44,9 +34,9 @@ export const PlayersTable = component$(() => {
                 manager
               </span>
             )}
-            {/* {participant.points! !== null && (
+            {state.votes[participant?.userId] != null && (
               <span class={`material-icons-outlined ${style.check}`}>done</span>
-            )} */}
+            )}
             <p>{participant.name}</p>
             <p>{ state.showVotes ? participant.points : '**'}</p>
           </div>

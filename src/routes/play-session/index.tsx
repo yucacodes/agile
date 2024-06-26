@@ -2,7 +2,6 @@ import {
   $,
   component$,
   useContext,
-  useSignal,
   useVisibleTask$,
 } from '@builder.io/qwik'
 import {
@@ -13,14 +12,13 @@ import {
 import { HasPermission } from '~/components/hasPermission/hasPermission'
 import { PlayersTable } from '~/components/players-table/PlayersTable'
 import { Points } from '~/components/points/Points'
-import { PrimaryButton } from '~/components/primary-button/PrimaryButton'
-import { SecondaryButton } from '~/components/secondary-button/SecondaryButton'
 import { StateProvider } from '~/context/ProviderContext'
 import style from './play-session-page.module.css'
 
 import { CounterDown, useSnackBar } from '@yucacodes/ui-qwik'
 import { VotingStartedEventDto } from '@application'
-import { SocketResult } from '~/framework/presentation'
+
+import { Button } from '@yucacodes/ui-qwik'
 
 export const onRequest: RequestHandler = async ({ next, url, redirect }) => {
   const secret = url.searchParams.get('secret')
@@ -40,6 +38,8 @@ export default component$(() => {
   const location = useLocation()
 
   const hanlderParticipantJoind = $((payload: any) => {
+    console.log(payload);
+
     if (payload.participant) {
       state.participants = {
         ...state.participants,
@@ -53,6 +53,7 @@ export default component$(() => {
   })
 
   const handlerParticipantVoted = $((payload: any) => {
+    console.log(payload);
     if (payload.participant) {
       state.votes = {
         ...state.votes,
@@ -66,6 +67,7 @@ export default component$(() => {
   })
 
   const handlerParticipantDisconnected = $((payload: any) => {
+    console.log(payload);
     if (payload.participant) {
       addSnackBar({
         message: `${payload.participant.name} ha dejado la sesión`,
@@ -91,6 +93,7 @@ export default component$(() => {
   })
 
   const hanlderVotingClosed = $((payload: any) => {
+    console.log(payload);
     if (payload) {
       console.log(payload)
       state.votingId = ''
@@ -106,24 +109,31 @@ export default component$(() => {
   })
 
   useVisibleTask$(({ track, cleanup }) => {
-    track(() => state.socket)
+    const socket = track(() => state.socket)
+    if(!socket) return
 
-    state.socket!.on('ParticipantJoined', hanlderParticipantJoind)
-    state.socket!.on('ParticipantVoted', handlerParticipantVoted)
-    state.socket!.on('ParticipantDisconnected', handlerParticipantDisconnected)
-    state.socket!.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
-    state.socket!.on('VotingClosed', hanlderVotingClosed)
+    socket.on('ParticipantJoined', hanlderParticipantJoind)
+    socket.on('ParticipantVoted', handlerParticipantVoted)
+    socket.on('ParticipantDisconnected', handlerParticipantDisconnected)
+    socket.on('VotingStarted', hanlderVotingStarted as any) // TODO: fix types
+    socket.on('VotingClosed', hanlderVotingClosed)
+
+    socket.on('disconnect', () => {
+      addSnackBar({
+        message: `Se ha perdido la conexión`,
+      })
+    }
+    )
 
     cleanup(() => {
-      state.socket!.off('ParticipantJoined')
-      state.socket!.off('ParticipantVoted')
-      state.socket!.off('ParticipantDisconnected')
-      state.socket!.off('VotingStarted')
-      state.socket!.off('VotingClosed')
+      socket.off('ParticipantJoined')
+      socket.off('ParticipantVoted')
+      socket.off('ParticipantDisconnected')
+      socket.off('VotingStarted')
+      socket.off('VotingClosed')
+      socket.off('disconnect')
     })
   })
-
-  const action = $(() => {})
 
   const shareLink = $(() => {
     // eslint-disable-next-line
@@ -132,6 +142,10 @@ export default component$(() => {
         location.url.protocol + '//' + location.url.host
       }/join-session?secret=${state.secret}&id=${state.idMeeting}`
     )
+
+    addSnackBar({
+      message: `Link copiado al portapapeles`,
+    })
   })
 
   const initVoting = $(async () => {
@@ -149,6 +163,11 @@ export default component$(() => {
         state.beerTime = new Date().getTime() + 5 * 60 * 1000
         state.showVotes = false
         state.votes = {}
+
+        addSnackBar({
+          message: `Se ha iniciado la votación`,
+        })
+
       }
     } catch (error) {
       console.log(error)
@@ -162,7 +181,9 @@ export default component$(() => {
     })
     if (res.success) {
       state.startCounter = false
-      state.isStartedMeeting = false
+      // state.isStartedMeeting = false
+
+
     }
   })
 
@@ -204,19 +225,25 @@ export default component$(() => {
       <section class={style.buttonsContainer}>
         {!state.isStartedMeeting && (
           <HasPermission>
-            <PrimaryButton action={initVoting} text="START VOTING" />
+            <Button onClick$={initVoting} >
+              Iniciar Votacion
+            </Button>
           </HasPermission>
         )}
 
         {state.isStartedMeeting && (
           <>
             <HasPermission>
-              <PrimaryButton action={closeVoting} text="Cerrar Votacion" />
+              <Button secondary onClick$={closeVoting} >
+                Cerrar Votacion
+              </Button>
             </HasPermission>
           </>
         )}
         <HasPermission>
-          <SecondaryButton action={shareLink} text="SHARED SESSION" />
+          <Button outlined onClick$={shareLink} >
+            Share Session
+          </Button>
         </HasPermission>
       </section>
     </main>

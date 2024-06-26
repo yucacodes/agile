@@ -9,6 +9,8 @@ import style from './join-session-page.module.css'
 import { Button, useSnackBar } from '@yucacodes/ui-qwik'
 import { Title } from '~/components/title/Title'
 import { StateProvider } from '~/context/ProviderContext'
+import { setSession } from '~/utils/Session'
+import { connectSocket } from '~/utils/SocketManager'
 
 export const useJoinPokerSession = routeLoader$(async ({ url }) => {
   const secret = url.searchParams.get('secret')
@@ -27,13 +29,15 @@ export default component$(() => {
   const { addSnackBar } = useSnackBar()
 
   const startSession = $(async (name: string) => {
-    void (await state.connect())
+    state.socket = await connectSocket()
+
+    state.isOnline = true
 
     const payload = await state.emitEvent('StartMeeting', {
       name: name,
     })
 
-    console.log(payload)
+
 
     if (payload.success) {
       state.participants = payload.data.meeting.participants
@@ -49,6 +53,18 @@ export default component$(() => {
         name: name,
         isManager,
       }
+
+      setSession({
+        nameItem: 'session',
+        value: {
+          name,
+          isManager: true,
+          secret: payload.data.secret,
+          idMeeting: payload.data.meeting.id,
+          sessionData: payload.data.sessionData,
+        },
+      })
+
       addSnackBar({
         message: `Has creado una sesión exitosamente`,
       })
@@ -67,7 +83,11 @@ export default component$(() => {
       secret: string
       idMeeting: string
     }) => {
-      void (await state.connect())
+
+
+      state.socket = await connectSocket()
+
+      state.isOnline = true
 
       const payload = await state.emitEvent('JoinMeeting', {
         name,
@@ -83,8 +103,26 @@ export default component$(() => {
         state.user = {
           ...payload.data.authInfo,
           name,
-          isManager: false,
-        }
+          secret: secret,
+          meetingId: idMeeting,
+        };
+
+
+        setSession({
+          nameItem: 'session',
+          value: {
+            name,
+            isManager: false,
+            secret: payload.data.secret,
+            idMeeting: payload.data.meeting.id,
+            sessionData: payload.data.sessionData,
+          },
+        })
+
+        addSnackBar({
+          message: `Has unido a la sesión exitosamente`,
+        })
+
         nav(`/play-session?secret=${state.secret}&id=${state.idMeeting}`)
       }
     }
@@ -104,7 +142,7 @@ export default component$(() => {
   return (
     <>
       <div class={style.content}>
-        <Title text="Create Session" />
+        <Title text={QueryParams?.value?.id ? 'Join a session' : 'Create a session'} />
         <section class={style.form}>
           <input
             onChange$={(event) => {
