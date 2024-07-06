@@ -24,3 +24,19 @@ jobs:
         tags: yucacodes/agile-backend:${{ github.sha }}
         push: true
         target: backend
+    - name: Deploy
+      uses: appleboy/ssh-action@v1.0.1
+      with:
+        host: anchat.yuca.codes
+        username: deployer
+        key: ${{ secrets.DEPLOYER_USER_KEY }}
+        script: |
+          docker run -d --restart=unless-stopped -e VIRTUAL_HOST=backend.agile.yuca.codes -e LETSENCRYPT_HOST=backend.agile.yuca.codes yucacodes/agile-backend:${{ github.sha }}
+          CONTAINERS_TO_STOP=$(docker ps --format '{{.ID}} {{.Image}}' | grep yucacodes/agile-backend | grep -v ${{ github.sha }} | awk '{ print $1 }')
+          for C in $CONTAINERS_TO_STOP; do docker kill $C; done;
+          for C in $CONTAINERS_TO_STOP; do docker rm $C; done;
+          docker run -d --restart=unless-stopped -e VIRTUAL_HOST=agile.yuca.codes -e LETSENCRYPT_HOST=agile.yuca.codes yucacodes/agile-front:${{ github.sha }}
+          CONTAINERS_TO_STOP=$(docker ps --format '{{.ID}} {{.Image}}' | grep yucacodes/agile-front | grep -v ${{ github.sha }} | awk '{ print $1 }')
+          for C in $CONTAINERS_TO_STOP; do docker kill $C; done;
+          for C in $CONTAINERS_TO_STOP; do docker rm $C; done;
+          docker image prune --all --force
