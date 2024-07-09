@@ -17,7 +17,7 @@ jobs:
         tags: yucacodes/agile-front:${{ github.sha }}
         push: true
         target: front
-        build-args: PUBLIC_API_URL=https://agile-backend.yuca.codes
+        build-args: PUBLIC_API_URL=https://backend.agile.yuca.codes
     - name: Build and push Backend Docker image
       uses: docker/build-push-action@v5.1.0
       with:
