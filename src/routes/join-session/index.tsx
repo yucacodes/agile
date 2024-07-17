@@ -25,6 +25,7 @@ export default component$(() => {
   const state = useContext(StateProvider)
   const QueryParams = useJoinPokerSession()
   const name = useSignal('')
+  const isLoading = useSignal(false)
   const nav = useNavigate()
   const { addSnackBar } = useSnackBar()
 
@@ -64,7 +65,7 @@ export default component$(() => {
           sessionData: payload.data.sessionData,
         },
       })
-
+      isLoading.value = false
       addSnackBar({
         message: `Has creado una sesión exitosamente`,
       })
@@ -118,7 +119,7 @@ export default component$(() => {
             sessionData: payload.data.sessionData,
           },
         })
-
+        isLoading.value = false
         addSnackBar({
           message: `Has unido a la sesión exitosamente`,
         })
@@ -129,6 +130,8 @@ export default component$(() => {
   )
 
   const createOrJoinToSession = $(async () => {
+    isLoading.value = true
+
     if (QueryParams?.value?.id && QueryParams?.value?.secret) {
       joinToSession({
         name: name.value,
@@ -158,6 +161,8 @@ export default component$(() => {
             outlined
             primary
             size="1.2rem"
+            loading={isLoading.value}
+            disabled={isLoading.value}
           >
             {QueryParams.value.id ? 'Join a session' : 'Create a session'}
           </Button>
