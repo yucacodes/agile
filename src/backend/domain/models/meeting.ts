@@ -76,14 +76,32 @@ export class Meeting extends Entity<MeetingProps> {
     return new Map(this.props.votings)
   }
 
-  assignManagerRole() {
-    const participants = Array.from(this.props.participants.values())
-    if (participants.length < 2) {
+  getManager(): Participant | undefined {
+    return Array.from(this.props.participants.values()).find((participant) =>
+      participant.isManager()
+    )
+  }
+
+  getSecondParticipant(): Participant {
+    const filteredParticipants = Array.from(
+      this.props.participants.values()
+    ).filter(
+      (participant) => !participant.isManager() && participant.isConnected()
+    )
+
+    if (!filteredParticipants.length) {
       throw new NotEnoughParticipantsError()
     }
-    const secondParticipant = participants[1]
-    secondParticipant.assignManagerRole()
-    return secondParticipant
+
+    filteredParticipants.sort((a, b) => a.userId().localeCompare(b.userId()))
+    return filteredParticipants[0]
+  }
+
+  assignManagerRole(): Participant {
+    const newManager = this.getSecondParticipant()
+    newManager.assignManagerRole()
+
+    return newManager
   }
 
   // Private methods

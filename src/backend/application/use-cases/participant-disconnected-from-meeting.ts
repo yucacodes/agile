@@ -2,7 +2,6 @@ import {
   MeetingsRepository,
   ParticipantDisconnectedEvent,
   PotentialManagerEvent,
-  ManagerAssignedEvent,
 } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework'
 import { TimeProvider } from '@framework'
@@ -51,33 +50,16 @@ export class ParticipantDisconectedFromMeeting {
     const isManager = participant.isManager()
 
     if (isManager) {
-      const secondParticipant = meeting.assignManagerRole()
+      const newManager = meeting.getSecondParticipant()
 
-      // Notificar al segundo participante que tomará el rol de manager
       const notificationEvent = PotentialManagerEvent.factory({
         meeting,
-        participant: secondParticipant,
+        participant: newManager,
       })
       this.eventsBus.notify({
         event: notificationEvent,
-        channel: `participant/${secondParticipant.userId()}`,
+        channel: `meeting/${meeting.id()}`,
       })
-
-      // Iniciar el temporizador para reasignar el rol de manager
-      participant.startDisconnectTimeout(async () => {
-        const newManager = meeting.assignManagerRole()
-        await this.meetingsRepository.saveUpdate(meeting)
-
-        // Notificar al nuevo manager que ahora tiene el rol
-        const managerAssignedEvent = ManagerAssignedEvent.factory({
-          meeting,
-          participant: newManager,
-        })
-        this.eventsBus.notify({
-          event: managerAssignedEvent,
-          channel: `meeting/${meeting.id()}`,
-        })
-      }, 60000) // 1 minuto
     }
 
     await this.meetingsRepository.saveUpdate(meeting)
