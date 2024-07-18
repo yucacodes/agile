@@ -1,3 +1,4 @@
+import { Timeout } from '~/framework/domain'
 import { Model } from '../core/model'
 import type { User } from './user'
 
@@ -15,6 +16,8 @@ export interface ParticipantFactoryProps {
 }
 
 export class Participant extends Model<ParticipantProps> {
+  private disconnectTimeout?: Timeout
+
   static factory(props: ParticipantFactoryProps): Participant {
     return new Participant({
       userId: props.user.id(),

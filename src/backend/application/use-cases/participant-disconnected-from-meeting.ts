@@ -2,6 +2,10 @@ import {
   MeetingsRepository,
   ParticipantDisconnectedEvent,
   PotentialManagerEvent,
+<<<<<<< HEAD
+=======
+  ManagerAssignedEvent,
+>>>>>>> b6d76228ec29c50a59e4f16640c49170fc3cea81
 } from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework'
 import { TimeProvider } from '@framework'
