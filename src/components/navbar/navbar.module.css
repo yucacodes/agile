@@ -2,6 +2,11 @@
   position: relative;
 }
 
+.logo{
+  width: 72px;
+  height: 28px;;
+}
+
 .nav {
   display: none;
 
