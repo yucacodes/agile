@@ -2,8 +2,12 @@
 .content {
   display: flex;
   flex-flow: column;
-  gap: 2.5rem;
+  gap: 1.5rem;
   padding: 0 1.6rem 3.7rem;
+}
+
+.container {
+  overflow-y: scroll;
 }
 
 .content {
@@ -41,7 +45,7 @@
 .time {
   font-size: var(--font-size, 1.25rem);
   font-weight: 500;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
 }
 
 .input {
@@ -66,9 +70,6 @@
   gap: 1.25rem;
 }
 
-.buttonsContainer button:last-child {
-  margin-top: 1.25rem;
-}
 
 .tableInDesktop {
   display: none;

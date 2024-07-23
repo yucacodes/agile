@@ -10,6 +10,8 @@ export const Navbar = component$(() => {
     return loc.url.pathname
   })
 
+  console.log(pathname.value)
+
   return (
     <div class={style.container}>
       <MenuBurger />
@@ -23,7 +25,10 @@ export const Navbar = component$(() => {
             href="/"
             role="planning"
             class={{
-              active: pathname.value === '/',
+              active:
+                pathname.value === '/' ||
+                pathname.value === '/join-session/' ||
+                pathname.value === '/play-session/',
             }}
           >
             Planning
