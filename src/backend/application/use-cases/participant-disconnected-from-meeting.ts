@@ -1,4 +1,8 @@
-import { MeetingsRepository, ParticipantDisconnectedEvent } from '@domain'
+import {
+  MeetingsRepository,
+  ParticipantDisconnectedEvent,
+  PotentialManagerEvent,
+} from '@domain'
 import { Authorization, EventsBus, useCase } from '@framework'
 import { TimeProvider } from '@framework'
 import { type AuthInformationDto } from '../dtos'
@@ -42,6 +46,21 @@ export class ParticipantDisconectedFromMeeting {
     })
 
     this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
+
+    const isManager = participant.isManager()
+
+    if (isManager) {
+      const newManager = meeting.getPotencialManager()
+
+      const notificationEvent = PotentialManagerEvent.factory({
+        meeting,
+        participant: newManager,
+      })
+      this.eventsBus.notify({
+        event: notificationEvent,
+        channel: `meeting/${meeting.id()}`,
+      })
+    }
 
     await this.meetingsRepository.saveUpdate(meeting)
   }

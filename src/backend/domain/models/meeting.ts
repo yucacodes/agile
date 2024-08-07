@@ -10,12 +10,16 @@ import { Voting } from './voting'
 
 export interface MeetingFactoryProps {
   timeProvider: TimeProvider
+  possibleNewManager: Participant
+  newManagerNotifyTime: number
 }
 
 export interface MeetingProps extends EntityProps {
   secretHash: string
   participants: Map<string, Participant>
   votings: Map<string, Voting>
+  possibleNewManager: Participant
+  newManagerNotifyTime: number
 }
 
 export interface MeetingAndSecret {
@@ -36,6 +40,8 @@ export class Meeting extends Entity<MeetingProps> {
         secretHash: generatePasswordHash(secret, this.SECRET_SALT_ROUNDS),
         participants: new Map(),
         votings: new Map(),
+        possibleNewManager: props.possibleNewManager,
+        newManagerNotifyTime: props.newManagerNotifyTime,
       },
       props.timeProvider
     )
@@ -76,6 +82,37 @@ export class Meeting extends Entity<MeetingProps> {
     return new Map(this.props.votings)
   }
 
+  getManager(): Participant | undefined {
+    return Array.from(this.props.participants.values()).find((participant) =>
+      participant.isManager()
+    )
+  }
+
+  getPotencialManager(): Participant {
+    const potentialManager = Array.from(
+      this.props.participants.values()
+    ).filter(
+      (participant) => !participant.isManager() && participant.isConnected()
+    )
+
+    if (!potentialManager.length) {
+      throw new NotEnoughParticipantsError()
+    }
+
+    potentialManager.sort((a, b) => a.userId().localeCompare(b.userId()))
+    this.props.possibleNewManager = potentialManager[0]
+    this.props.newManagerNotifyTime = Date.now()
+
+    return potentialManager[0]
+  }
+
+  setAsManager(): Participant {
+    const newManager = this.getPotencialManager()
+    newManager.assignManagerRole()
+
+    return newManager
+  }
+
   // Private methods
 
   private isValidSecret(secret: string): boolean {
@@ -87,3 +124,4 @@ export class Meeting extends Entity<MeetingProps> {
 
 export class ParticipantMeetingIdNotMatch extends Error {}
 export class ParticipantProvideInvalidSecretError extends Error {}
+export class NotEnoughParticipantsError extends Error {}
