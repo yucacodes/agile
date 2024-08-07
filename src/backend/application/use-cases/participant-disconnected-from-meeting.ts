@@ -50,7 +50,7 @@ export class ParticipantDisconectedFromMeeting {
     const isManager = participant.isManager()
 
     if (isManager) {
-      const newManager = meeting.getSecondParticipant()
+      const newManager = meeting.getPotencialManager()
 
       const notificationEvent = PotentialManagerEvent.factory({
         meeting,

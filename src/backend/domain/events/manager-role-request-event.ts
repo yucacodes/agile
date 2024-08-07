@@ -1,27 +1,27 @@
 import type { Meeting, Participant } from '../models'
 import { MeetingEvent } from './meeting-event'
 
-export type ManagerAssignedEventFactoryProps = {
+export type ManagerRoleRequestEventFactoryProps = {
   meeting: Meeting
   participant: Participant
 }
 
-export interface ManagerAssignedEventProps {
+export interface ManagerRoleRequestEventProps {
   meeting: Meeting
   participant: Participant
 }
 
-export class ManagerAssignedEvent extends MeetingEvent {
+export class ManagerRoleRequestEvent extends MeetingEvent {
   static factory(
-    props: ManagerAssignedEventFactoryProps
-  ): ManagerAssignedEvent {
-    return new ManagerAssignedEvent({
+    props: ManagerRoleRequestEventFactoryProps
+  ): ManagerRoleRequestEvent {
+    return new ManagerRoleRequestEvent({
       participant: props.participant,
       meeting: props.meeting,
     })
   }
 
-  constructor(private props: ManagerAssignedEventProps) {
+  constructor(private props: ManagerRoleRequestEventProps) {
     super()
   }
 

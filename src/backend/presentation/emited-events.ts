@@ -6,7 +6,7 @@ import type {
   ParticipantJoinedEventDto,
   ParticipantVotedEventDto,
   PotentialManagerEventDto,
-  ManagerAssignedEventDto,
+  ManagerRoleRequestEventDto,
 } from '../application/dtos'
 
 /* ----- Events that server emit, and client listen ----- */
@@ -17,7 +17,7 @@ export const emit = {
   VotingStarted: 'VotingStarted',
   VotingClosed: 'VotingClosed',
   PotentialManager: 'PotentialManager',
-  ManagerAssigned: 'ManagerAssigned',
+  ManagerRoleRequest: 'ManagerRoleRequest',
 } as const
 
 // types
@@ -28,5 +28,5 @@ export type EmmitedEventsMap = {
   [emit.VotingStarted]: SocketEmit<VotingStartedEventDto>
   [emit.VotingClosed]: SocketEmit<VotingClosedEventDto>
   [emit.PotentialManager]: SocketEmit<PotentialManagerEventDto>
-  [emit.ManagerAssigned]: SocketEmit<ManagerAssignedEventDto>
+  [emit.ManagerRoleRequest]: SocketEmit<ManagerRoleRequestEventDto>
 }

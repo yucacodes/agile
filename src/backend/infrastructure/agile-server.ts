@@ -1,5 +1,5 @@
 import {
-  ManagerAssignedEventDtoMapper,
+  ManagerRoleRequestEventDtoMapper,
   ManagerCloseVoting,
   ManagerStartVoting,
   ParticipantDisconectedFromMeeting,
@@ -16,7 +16,7 @@ import {
   VotingStartedEventDtoMapper,
 } from '@application'
 import {
-  ManagerAssignedEvent,
+  ManagerRoleRequestEvent,
   ParticipantDisconnectedEvent,
   ParticipantJoinedEvent,
   ParticipantVotedEvent,
@@ -79,9 +79,9 @@ import {
       mapper: PotentialManagerEventDtoMapper,
     },
     {
-      model: ManagerAssignedEvent,
-      event: emit.ManagerAssigned,
-      mapper: ManagerAssignedEventDtoMapper,
+      model: ManagerRoleRequestEvent,
+      event: emit.ManagerRoleRequest,
+      mapper: ManagerRoleRequestEventDtoMapper,
     },
   ],
   implementations: [

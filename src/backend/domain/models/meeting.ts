@@ -10,12 +10,16 @@ import { Voting } from './voting'
 
 export interface MeetingFactoryProps {
   timeProvider: TimeProvider
+  possibleNewManager: Participant
+  newManagerNotifyTime: number
 }
 
 export interface MeetingProps extends EntityProps {
   secretHash: string
   participants: Map<string, Participant>
   votings: Map<string, Voting>
+  possibleNewManager: Participant
+  newManagerNotifyTime: number
 }
 
 export interface MeetingAndSecret {
@@ -36,6 +40,8 @@ export class Meeting extends Entity<MeetingProps> {
         secretHash: generatePasswordHash(secret, this.SECRET_SALT_ROUNDS),
         participants: new Map(),
         votings: new Map(),
+        possibleNewManager: props.possibleNewManager,
+        newManagerNotifyTime: props.newManagerNotifyTime,
       },
       props.timeProvider
     )
@@ -82,23 +88,26 @@ export class Meeting extends Entity<MeetingProps> {
     )
   }
 
-  getSecondParticipant(): Participant {
-    const filteredParticipants = Array.from(
+  getPotencialManager(): Participant {
+    const potentialManager = Array.from(
       this.props.participants.values()
     ).filter(
       (participant) => !participant.isManager() && participant.isConnected()
     )
 
-    if (!filteredParticipants.length) {
+    if (!potentialManager.length) {
       throw new NotEnoughParticipantsError()
     }
 
-    filteredParticipants.sort((a, b) => a.userId().localeCompare(b.userId()))
-    return filteredParticipants[0]
+    potentialManager.sort((a, b) => a.userId().localeCompare(b.userId()))
+    this.props.possibleNewManager = potentialManager[0]
+    this.props.newManagerNotifyTime = Date.now()
+
+    return potentialManager[0]
   }
 
-  assignManagerRole(): Participant {
-    const newManager = this.getSecondParticipant()
+  setAsManager(): Participant {
+    const newManager = this.getPotencialManager()
     newManager.assignManagerRole()
 
     return newManager
