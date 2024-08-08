@@ -2,7 +2,7 @@ import { component$, useComputed$ } from '@builder.io/qwik'
 import style from './navbar.module.css'
 import { Link, useLocation } from '@builder.io/qwik-city'
 import { MenuBurger } from '../menu-burger/MenuBurger'
-import Logo from '../../../public/Logo.svg?jsx'
+import Logo from '../../../public/Logo.svg?url&jsx'
 
 export const Navbar = component$(() => {
   const loc = useLocation()
