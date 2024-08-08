@@ -7,7 +7,8 @@
 }
 
 .container {
-  overflow-y: scroll;
+  overflow-y: auto; 
+  scroll-behavior: smooth;
 }
 
 .content {

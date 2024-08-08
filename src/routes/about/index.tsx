@@ -3,9 +3,9 @@ import type { DocumentHead } from '@builder.io/qwik-city'
 import { CreatorCard } from '~/components/creator-card/CreatorCard'
 import style from './about-page.module.css'
 
-import jorgeImage from '../../../public/jorge.jpg?jsx'
-import ricardoImage from '../../../public/ricardo.jpg?jsx'
-import sharonImage from '../../../public/sharon.jpg?jsx'
+import jorgeImage from '../../../public/jorge.jpg?url&jsx'
+import ricardoImage from '../../../public/ricardo.jpg?url&jsx'
+import sharonImage from '../../../public/sharon.jpg?url&jsx'
 
 export default component$(() => {
   const creators = [
