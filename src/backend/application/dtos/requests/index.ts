@@ -1,5 +1,6 @@
 export * from './manager-close-voting-request-dto'
 export * from './manager-start-voting-request-dto'
+export * from './manager-role-request-dto'
 export * from './participant-reconect-to-meeting-request-dto'
 export * from './participant-votes-request-dto'
 export * from './user-create-meeting-request-dto'

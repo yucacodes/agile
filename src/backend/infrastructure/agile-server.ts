@@ -1,4 +1,5 @@
 import {
+  ManagerRoleRequestEventDtoMapper,
   ManagerCloseVoting,
   ManagerStartVoting,
   ParticipantDisconectedFromMeeting,
@@ -7,6 +8,7 @@ import {
   ParticipantJoinedEventDtoMapper,
   ParticipantVotedEventDtoMapper,
   ParticipantVotes,
+  PotentialManagerEventDtoMapper,
   UserCreateMeeting,
   UserJoinMeeting,
   UserRefreshSession,
@@ -14,9 +16,11 @@ import {
   VotingStartedEventDtoMapper,
 } from '@application'
 import {
+  ManagerRoleRequestEvent,
   ParticipantDisconnectedEvent,
   ParticipantJoinedEvent,
   ParticipantVotedEvent,
+  PotentialManagerEvent,
   VotingClosedEvent,
   VotingStartedEvent,
 } from '@domain'
@@ -68,6 +72,16 @@ import {
       model: ParticipantDisconnectedEvent,
       event: emit.ParticipantDisconnected,
       mapper: ParticipantDisconnectedEventDtoMapper,
+    },
+    {
+      model: PotentialManagerEvent,
+      event: emit.PotentialManager,
+      mapper: PotentialManagerEventDtoMapper,
+    },
+    {
+      model: ManagerRoleRequestEvent,
+      event: emit.ManagerRoleRequest,
+      mapper: ManagerRoleRequestEventDtoMapper,
     },
   ],
   implementations: [
