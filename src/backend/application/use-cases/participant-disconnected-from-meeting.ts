@@ -1,6 +1,6 @@
 import { MeetingsRepository, ParticipantDisconnectedEvent } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework'
-import { TimeProvider } from '@framework'
+import { Authorization, EventsBus, useCase } from '@yucacodes/es'
+import { TimeProvider } from '@yucacodes/es'
 import { type AuthInformationDto } from '../dtos'
 
 @useCase({ allowAnyRole: true, disableRequestValidation: true })

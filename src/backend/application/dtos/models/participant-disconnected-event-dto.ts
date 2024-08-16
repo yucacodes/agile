@@ -1,5 +1,5 @@
 import { ParticipantDisconnectedEvent } from '@domain'
-import { dtoMapper } from '@framework'
+import { dtoMapper } from '@yucacodes/es'
 import {
   ParticipantDtoMapper,
   type ParticipantDto,

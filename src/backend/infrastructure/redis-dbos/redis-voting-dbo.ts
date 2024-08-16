@@ -1,5 +1,5 @@
 import { Voting } from '@domain'
-import { DboCollectionsMapper, TimeProvider, dboMapper } from '@framework'
+import { DboCollectionsMapper, TimeProvider, dboMapper } from '@yucacodes/es'
 import type { RedisEntityDbo } from './redis-entity-dbo'
 import { RedisEntityDboMapperHelper } from './redis-entity-dbo'
 import type { RedisParticipantDbo } from './redis-participant-dbo'

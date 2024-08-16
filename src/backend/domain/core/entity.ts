@@ -1,6 +1,6 @@
 import shortUUID from 'short-uuid'
 import { Model } from './model'
-import { type TimeProvider } from '@framework'
+import { type TimeProvider } from '@yucacodes/es'
 
 export interface EntityProps {
   id: string

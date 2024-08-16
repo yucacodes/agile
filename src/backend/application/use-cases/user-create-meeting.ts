@@ -6,7 +6,7 @@ import {
   RefreshTokensRepository,
   User,
 } from '@domain'
-import { Authorization, EventsBus, TimeProvider, useCase } from '@framework'
+import { Authorization, EventsBus, TimeProvider, useCase } from '@yucacodes/es'
 import type { MeetingAndSessionDataDto } from '../dtos'
 import {
   MeetingDtoMapper,

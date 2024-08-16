@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Max, Min } from '@framework'
+import { IsNotEmpty, IsNumber, IsString, Max, Min } from '@yucacodes/es'
 
 export interface ParticipantVotesRequestDto {
   meetingId: string

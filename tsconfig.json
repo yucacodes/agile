@@ -20,7 +20,6 @@
     "noEmit": true,
     "types": ["node", "vite/client"],
     "paths": {
-      "@framework": ["./src/framework"],
       "@domain": ["./src/backend/domain"],
       "@application": ["./src/backend/application"],
       "@presentation": ["./src/backend/presentation"],

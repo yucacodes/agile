@@ -1,5 +1,5 @@
 import { MeetingsRepository, type Meeting } from '@domain'
-import { implementation } from '@framework'
+import { implementation } from '@yucacodes/es'
 import { redisRepositoriesClient as client } from '../db-connections/redis-repositories'
 import { RedisMeetingDboMapper } from '../redis-dbos'
 

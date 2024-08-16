@@ -1,5 +1,5 @@
 import { MeetingsRepository } from '@domain'
-import { EventsBus, useCase } from '@framework'
+import { EventsBus, useCase } from '@yucacodes/es'
 import type { MeetingDto, ParticipantReconectToMeetingRequestDto } from '../dtos'
 import {
   MeetingDtoMapper,

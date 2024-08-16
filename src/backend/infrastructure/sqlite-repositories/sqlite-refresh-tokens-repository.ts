@@ -1,6 +1,6 @@
 import type { RefreshToken } from '@domain'
 import { RefreshTokensRepository } from '@domain'
-import { implementation } from '@framework'
+import { implementation } from '@yucacodes/es'
 import { sqliteRepositoriesClient as client } from '../db-connections/sqlite-repositories'
 import type { SqliteRefreshTokenDbo } from '../sqlite-dbos'
 import { SqliteRefreshTokenDboMapper } from '../sqlite-dbos'

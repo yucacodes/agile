@@ -3,8 +3,8 @@ import {
   ParticipantVotedEvent,
   VotingClosedEvent,
 } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework'
-import { TimeProvider } from '@framework'
+import { Authorization, EventsBus, useCase } from '@yucacodes/es'
+import { TimeProvider } from '@yucacodes/es'
 import {
   ParticipantVotesRequestDtoValidator,
   type AuthInformationDto,

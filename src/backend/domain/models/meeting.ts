@@ -1,9 +1,9 @@
 import {
-  generatePasswordHash,
-  generateSecureRandomSecretString,
-  verifyPasswordHash,
+  hashPasswordSync,
+  secureSecret,
+  verifyPasswordSync,
   type TimeProvider,
-} from '@framework'
+} from '@yucacodes/es'
 import { Entity, type EntityProps } from '../core'
 import type { Participant } from './participant'
 import { Voting } from './voting'
@@ -29,11 +29,11 @@ export class Meeting extends Entity<MeetingProps> {
   private static SECRET_SALT_ROUNDS = 10
 
   static factory(props: MeetingFactoryProps): MeetingAndSecret {
-    const secret = generateSecureRandomSecretString(this.SECRET_BYTES)
+    const secret = secureSecret(this.SECRET_BYTES)
     const meeting = new Meeting(
       {
         ...this.factoryEntityProps(props.timeProvider),
-        secretHash: generatePasswordHash(secret, this.SECRET_SALT_ROUNDS),
+        secretHash: hashPasswordSync(secret),
         participants: new Map(),
         votings: new Map(),
       },
@@ -79,7 +79,7 @@ export class Meeting extends Entity<MeetingProps> {
   // Private methods
 
   private isValidSecret(secret: string): boolean {
-    return verifyPasswordHash(secret, this.props.secretHash)
+    return verifyPasswordSync(secret, this.props.secretHash)
   }
 }
 

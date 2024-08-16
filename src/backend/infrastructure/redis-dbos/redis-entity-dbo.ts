@@ -1,5 +1,5 @@
 import type { Entity, EntityProps } from '@domain'
-import { implementation } from '@framework'
+import { implementation } from '@yucacodes/es'
 
 export interface RedisEntityDbo {
   id: string

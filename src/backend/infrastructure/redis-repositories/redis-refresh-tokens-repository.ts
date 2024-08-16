@@ -1,6 +1,6 @@
 import type { RefreshToken } from '@domain'
 import { RefreshTokensRepository } from '@domain'
-import { implementation } from '@framework'
+import { implementation } from '@yucacodes/es'
 import { redisRepositoriesClient as client } from '../db-connections/redis-repositories'
 import { RedisRefreshTokenDboMapper } from '../redis-dbos'
 

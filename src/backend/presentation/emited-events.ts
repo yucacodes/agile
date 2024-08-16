@@ -1,4 +1,4 @@
-import type { SocketEmit } from '@framework'
+import type { SocketEmit } from '@yucacodes/es'
 import type {
   VotingClosedEventDto,
   VotingStartedEventDto,

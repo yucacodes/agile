@@ -1,4 +1,4 @@
-import { socketAuthProvider } from '@framework'
+import { socketAuthProvider } from '@yucacodes/es'
 import type { Socket } from 'socket.io'
 import type { AuthInformationDto } from '../application/dtos'
 

@@ -1,5 +1,5 @@
 import { Participant } from '@domain'
-import { CollectionsMapper, dtoMapper } from '@framework'
+import { CollectionsMapper, dtoMapper } from '@yucacodes/es'
 
 export interface ParticipantDto {
   userId: string

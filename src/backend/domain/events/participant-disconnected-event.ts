@@ -1,4 +1,4 @@
-import { type TimeProvider } from '@framework'
+import { type TimeProvider } from '@yucacodes/es'
 import type { Meeting, Participant } from '../models'
 import { MeetingEvent } from './meeting-event'
 

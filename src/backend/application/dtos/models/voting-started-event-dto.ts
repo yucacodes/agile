@@ -1,5 +1,5 @@
 import { VotingStartedEvent } from '@domain'
-import { dtoMapper } from '@framework'
+import { dtoMapper } from '@yucacodes/es'
 import { VotingDto, VotingDtoMapper } from './voting-dto'
 
 export interface VotingStartedEventDto {

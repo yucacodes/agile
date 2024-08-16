@@ -5,7 +5,7 @@ import type {
 } from '@application'
 import { UserRefreshSessionRequestDtoValidator } from '@application'
 import { RefreshToken, RefreshTokensRepository } from '@domain'
-import { Authorization, TimeProvider, useCase } from '@framework'
+import { Authorization, TimeProvider, useCase } from '@yucacodes/es'
 
 @useCase({
   disableAuthValidation: true,

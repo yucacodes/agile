@@ -1,7 +1,7 @@
 import { Meeting } from '@domain'
 
-import { TimeProvider } from '@framework'
-import { dboMapper } from '@framework'
+import { TimeProvider } from '@yucacodes/es'
+import { dboMapper } from '@yucacodes/es'
 import type { RedisEntityDbo } from './redis-entity-dbo'
 import { RedisEntityDboMapperHelper } from './redis-entity-dbo'
 import {
