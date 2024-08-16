@@ -59,19 +59,11 @@
     "vitest": "^0.34.6"
   },
   "dependencies": {
+    "@yucacodes/es": "0.0.14",
     "@yucacodes/ui-qwik": "^0.0.16",
-    "bcrypt": "^5.1.1",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
-    "express": "^4.18.2",
-    "pino": "^8.16.2",
     "redis": "^4.6.13",
-    "reflect-metadata": "^0.1.13",
     "sharp": "^0.32.6",
-    "short-uuid": "^4.2.2",
-    "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
-    "sqlite3": "^5.1.7",
-    "tsyringe": "^4.8.0"
+    "sqlite3": "^5.1.7"
   }
 }

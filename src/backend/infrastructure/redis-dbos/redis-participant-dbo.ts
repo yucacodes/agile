@@ -1,5 +1,5 @@
 import { Participant } from '@domain'
-import { DboCollectionsMapper, dboMapper } from '@framework'
+import { DboCollectionsMapper, dboMapper } from '@yucacodes/es'
 
 export interface RedisParticipantDbo {
   userId: string

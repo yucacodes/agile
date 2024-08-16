@@ -1,5 +1,5 @@
 import { Voting } from '@domain'
-import { CollectionsMapper, dtoMapper } from '@framework'
+import { CollectionsMapper, dtoMapper } from '@yucacodes/es'
 import { EntityDtoMapper, type EntityDto } from './entity-dto'
 
 export interface VotingDto extends EntityDto {

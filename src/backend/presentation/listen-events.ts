@@ -1,4 +1,4 @@
-import { type SocketListener } from '@framework'
+import { type SocketListener } from '@yucacodes/es'
 import type {
   ManagerCloseVoting,
   ManagerStartVoting,

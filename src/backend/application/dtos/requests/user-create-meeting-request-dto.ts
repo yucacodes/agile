@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from '@framework'
+import { IsNotEmpty, IsString } from '@yucacodes/es'
 
 export interface UserCreateMeetingRequestDto {
   name: string

@@ -1,5 +1,5 @@
 import { ParticipantJoinedEvent } from '@domain'
-import { dtoMapper } from '@framework'
+import { dtoMapper } from '@yucacodes/es'
 import { ParticipantDtoMapper, type ParticipantDto } from './participant-dto'
 
 export interface ParticipantJoinedEventDto {

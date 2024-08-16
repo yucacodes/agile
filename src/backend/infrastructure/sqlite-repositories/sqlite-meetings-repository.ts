@@ -1,6 +1,6 @@
 import type { Meeting } from '@domain'
 import { MeetingsRepository } from '@domain'
-import { implementation } from '@framework'
+import { implementation } from '@yucacodes/es'
 import { sqliteRepositoriesClient as client } from '../db-connections/sqlite-repositories'
 import type { SqliteMeetingDbo } from '../sqlite-dbos'
 import { SqliteMeetingDboMapper } from '../sqlite-dbos'

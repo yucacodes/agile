@@ -16,7 +16,6 @@
     "types": ["node", "vite/client"],
     "esModuleInterop": true,
     "paths": {
-      "@framework": ["./src/framework"],
       "@domain": ["./src/backend/domain"],
       "@application": ["./src/backend/application"],
       "@presentation": ["./src/backend/presentation"],
@@ -24,5 +23,5 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src/framework", "src/backend"]
+  "include": ["src/backend"]
 }

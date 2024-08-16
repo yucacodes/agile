@@ -1,11 +1,14 @@
 import { MeetingsRepository, VotingStartedEvent } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework'
-import { TimeProvider } from '@framework'
-import  { type AuthInformationDto, type VotingDto, VotingDtoMapper } from '../dtos'
+import {
+  type AuthInformationDto,
+  type VotingDto,
+  VotingDtoMapper,
+} from '../dtos'
 import {
   ManagerStartVotingRequestDtoValidator,
   type ManagerStartVotingRequestDto,
 } from '../dtos'
+import { Authorization, EventsBus, TimeProvider, useCase } from '@yucacodes/es'
 
 @useCase({
   allowRole: (req) => `meeting/${req.meetingId}/participant`,
@@ -36,20 +39,19 @@ export class ManagerStartVoting {
     if (!participant.isManager()) {
       throw new Error('You do not have permission to start the voting.')
     }
-    
+
     const voting = meeting.newVoting()
-    
+
     const event = VotingStartedEvent.factory({
       meeting,
       voting,
       timeProvider: this.timeProvider,
     })
-    
+
     await this.meetingsRepository.saveUpdate(meeting)
-    
+
     this.eventsBus.notify({ event, channel: `meeting/${meeting.id()}` })
 
-
-    return this.votingDtoMapper.map(voting) 
+    return this.votingDtoMapper.map(voting)
   }
 }

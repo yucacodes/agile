@@ -1,4 +1,4 @@
-import { type TimeProvider } from '@framework'
+import { type TimeProvider } from '@yucacodes/es'
 import { Entity, type EntityProps } from '../core'
 import type { Participant } from './participant'
 

@@ -1,5 +1,5 @@
 import { Meeting } from '@domain'
-import { dtoMapper } from '@framework'
+import { dtoMapper } from '@yucacodes/es'
 import { EntityDtoMapper, type EntityDto } from './entity-dto'
 import { ParticipantDtoMapper, type ParticipantDto } from './participant-dto'
 import type { VotingDto } from './voting-dto'

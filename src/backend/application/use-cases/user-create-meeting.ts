@@ -6,7 +6,6 @@ import {
   RefreshTokensRepository,
   User,
 } from '@domain'
-import { Authorization, EventsBus, TimeProvider, useCase } from '@framework'
 import type { MeetingAndSessionDataDto } from '../dtos'
 import {
   MeetingDtoMapper,
@@ -14,6 +13,7 @@ import {
   type AuthInformationDto,
   type UserCreateMeetingRequestDto,
 } from '../dtos'
+import { Authorization, EventsBus, TimeProvider, useCase } from '@yucacodes/es'
 
 @useCase({
   disableAuthValidation: true,

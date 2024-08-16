@@ -1,5 +1,5 @@
 import { Meeting } from '@domain'
-import { dboMapper } from '@framework'
+import { dboMapper } from '@yucacodes/es'
 import { RedisMeetingDboMapper } from '../redis-dbos'
 
 export interface SqliteMeetingDbo {

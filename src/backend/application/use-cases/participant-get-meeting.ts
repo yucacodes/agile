@@ -1,10 +1,10 @@
 import { MeetingsRepository } from '@domain'
-import { useCase } from '@framework'
 import type { MeetingDto, ParticipantGetMeetingRequestDto } from '../dtos'
 import {
   MeetingDtoMapper,
   ParticipantGetMeetingRequestDtoValidator,
 } from '../dtos'
+import { useCase } from '@yucacodes/es'
 
 @useCase({
   allowRole: (req) => `meeting/${req.id}/participant`,

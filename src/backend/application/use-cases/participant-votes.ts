@@ -1,6 +1,4 @@
 import { MeetingsRepository, ParticipantVotedEvent } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework'
-import { TimeProvider } from '@framework'
 import {
   ParticipantVotesRequestDtoValidator,
   type AuthInformationDto,
@@ -8,6 +6,7 @@ import {
   type VotingDto,
   VotingDtoMapper,
 } from '../dtos'
+import { Authorization, EventsBus, TimeProvider, useCase } from '@yucacodes/es'
 
 @useCase({
   allowRole: (req) => `meeting/${req.meetingId}/participant`,

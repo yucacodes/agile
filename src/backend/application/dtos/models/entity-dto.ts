@@ -1,5 +1,5 @@
 import { Entity, EntityProps } from '@domain'
-import { implementation } from '@framework'
+import { implementation } from '@yucacodes/es'
 
 export interface EntityDto {
   id: string

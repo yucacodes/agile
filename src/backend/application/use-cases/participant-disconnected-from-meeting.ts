@@ -1,7 +1,6 @@
 import { MeetingsRepository, ParticipantDisconnectedEvent } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework'
-import { TimeProvider } from '@framework'
 import { type AuthInformationDto } from '../dtos'
+import { Authorization, EventsBus, TimeProvider, useCase } from '@yucacodes/es'
 
 @useCase({ allowAnyRole: true, disableRequestValidation: true })
 export class ParticipantDisconectedFromMeeting {

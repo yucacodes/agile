@@ -1,9 +1,9 @@
-import type { TimeProvider } from '@framework'
+import type { TimeProvider } from '@yucacodes/es'
 import {
-  generatePasswordHash,
-  generateSecureRandomSecretString,
-  verifyPasswordHash,
-} from '@framework'
+  hashPasswordSync,
+  secureSecret,
+  verifyPasswordSync,
+} from '@yucacodes/es'
 import type { EntityProps } from '../core'
 import { Entity } from '../core'
 
@@ -32,11 +32,11 @@ export class RefreshToken extends Entity<RefreshTokenProps> {
   private static SECRET_SALT_ROUNDS = 10
 
   static factory(props: RefreshTokenFactoryProps): RefreshTokenAndSecret {
-    const secret = generateSecureRandomSecretString(this.SECRET_BYTES)
+    const secret = secureSecret(this.SECRET_BYTES)
     const refreshToken = new RefreshToken(
       {
         ...this.factoryEntityProps(props.timeProvider),
-        secretHash: generatePasswordHash(secret, this.SECRET_SALT_ROUNDS),
+        secretHash: hashPasswordSync(secret),
         expiresAt:
           props.expiresAt ??
           props.timeProvider.minutesLater(this.DEFAULT_EXPIRATION_MINUTES),
@@ -69,6 +69,6 @@ export class RefreshToken extends Entity<RefreshTokenProps> {
   }
 
   private isValidSecret(secret: string): boolean {
-    return verifyPasswordHash(secret, this.props.secretHash)
+    return verifyPasswordSync(secret, this.props.secretHash)
   }
 }

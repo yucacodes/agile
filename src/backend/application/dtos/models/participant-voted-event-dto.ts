@@ -1,5 +1,5 @@
 import { ParticipantVotedEvent } from '@domain'
-import { dtoMapper } from '@framework'
+import { dtoMapper } from '@yucacodes/es'
 
 export interface ParticipantVotedEventDto {
   meetingId: string

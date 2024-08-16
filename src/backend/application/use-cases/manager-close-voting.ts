@@ -1,6 +1,6 @@
 import { MeetingsRepository, VotingClosedEvent } from '@domain'
-import { Authorization, EventsBus, useCase } from '@framework'
-import { TimeProvider } from '@framework'
+import { Authorization, EventsBus, TimeProvider, useCase } from '@yucacodes/es'
+
 import type { AuthInformationDto } from '../dtos'
 import {
   ManagerCloseVotingRequestDtoValidator,
@@ -49,9 +49,8 @@ export class ManagerCloseVoting {
       timeProvider: this.timeProvider,
     })
 
-    this.eventsBus.notifyToOrigin({ event, channel: `meeting/${meeting.id()}` })
+    // this.eventsBus.notifyToOrigin({ event, channel: `meeting/${meeting.id()}` })
 
     await this.meetingsRepository.saveUpdate(meeting)
-
   }
 }

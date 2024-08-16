@@ -1,6 +1,6 @@
-import shortUUID from 'short-uuid'
+import { shortUUID } from '@yucacodes/es'
 import { Model } from './model'
-import { type TimeProvider } from '@framework'
+import { type TimeProvider } from '@yucacodes/es'
 
 export interface EntityProps {
   id: string
@@ -12,7 +12,7 @@ export interface EntityProps {
 export abstract class Entity<P extends EntityProps> extends Model<P> {
   protected static factoryEntityProps(timeProvider: TimeProvider): EntityProps {
     return {
-      id: shortUUID.generate(),
+      id: shortUUID(),
       createdAt: timeProvider.now(),
       updatedAt: timeProvider.now(),
     }

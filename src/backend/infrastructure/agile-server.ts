@@ -20,8 +20,8 @@ import {
   VotingClosedEvent,
   VotingStartedEvent,
 } from '@domain'
-import { NODE_ENV, Server, server } from '@framework'
-import { SocketAuthProvider, emit, listen } from '@presentation'
+import { NODE_ENV, Server, server } from '@yucacodes/es'
+import { emit, listen, SocketAuthProvider } from '@presentation'
 import {
   RedisMeetingsRepository,
   RedisRefreshTokensRepository,

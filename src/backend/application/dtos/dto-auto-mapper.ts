@@ -1,4 +1,4 @@
-import { AutoMapper, autoMapper } from '@framework'
+import { AutoMapper, autoMapper } from '@yucacodes/es'
 import {
   VotingClosedEventDtoMapper,
   VotingStartedEventDtoMapper,

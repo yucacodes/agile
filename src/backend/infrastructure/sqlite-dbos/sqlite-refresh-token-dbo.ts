@@ -1,5 +1,5 @@
 import { RefreshToken } from '@domain'
-import { dboMapper } from '@framework'
+import { dboMapper } from '@yucacodes/es'
 import { RedisRefreshTokenDboMapper } from '../redis-dbos'
 
 export interface SqliteRefreshTokenDbo {
