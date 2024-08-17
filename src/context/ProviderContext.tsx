@@ -11,7 +11,7 @@ import {
   type QRL,
 } from '@builder.io/qwik'
 import { ClientSocket } from '@presentation'
-import { SocketSuccessResult } from '~/framework/presentation'
+import { SocketSuccessResult } from '@yucacodes/es'
 import { getSession, removeSession, setSession } from '~/utils/Session'
 import { connectSocket } from '~/utils/SocketManager'
 

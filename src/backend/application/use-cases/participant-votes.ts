@@ -68,9 +68,10 @@ export class ParticipantVotes {
         timeProvider: this.timeProvider,
         voting,
       })
-      this.eventsBus.notifyToOrigin({
+      this.eventsBus.notify({
         event,
         channel: `meeting/${meeting.id()}`,
+        includeOrigin: true,
       })
     }
 

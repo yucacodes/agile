@@ -3,7 +3,7 @@
 import { $, NoSerialize, noSerialize, type QRL } from '@builder.io/qwik'
 import { ClientSocket, ListenEventsMap } from '@presentation'
 import { io } from 'socket.io-client'
-import { SocketResult } from '~/framework/presentation'
+import { SocketResult } from '@yucacodes/es'
 
 // export const emitEventWithCallback: QRL<
 //   <T, P>(
